@@ -14,13 +14,140 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      credit_transactions: {
+        Row: {
+          action: string
+          amount: number
+          created_at: string
+          id: string
+          result: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          amount: number
+          created_at?: string
+          id?: string
+          result?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          amount?: number
+          created_at?: string
+          id?: string
+          result?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      generations: {
+        Row: {
+          ai_model: string
+          created_at: string
+          credits_used: number
+          format: string | null
+          id: string
+          prompt_en_final: string | null
+          prompt_fr_final: string | null
+          result_url: string | null
+          result_urls: string[] | null
+          status: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          ai_model: string
+          created_at?: string
+          credits_used?: number
+          format?: string | null
+          id?: string
+          prompt_en_final?: string | null
+          prompt_fr_final?: string | null
+          result_url?: string | null
+          result_urls?: string[] | null
+          status?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          ai_model?: string
+          created_at?: string
+          credits_used?: number
+          format?: string | null
+          id?: string
+          prompt_en_final?: string | null
+          prompt_fr_final?: string | null
+          result_url?: string | null
+          result_urls?: string[] | null
+          status?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          company_activity: string | null
+          company_sector: string | null
+          created_at: string
+          credits: number
+          display_name: string | null
+          id: string
+          plan: string
+          referral_code: string | null
+          referred_by: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          company_activity?: string | null
+          company_sector?: string | null
+          created_at?: string
+          credits?: number
+          display_name?: string | null
+          id?: string
+          plan?: string
+          referral_code?: string | null
+          referred_by?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          company_activity?: string | null
+          company_sector?: string | null
+          created_at?: string
+          credits?: number
+          display_name?: string | null
+          id?: string
+          plan?: string
+          referral_code?: string | null
+          referred_by?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_credits: {
+        Args: { p_action: string; p_amount: number; p_user_id: string }
+        Returns: undefined
+      }
+      deduct_credits: {
+        Args: { p_action: string; p_amount: number; p_user_id: string }
+        Returns: boolean
+      }
+      generate_referral_code: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
