@@ -14,20 +14,31 @@ interface Profile {
   referral_code: string | null;
 }
 
+interface SubscriptionInfo {
+  subscribed: boolean;
+  plan: string;
+  subscription_end?: string;
+  credits_per_month?: number;
+}
+
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  subscription: SubscriptionInfo | null;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  checkSubscription: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   profile: null,
   loading: true,
+  subscription: null,
   signOut: async () => {},
   refreshProfile: async () => {},
+  checkSubscription: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -36,6 +47,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
+
+  const checkSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      if (!error && data) {
+        setSubscription(data as SubscriptionInfo);
+      }
+    } catch (e) {
+      console.error('Error checking subscription:', e);
+    }
+  };
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
@@ -56,7 +79,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         // Use setTimeout to avoid deadlock with Supabase client
-        setTimeout(() => fetchProfile(session.user.id), 0);
+        setTimeout(() => {
+          fetchProfile(session.user.id);
+          checkSubscription();
+        }, 0);
       } else {
         setProfile(null);
       }
@@ -68,6 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id);
+        checkSubscription();
       }
       setLoading(false);
     });
@@ -99,7 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, subscription, signOut, refreshProfile, checkSubscription }}>
       {children}
     </AuthContext.Provider>
   );
