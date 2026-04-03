@@ -125,13 +125,23 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* CTA */}
-        <Button
-          onClick={() => navigate('/')}
-          className="gradient-bg border-0 text-primary-foreground font-bold px-8 py-6 rounded-btn text-base mb-8 hover:opacity-90"
-        >
-          Créer du contenu ✨
-        </Button>
+        {/* CTAs */}
+        <div className="flex flex-wrap gap-3 mb-8">
+          <Button
+            onClick={() => navigate('/')}
+            className="gradient-bg border-0 text-primary-foreground font-bold px-8 py-6 rounded-btn text-base hover:opacity-90"
+          >
+            Créer du contenu ✨
+          </Button>
+          <Button
+            onClick={() => navigate('/pricing')}
+            variant="outline"
+            className="border-primary/30 text-primary font-bold px-8 py-6 rounded-btn text-base hover:bg-primary/10"
+          >
+            <Crown className="w-4 h-4 mr-2" />
+            {profile.plan === 'free' ? 'Passer Pro' : 'Gérer l\'abonnement'}
+          </Button>
+        </div>
 
         {/* History */}
         <h2 className="text-lg font-bold text-foreground mb-4">Historique des générations</h2>
