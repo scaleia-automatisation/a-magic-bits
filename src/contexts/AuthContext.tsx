@@ -35,8 +35,10 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   profile: null,
   loading: true,
+  subscription: null,
   signOut: async () => {},
   refreshProfile: async () => {},
+  checkSubscription: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
