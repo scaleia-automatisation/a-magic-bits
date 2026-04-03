@@ -47,6 +47,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
+
+  const checkSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      if (!error && data) {
+        setSubscription(data as SubscriptionInfo);
+      }
+    } catch (e) {
+      console.error('Error checking subscription:', e);
+    }
+  };
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
