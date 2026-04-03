@@ -14,12 +14,21 @@ interface Profile {
   referral_code: string | null;
 }
 
+interface SubscriptionInfo {
+  subscribed: boolean;
+  plan: string;
+  subscription_end?: string;
+  credits_per_month?: number;
+}
+
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  subscription: SubscriptionInfo | null;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  checkSubscription: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
