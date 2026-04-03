@@ -2,22 +2,58 @@ import { useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Share2, Pencil } from 'lucide-react';
+import { Copy, Share2, Pencil, Loader2 } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { toast } from 'sonner';
+import { generatePrompt } from '@/lib/kreator-ai';
+import { useAuth } from '@/contexts/AuthContext';
 
 const PromptStep = () => {
-  const { prompt_fr, setPromptFr, prompt_en, setPromptEn, type, slides_count } = useKreatorStore();
+  const { user } = useAuth();
+  const {
+    prompt_fr, setPromptFr, prompt_en, setPromptEn,
+    type, format, objective, company_activity, company_sector,
+    input_text, idea_chosen, input_image_description,
+    options, slides_count
+  } = useKreatorStore();
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
+    if (!user) {
+      toast.error('Connectez-vous pour générer un prompt');
+      return;
+    }
+
     setIsGenerating(true);
-    // Simulated prompt generation
-    setTimeout(() => {
-      setPromptFr('Photographie commerciale premium montrant un produit en situation lifestyle, éclairage studio professionnel, composition centrée avec espace négatif pour typographie. Palette de couleurs harmonieuse, rendu ultra-détaillé 4K.');
-      setPromptEn('Premium commercial photography showcasing a product in lifestyle setting, professional studio lighting, centered composition with negative space for typography. Harmonious color palette, ultra-detailed 4K rendering.');
+    try {
+      const result = await generatePrompt({
+        contentType: type,
+        format,
+        objective,
+        ton: options.ton,
+        visualStyle: options.visual_style,
+        inputText: input_text,
+        ideaChosen: idea_chosen,
+        companyActivity: company_activity,
+        companySector: company_sector,
+        showText: options.show_text,
+        textContent: options.text_content,
+        paletteEnabled: options.palette_enabled,
+        paletteHex: options.palette_hex,
+        imageDescription: input_image_description,
+      });
+
+      setPromptFr(result.prompt_fr || '');
+      setPromptEn(result.prompt_en || '');
+    } catch (err) {
+      console.error(err);
+      toast.error('Erreur lors de la génération du prompt');
+      // Fallback
+      setPromptFr('Photographie commerciale premium montrant un produit en situation lifestyle, éclairage studio professionnel, composition centrée avec espace négatif pour typographie.');
+      setPromptEn('Premium commercial photography showcasing a product in lifestyle setting, professional studio lighting, centered composition with negative space for typography.');
+    } finally {
       setIsGenerating(false);
-    }, 1500);
+    }
   };
 
   const handleCopy = (text: string) => {
@@ -25,12 +61,10 @@ const PromptStep = () => {
     toast.success('Copié dans le presse-papier');
   };
 
-  const isSlideBased = type === 'carousel';
   const hasPrompt = prompt_fr.length > 0;
 
   return (
     <>
-      {/* Generate button outside step */}
       {!hasPrompt && (
         <Button
           onClick={handleGenerate}
@@ -39,7 +73,7 @@ const PromptStep = () => {
         >
           {isGenerating ? (
             <span className="flex items-center gap-2">
-              <span className="animate-spin-slow">✨</span> Génération en cours…
+              <Loader2 className="w-5 h-5 animate-spin" /> Génération en cours…
             </span>
           ) : (
             'Générer le prompt'
@@ -49,7 +83,6 @@ const PromptStep = () => {
 
       {hasPrompt && (
         <StepContainer stepNumber={5} title="Prompt généré">
-          {/* French prompt */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-foreground">🇫🇷 Prompt Français</label>
@@ -70,7 +103,6 @@ const PromptStep = () => {
             </div>
           </div>
 
-          {/* English prompt */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-foreground">🇬🇧 Prompt English</label>
@@ -91,6 +123,17 @@ const PromptStep = () => {
               </Button>
             </div>
           </div>
+
+          {/* Re-generate button */}
+          <Button
+            onClick={handleGenerate}
+            disabled={isGenerating}
+            variant="outline"
+            className="mt-4 border-foreground/10 text-muted-foreground hover:text-foreground"
+          >
+            {isGenerating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+            Régénérer le prompt
+          </Button>
         </StepContainer>
       )}
     </>
