@@ -55,15 +55,15 @@ serve(async (req) => {
       const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
       if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
 
-      // Map model names to Gemini model IDs
+      // Map model names to valid Gemini image-capable model IDs
       const geminiModelMap: Record<string, string> = {
-        "nano-banana-2": "gemini-2.5-flash",
-        "nano-banana-pro": "gemini-2.5-pro",
+        "nano-banana-2": "gemini-3.1-flash-image-preview",
+        "nano-banana-pro": "gemini-3-pro-image-preview",
         "imagen": "imagen-3.0-generate-002",
       };
 
       const selectedModel = ai_model || model || "nano-banana-2";
-      const geminiModel = geminiModelMap[selectedModel] || "gemini-2.5-flash";
+      const geminiModel = geminiModelMap[selectedModel] || "gemini-3.1-flash-image-preview";
 
       // For Imagen, use the Imagen API
       if (selectedModel === "imagen") {
