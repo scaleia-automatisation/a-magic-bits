@@ -92,7 +92,7 @@ const GenerationStep = () => {
         format,
         prompt_en_final: prompt_en,
         prompt_fr_final: prompt_fr,
-        result_url: imageUrl,
+        result_url: contentUrl,
         credits_used: creditsNeeded,
         status: 'done',
       });
