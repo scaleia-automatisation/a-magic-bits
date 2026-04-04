@@ -5,6 +5,33 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const jsonError = (status: number, error: string) =>
+  new Response(JSON.stringify({ error }), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
+const getProviderErrorMessage = (status: number, rawText: string, fallback: string) => {
+  let message = fallback;
+
+  try {
+    const parsed = JSON.parse(rawText);
+    message = parsed?.error?.message || fallback;
+  } catch {
+    message = rawText || fallback;
+  }
+
+  if (message.includes("not available in your country")) {
+    return "La génération d’images Gemini n’est pas disponible dans votre pays avec cette clé API.";
+  }
+
+  if (status === 429 || message.toLowerCase().includes("quota") || message.toLowerCase().includes("resource_exhausted")) {
+    return "Quota Gemini dépassé. Vérifiez la facturation et les limites de votre clé API Gemini.";
+  }
+
+  return message;
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
