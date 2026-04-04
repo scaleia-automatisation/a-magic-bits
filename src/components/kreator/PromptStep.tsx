@@ -49,7 +49,8 @@ const PromptStep = () => {
         textContent: options.text_content,
         paletteEnabled: options.palette_enabled,
         paletteHex: options.palette_hex,
-        imageDescription: input_image_description,
+        imageDescription: getImageSynthesis(),
+        referenceImageCount: input_photos.filter(p => p.url).length,
       });
 
       setPromptFr(result.prompt_fr || '');

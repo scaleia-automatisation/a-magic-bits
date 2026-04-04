@@ -99,7 +99,8 @@ ${params.companyActivity ? `Activité: ${params.companyActivity}` : ''}
 ${params.companySector ? `Secteur: ${params.companySector}` : ''}
 ${params.showText ? `Texte overlay: "${params.textContent}" — Le texte doit être intégré dans l'image de manière professionnelle et esthétique, comme le ferait un graphiste expert.` : 'Pas de texte overlay — NE PAS générer de texte dans l\'image'}
 ${params.paletteEnabled ? `Palette: ${params.paletteHex.join(', ')}` : 'Palette automatique'}
-${params.imageDescription ? `Description image: ${params.imageDescription}` : ''}`;
+${params.imageDescription ? `Description image (${params.referenceImageCount || 1} image(s) de référence): ${params.imageDescription}` : ''}
+${params.referenceImageCount && params.referenceImageCount > 1 ? `IMPORTANT: ${params.referenceImageCount} images de référence fournies. Analyser et fusionner les éléments visuels communs pour créer un visuel cohérent et harmonieux.` : ''}`;
 
   const data = await callKreatorAI({
     action: 'generate_prompt',
