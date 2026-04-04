@@ -65,6 +65,7 @@ export async function generatePrompt(params: {
   paletteEnabled: boolean;
   paletteHex: string[];
   imageDescription: string;
+  referenceImageCount?: number;
 }) {
   const systemPrompt = `Tu es un expert en création de prompts pour la génération d'images et vidéos par IA.
 Génère un prompt FR et EN de 300 à 350 mots chacun.
