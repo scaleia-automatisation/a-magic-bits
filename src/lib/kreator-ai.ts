@@ -62,24 +62,36 @@ export async function generateIdeaFromImages(params: {
 }) {
   const imageCount = params.imageDescriptions.length;
   const systemPrompt = `Tu es un expert en marketing digital et création de contenu visuel.
-À partir de ${imageCount} image(s) de référence décrite(s), génère UNE idée de contenu unique, créative et engageante.
-L'idée doit être cohérente avec toutes les images fournies, le type de contenu, l'objectif et le contexte métier.
+À partir de ${imageCount} image(s) de référence, génère UNE idée de contenu unique, créative et engageante.
+
+RÈGLES OBLIGATOIRES — L'idée générée DOIT prendre en compte et fusionner de façon cohérente :
+1. L'ANALYSE DES IMAGES DE RÉFÉRENCE : éléments visuels, ambiance, couleurs, objets, personnes, contexte
+2. L'OBJECTIF DU CONTENU (PRIORITAIRE) : l'idée doit directement servir cet objectif (vendre, engager, éduquer, inspirer…)
+3. L'ACTIVITÉ PRINCIPALE de l'entreprise : adapter l'idée au métier et au contexte professionnel
+4. LE SECTEUR D'ACTIVITÉ : utiliser les codes et le vocabulaire du secteur
+5. Le TYPE et FORMAT de contenu : adapter l'idée au support (image, carrousel, vidéo)
+6. Le TON et STYLE VISUEL si renseignés
+
+Tous ces éléments forment un CONTEXTE UNIFIÉ. L'idée doit être pertinente et actionnable pour l'entreprise.
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"idea":{"title":"max 30 chars avec emoji","angle":"Éducatif|Storytelling|Engagement|Preuve sociale|Urgence","description":"max 80 chars décrivant l'idée en détail"}}`;
 
-  const userPrompt = `Images de référence:
+  const userPrompt = `=== IMAGES DE RÉFÉRENCE ===
 ${params.imageDescriptions.map((d, i) => `- Image ${i + 1}: ${d}`).join('\n')}
 
+=== CONTEXTE ENTREPRISE ===
+${params.activity ? `Activité principale: ${params.activity}` : 'Activité: non renseignée'}
+${params.sector ? `Secteur d'activité: ${params.sector}` : 'Secteur: non renseigné'}
+
+=== CONTENU ===
 Type de contenu: ${params.contentType}
 Format: ${params.format}
-${params.objective ? `Objectif: ${params.objective}` : ''}
-${params.activity ? `Activité: ${params.activity}` : ''}
-${params.sector ? `Secteur: ${params.sector}` : ''}
+${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
 ${params.ton ? `Ton: ${params.ton}` : ''}
 ${params.visualStyle ? `Style visuel: ${params.visualStyle}` : ''}
 
-Génère une idée originale inspirée des images de référence.`;
+Génère une idée originale qui fusionne l'analyse des images avec le contexte entreprise et l'objectif.`;
 
   const data = await callKreatorAI({
     action: 'generate_idea_from_images',
