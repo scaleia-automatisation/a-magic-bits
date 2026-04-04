@@ -13,8 +13,9 @@ import { useAuth } from '@/contexts/AuthContext';
 const IdeaStep = () => {
   const { user, profile } = useAuth();
   const {
-    type, input_text, setInputText, idea_chosen, setIdeaChosen,
-    company_activity, setCompanyActivity, company_sector, setCompanySector, objective
+    type, format, input_text, setInputText, idea_chosen, setIdeaChosen,
+    company_activity, setCompanyActivity, company_sector, setCompanySector, objective,
+    input_photos, options
   } = useKreatorStore();
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
