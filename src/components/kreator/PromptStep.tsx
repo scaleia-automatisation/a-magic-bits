@@ -14,7 +14,7 @@ const PromptStep = () => {
     prompt_fr, setPromptFr, prompt_en, setPromptEn,
     type, format, objective, company_activity, company_sector,
     input_text, idea_chosen, input_image_description, input_photos,
-    options, slides_count
+    options, slides_count, status, setStatus, setResultUrl
   } = useKreatorStore();
 
   // Synthesize reference image descriptions — always include uploaded images
@@ -59,6 +59,11 @@ const PromptStep = () => {
 
       setPromptFr(result.prompt_fr || '');
       setPromptEn(result.prompt_en || '');
+      // Reset generation status so user can generate new content with the new prompt
+      if (status === 'done' || status === 'error') {
+        setStatus('idle');
+        setResultUrl('');
+      }
     } catch (err) {
       console.error(err);
       toast.error('Erreur lors de la génération du prompt');
