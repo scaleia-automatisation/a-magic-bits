@@ -1,25 +1,28 @@
 import { useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
-import { Lightbulb, RefreshCw, Loader2, CheckCircle } from 'lucide-react';
+import { Lightbulb, RefreshCw, Loader2, CheckCircle, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import StepContainer from './StepContainer';
 import PhotoUpload from './PhotoUpload';
-import { generateIdeas } from '@/lib/kreator-ai';
+import { generateIdeas, generateIdeaFromImages } from '@/lib/kreator-ai';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 
 const IdeaStep = () => {
   const { user, profile } = useAuth();
   const {
-    type, input_text, setInputText, idea_chosen, setIdeaChosen,
-    company_activity, setCompanyActivity, company_sector, setCompanySector, objective
+    type, format, input_text, setInputText, idea_chosen, setIdeaChosen,
+    company_activity, setCompanyActivity, company_sector, setCompanySector, objective,
+    input_photos, options
   } = useKreatorStore();
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [showIdeaFields, setShowIdeaFields] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
+  const [generatedImageIdea, setGeneratedImageIdea] = useState('');
+  const [loadingImageIdea, setLoadingImageIdea] = useState(false);
 
   const isVideo = type === 'video';
 
@@ -59,6 +62,41 @@ const IdeaStep = () => {
     }
   };
 
+  const handleGenerateIdeaFromImages = async () => {
+    if (!user) {
+      toast.error('Connectez-vous pour générer une idée');
+      return;
+    }
+    const photosWithDesc = input_photos.filter(p => p.url && p.description);
+    if (photosWithDesc.length === 0) {
+      toast.error('Ajoutez au moins une image de référence avec une description');
+      return;
+    }
+    setLoadingImageIdea(true);
+    try {
+      const result = await generateIdeaFromImages({
+        imageDescriptions: photosWithDesc.map(p => p.description),
+        contentType: type,
+        objective,
+        format,
+        activity: company_activity,
+        sector: company_sector,
+        ton: options.ton,
+        visualStyle: options.visual_style,
+      });
+      const idea = result.idea;
+      setGeneratedImageIdea(`${idea.title} — ${idea.description}`);
+      setIdeaChosen(`${idea.title} — ${idea.description}`);
+      setInputText(`${idea.title} — ${idea.description}`);
+      toast.success('Idée générée à partir des images !');
+    } catch (err) {
+      console.error(err);
+      toast.error('Erreur lors de la génération de l\'idée');
+    } finally {
+      setLoadingImageIdea(false);
+    }
+  };
+
   const handleGenerateMore = async () => {
     setLoadingIdeas(true);
     try {
@@ -87,6 +125,22 @@ const IdeaStep = () => {
       {/* Images de référence (max 3) */}
       <div className="mb-6">
         <PhotoUpload />
+        {/* Bouton Générer une idée à partir des images */}
+        {input_photos.some(p => p.url) && (
+          <Button
+            onClick={handleGenerateIdeaFromImages}
+            disabled={loadingImageIdea}
+            size="sm"
+            className="mt-3 gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs font-bold px-4"
+          >
+            {loadingImageIdea ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-1.5" />
+            ) : (
+              <ImageIcon className="w-4 h-4 mr-1.5" />
+            )}
+            Générer une idée à partir des images
+          </Button>
+        )}
       </div>
 
       {/* Text idea */}
