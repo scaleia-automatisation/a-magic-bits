@@ -53,7 +53,7 @@ const ContentTypeStep = () => {
           <button
             key={t}
             onClick={() => setType(t)}
-            className={`relative flex flex-col items-center justify-center gap-3 p-6 rounded-card border-[3px] transition-all duration-200 ${
+            className={`relative flex flex-col items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 rounded-card border-[3px] transition-all duration-200 ${
               type === t
                 ? 'border-primary bg-card shadow-lg shadow-primary/10'
                 : 'border-foreground/10 bg-card hover:border-secondary hover:bg-secondary/5'
