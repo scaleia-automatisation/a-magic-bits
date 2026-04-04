@@ -98,51 +98,10 @@ const IdeaStep = () => {
         </Button>
       ) : undefined
     }>
-      {/* Upload zone */}
-      <div className="mb-6">
-        <label className="text-sm font-medium text-muted-foreground mb-2 block">
-          {isVideo ? 'Insérer l\'image de votre produit (optionnel)' : 'Image de référence (optionnel)'}
-        </label>
-        {input_image_url ? (
-          <div className="relative inline-block">
-            <img src={input_image_url} alt="Upload" className="max-h-40 rounded-card object-cover" />
-            <button
-              onClick={() => setInputImageUrl('')}
-              className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive flex items-center justify-center"
-            >
-              <X className="w-3 h-3 text-destructive-foreground" />
-            </button>
-            <div className="mt-2">
-              <Input
-                value={input_image_description}
-                onChange={(e) => setInputImageDescription(e.target.value)}
-                placeholder="Décris ton image..."
-                className="bg-card border-foreground/10 text-foreground text-sm placeholder:text-muted-foreground"
-              />
-            </div>
-          </div>
-        ) : (
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-foreground/10 rounded-card p-8 flex flex-col items-center justify-center cursor-pointer hover:border-secondary transition-colors"
-          >
-            <Upload className="w-8 h-8 text-muted-foreground mb-2" />
-            <span className="text-sm text-muted-foreground">Glisser ou cliquer pour importer</span>
-            <span className="text-xs text-muted-foreground mt-1">JPG, PNG, WEBP — max 10 Mo</span>
-          </div>
-        )}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".jpg,.jpeg,.png,.webp"
-          className="hidden"
-          onChange={handleFileUpload}
-        />
-      </div>
-
-      {/* Photo upload (up to 4 reference photos) */}
+      {/* Images de référence (max 3) */}
       <div className="mb-6">
         <PhotoUpload />
+      </div>
       </div>
 
       {/* Text idea */}

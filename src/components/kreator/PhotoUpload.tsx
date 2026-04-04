@@ -56,7 +56,7 @@ const PhotoUpload = () => {
   return (
     <div className="space-y-3">
       <label className="text-sm font-medium text-muted-foreground block">
-        Photos de référence (max {MAX_PHOTOS})
+        Images de référence (max {MAX_PHOTOS})
       </label>
 
       <div className="grid grid-cols-3 gap-3">
