@@ -13,15 +13,13 @@ import { useAuth } from '@/contexts/AuthContext';
 const IdeaStep = () => {
   const { user, profile } = useAuth();
   const {
-    type, input_text, setInputText, input_image_url, setInputImageUrl,
-    input_image_description, setInputImageDescription, idea_chosen, setIdeaChosen,
+    type, input_text, setInputText, idea_chosen, setIdeaChosen,
     company_activity, setCompanyActivity, company_sector, setCompanySector, objective
   } = useKreatorStore();
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [showIdeaFields, setShowIdeaFields] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isVideo = type === 'video';
 
