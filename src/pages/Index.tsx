@@ -1,4 +1,5 @@
 import ModeToggle from '@/components/kreator/ModeToggle';
+import MobileMenu from '@/components/MobileMenu';
 import ContentTypeStep from '@/components/kreator/ContentTypeStep';
 import FormatStep from '@/components/kreator/FormatStep';
 import IdeaStep from '@/components/kreator/IdeaStep';
@@ -17,61 +18,65 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-foreground/5">
+      <header className="border-b border-foreground/5 relative">
         <div className="max-w-4xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
           <span className="text-lg md:text-xl font-black gradient-text cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
             Kréator
           </span>
           <div className="flex items-center gap-2 md:gap-4">
-            <div className="hidden sm:block">
-              <ModeToggle />
-            </div>
             {user ? (
-              <div className="flex items-center gap-2 md:gap-3">
-                <div className="flex items-center gap-1.5 bg-card px-2.5 py-1.5 rounded-pill border border-foreground/10">
-                  <Coins className="w-3.5 h-3.5 text-primary" />
-                  <span className="font-bold text-sm text-foreground">{profile?.credits ?? 0}</span>
+              <>
+                <div className="hidden md:flex items-center gap-3">
+                  <div className="flex items-center gap-1.5 bg-card px-2.5 py-1.5 rounded-pill border border-foreground/10">
+                    <Coins className="w-3.5 h-3.5 text-primary" />
+                    <span className="font-bold text-sm text-foreground">{profile?.credits ?? 0}</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground p-2"
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground p-2"
+                    onClick={signOut}
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground hover:text-foreground p-2"
-                  onClick={() => navigate('/dashboard')}
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground hover:text-foreground p-2"
-                  onClick={signOut}
-                >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </div>
+                <MobileMenu />
+              </>
             ) : (
-              <button
-                className="gradient-bg text-primary-foreground px-3 md:px-4 py-2 rounded-btn text-xs md:text-sm font-semibold hover:opacity-90 transition-opacity"
-                onClick={() => navigate('/auth')}
-              >
-                Commencer
-              </button>
+              <>
+                <button
+                  className="hidden md:block gradient-bg text-primary-foreground px-3 md:px-4 py-2 rounded-btn text-xs md:text-sm font-semibold hover:opacity-90 transition-opacity"
+                  onClick={() => navigate('/auth')}
+                >
+                  Commencer
+                </button>
+                <MobileMenu />
+              </>
             )}
           </div>
-        </div>
-        {/* Mobile mode toggle */}
-        <div className="sm:hidden flex justify-center pb-3">
-          <ModeToggle />
         </div>
       </header>
 
       {/* Main */}
       <main className="max-w-4xl mx-auto px-4 py-6 md:py-10">
-        <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-center mb-6 md:mb-10 leading-tight">
+        <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-center mb-4 md:mb-6 leading-tight">
           <span className="gradient-text">L'outil qui crée du contenu</span>
           <br />
           <span className="gradient-text">qui convertit en 3 clics.</span>
         </h1>
+
+        {/* Mode toggle below title */}
+        <div className="flex justify-center mb-6 md:mb-10">
+          <ModeToggle />
+        </div>
 
         <div className="space-y-6">
           <ContentTypeStep />
