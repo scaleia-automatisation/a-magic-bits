@@ -25,6 +25,10 @@ const getProviderErrorMessage = (status: number, rawText: string, fallback: stri
     return "La génération d’images Gemini n’est pas disponible dans votre pays avec cette clé API.";
   }
 
+  if (message.toLowerCase().includes("only available on paid plans") || message.toLowerCase().includes("upgrade your account")) {
+    return "Imagen nécessite un compte Google AI payant avec facturation activée sur cette clé API.";
+  }
+
   if (status === 429 || message.toLowerCase().includes("quota") || message.toLowerCase().includes("resource_exhausted")) {
     return "Quota Gemini dépassé. Vérifiez la facturation et les limites de votre clé API Gemini.";
   }
@@ -86,15 +90,15 @@ serve(async (req) => {
       const geminiModelMap: Record<string, string> = {
         "nano-banana-2": "gemini-3.1-flash-image-preview",
         "nano-banana-pro": "gemini-3-pro-image-preview",
-        "imagen": "imagen-3.0-generate-002",
+        "imagen": "imagen-4.0-generate-001",
       };
 
       const selectedModel = ai_model || model || "nano-banana-2";
       const geminiModel = geminiModelMap[selectedModel] || "gemini-3.1-flash-image-preview";
 
-      // For Imagen, use the Imagen API
+      // For Imagen, use the Imagen predict API
       if (selectedModel === "imagen") {
-        const imagenRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`, {
+        const imagenRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:predict?key=${GEMINI_API_KEY}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
