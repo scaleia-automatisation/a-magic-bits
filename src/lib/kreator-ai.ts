@@ -118,6 +118,16 @@ export async function generatePrompt(params: {
   const systemPrompt = `Tu es un expert en création de prompts pour la génération d'images et vidéos par IA.
 Génère un prompt FR et EN de 300 à 350 mots chacun.
 
+CONTEXTE COMMUN OBLIGATOIRE — Tu DOIS intégrer TOUTES les informations suivantes dans le prompt généré si elles sont fournies :
+1. ACTIVITÉ DE L'ENTREPRISE et SECTEUR D'ACTIVITÉ : adapter le vocabulaire, l'ambiance, les décors et les éléments visuels au domaine métier
+2. TYPE DE CONTENU : adapter le format et la structure du prompt (image, carrousel, vidéo)
+3. OBJECTIF DU CONTENU (TRÈS IMPORTANT) : c'est le fil conducteur principal, tout le prompt doit servir cet objectif (vendre, engager, éduquer, inspirer…)
+4. ANALYSE DES IMAGES DE RÉFÉRENCE : s'inspirer des éléments visuels décrits, les intégrer dans le prompt
+5. IDÉE DÉCRITE ou IDÉE CHOISIE : le sujet central du visuel, à respecter fidèlement
+6. RÉGLAGES AVANCÉS (ton, style visuel, texte overlay, palette) : appliquer systématiquement s'ils sont actifs
+
+Tous ces éléments forment un CONTEXTE UNIFIÉ et COHÉRENT. Ne pas les traiter séparément mais les fusionner en un prompt fluide et naturel.
+
 CONSIGNES OBLIGATOIRES pour les prompts générés :
 - Le visuel DOIT être en qualité ULTRA HD 8K, photoréaliste et professionnel, indistinguable d'une vraie photo prise par un photographe professionnel
 - IMPÉRATIF : le rendu doit être ULTRA RÉALISTE, on ne doit JAMAIS pouvoir deviner que c'est une image générée par IA
@@ -136,19 +146,31 @@ CONSIGNES OBLIGATOIRES pour les prompts générés :
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","prompt_en":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
 
-  const userPrompt = `Type: ${params.contentType}
+  const userPrompt = `=== CONTEXTE ENTREPRISE ===
+${params.companyActivity ? `Activité principale: ${params.companyActivity}` : 'Activité: non renseignée'}
+${params.companySector ? `Secteur d'activité: ${params.companySector}` : 'Secteur: non renseigné'}
+
+=== CONTENU ===
+Type de contenu: ${params.contentType}
 Format: ${params.format}
-${params.objective ? `Objectif: ${params.objective}` : ''}
-${params.ton ? `Ton: ${params.ton}` : ''}
-${params.visualStyle ? `Style: ${params.visualStyle}` : ''}
-${params.inputText ? `Idée: "${params.inputText}"` : ''}
+${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
+
+=== IDÉE ===
+${params.inputText ? `Idée décrite: "${params.inputText}"` : ''}
 ${params.ideaChosen ? `Idée choisie: "${params.ideaChosen}"` : ''}
-${params.companyActivity ? `Activité: ${params.companyActivity}` : ''}
-${params.companySector ? `Secteur: ${params.companySector}` : ''}
-${params.showText ? `Texte overlay: "${params.textContent}" — Le texte doit être intégré dans l'image de manière professionnelle et esthétique, comme le ferait un graphiste expert.` : 'Pas de texte overlay — NE PAS générer de texte dans l\'image'}
-${params.paletteEnabled ? `Palette: ${params.paletteHex.join(', ')}` : 'Palette automatique'}
-${params.imageDescription ? `Description image (${params.referenceImageCount || 1} image(s) de référence): ${params.imageDescription}` : ''}
-${params.referenceImageCount && params.referenceImageCount > 1 ? `IMPORTANT: ${params.referenceImageCount} images de référence fournies. Analyser et fusionner les éléments visuels communs pour créer un visuel cohérent et harmonieux.` : ''}`;
+${!params.inputText && !params.ideaChosen ? 'Aucune idée spécifique — proposer un concept cohérent avec le contexte' : ''}
+
+=== IMAGES DE RÉFÉRENCE ===
+${params.imageDescription ? `Analyse (${params.referenceImageCount || 1} image(s)): ${params.imageDescription}` : 'Aucune image de référence'}
+${params.referenceImageCount && params.referenceImageCount > 1 ? `IMPORTANT: ${params.referenceImageCount} images fournies — analyser et fusionner les éléments visuels communs pour un rendu cohérent et harmonieux.` : ''}
+
+=== RÉGLAGES AVANCÉS ===
+${params.ton ? `Ton: ${params.ton}` : 'Ton: automatique'}
+${params.visualStyle ? `Style visuel: ${params.visualStyle}` : 'Style: automatique'}
+${params.showText ? `Texte overlay: "${params.textContent}" — Intégrer professionnellement dans le visuel` : 'Pas de texte overlay — NE PAS générer de texte dans l\'image'}
+${params.paletteEnabled ? `Palette de couleurs active: ${params.paletteHex.join(', ')} — utiliser entre 30% et 50% dans le visuel` : 'Palette automatique'}
+
+Génère un prompt unifié et cohérent intégrant TOUS ces éléments.`;
 
   const data = await callKreatorAI({
     action: 'generate_prompt',
