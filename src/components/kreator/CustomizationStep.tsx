@@ -20,9 +20,17 @@ const CustomizationStep = () => {
 
   if (user_mode === 'beginner' && !showAdvanced) {
     return (
-      <div className="flex items-center gap-3 px-2">
-        <Switch checked={showAdvanced} onCheckedChange={setShowAdvanced} />
-        <span className="text-sm text-muted-foreground">Réglages avancés</span>
+      <div className="flex flex-col items-center gap-3 py-4">
+        <div className="flex items-center gap-3">
+          <Switch
+            checked={showAdvanced}
+            onCheckedChange={setShowAdvanced}
+            className="data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground/30"
+          />
+          <span className="text-sm font-bold uppercase tracking-wider text-primary">
+            ⚙️ RÉGLAGES AVANCÉS
+          </span>
+        </div>
       </div>
     );
   }
@@ -30,9 +38,17 @@ const CustomizationStep = () => {
   return (
     <>
       {user_mode === 'beginner' && (
-        <div className="flex items-center gap-3 px-2 mb-4">
-          <Switch checked={showAdvanced} onCheckedChange={setShowAdvanced} />
-          <span className="text-sm text-muted-foreground">Réglages avancés</span>
+        <div className="flex flex-col items-center gap-3 py-4 mb-4">
+          <div className="flex items-center gap-3">
+            <Switch
+              checked={showAdvanced}
+              onCheckedChange={setShowAdvanced}
+              className="data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground/30"
+            />
+            <span className="text-sm font-bold uppercase tracking-wider text-primary">
+              ⚙️ RÉGLAGES AVANCÉS
+            </span>
+          </div>
         </div>
       )}
       {isVisible && (

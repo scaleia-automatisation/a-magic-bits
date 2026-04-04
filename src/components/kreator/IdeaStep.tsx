@@ -86,7 +86,18 @@ const IdeaStep = () => {
   };
 
   return (
-    <StepContainer stepNumber={3} title="Votre idée">
+    <StepContainer stepNumber={3} title="Votre idée" rightAction={
+      !showIdeas && !loadingIdeas ? (
+        <Button
+          onClick={handleNoIdea}
+          size="sm"
+          className="gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs font-bold px-4"
+        >
+          <Lightbulb className="w-4 h-4 mr-1.5" />
+          Je n'ai pas d'idée
+        </Button>
+      ) : undefined
+    }>
       {/* Upload zone */}
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -152,16 +163,7 @@ const IdeaStep = () => {
         </div>
       </div>
 
-      {/* "Je n'ai pas d'idée" button - gradient style */}
-      {!showIdeas && !loadingIdeas && (
-        <Button
-          onClick={handleNoIdea}
-          className="w-full py-6 text-base font-bold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
-        >
-          <Lightbulb className="w-5 h-5 mr-2" />
-          Je n'ai pas d'idée
-        </Button>
-      )}
+      {/* "Je n'ai pas d'idée" - now in header via rightAction */}
 
       {/* Activity/Sector inline fields when "Je n'ai pas d'idée" is clicked */}
       {showIdeaFields && !showIdeas && !loadingIdeas && (

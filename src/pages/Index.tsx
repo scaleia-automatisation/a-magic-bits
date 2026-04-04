@@ -9,12 +9,14 @@ import PromptStep from '@/components/kreator/PromptStep';
 import GenerationStep from '@/components/kreator/GenerationStep';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Coins, LayoutDashboard, LogOut } from 'lucide-react';
+import { Coins, LayoutDashboard, LogOut, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTheme } from 'next-themes';
 
 const Index = () => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-background">
@@ -25,6 +27,14 @@ const Index = () => {
             Kréator
           </span>
           <div className="flex items-center gap-2 md:gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground h-9 w-9"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             {user ? (
               <>
                 <div className="hidden md:flex items-center gap-3">
