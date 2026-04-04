@@ -302,7 +302,7 @@ const GenerationStep = () => {
                     <MessageCircle className="w-4 h-4 mr-2 text-secondary" /> WhatsApp
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleShare('telegram')} className="text-foreground focus:bg-secondary/20 cursor-pointer">
-                    <Send className="w-4 h-4 mr-2 text-blue-400" /> Telegram
+                    <Send className="w-4 h-4 mr-2 text-primary" /> Telegram
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleShare('email')} className="text-foreground focus:bg-secondary/20 cursor-pointer">
                     <Mail className="w-4 h-4 mr-2 text-muted-foreground" /> Email
