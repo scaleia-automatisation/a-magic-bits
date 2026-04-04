@@ -2,7 +2,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Coins, Image, Layers, Video, LogOut, Copy, Users, Crown } from 'lucide-react';
+import { Coins, Image, Layers, Video, LogOut, Copy, Users, Crown, ArrowUpCircle, ArrowDownCircle, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -16,10 +16,19 @@ interface Generation {
   result_url: string | null;
 }
 
+interface CreditTransaction {
+  id: string;
+  type: string;
+  amount: number;
+  action: string;
+  created_at: string;
+}
+
 const Dashboard = () => {
   const { user, profile, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const [generations, setGenerations] = useState<Generation[]>([]);
+  const [transactions, setTransactions] = useState<CreditTransaction[]>([]);
 
   useEffect(() => {
     if (!loading && !user) navigate('/auth');
@@ -34,6 +43,14 @@ const Dashboard = () => {
       .limit(20)
       .then(({ data }) => {
         if (data) setGenerations(data as Generation[]);
+      });
+    supabase
+      .from('credit_transactions')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(30)
+      .then(({ data }) => {
+        if (data) setTransactions(data as CreditTransaction[]);
       });
   }, [user]);
 
@@ -142,6 +159,54 @@ const Dashboard = () => {
             {profile.plan === 'free' ? 'Passer Pro' : 'Gérer l\'abonnement'}
           </Button>
         </div>
+
+        {/* Credit Transactions */}
+        <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+          <History className="w-5 h-5 text-primary" />
+          Historique des crédits
+        </h2>
+        {transactions.length === 0 ? (
+          <div className="card-surface p-8 border border-foreground/10 rounded-card text-center mb-8">
+            <p className="text-muted-foreground">Aucune transaction pour le moment</p>
+          </div>
+        ) : (
+          <div className="space-y-2 mb-8">
+            {transactions.map((tx) => {
+              const isCredit = tx.type === 'credit';
+              const actionLabel = tx.action
+                .replace('renewal_pro', 'Renouvellement Pro')
+                .replace('renewal_premium', 'Renouvellement Premium')
+                .replace('referral_bonus', 'Bonus parrainage')
+                .replace('signup_bonus', 'Bonus inscription')
+                .replace('generation_', 'Génération ')
+                .replace('image', 'image')
+                .replace('carousel', 'carrousel')
+                .replace('video', 'vidéo');
+
+              return (
+                <div key={tx.id} className="card-surface p-4 border border-foreground/10 rounded-card flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-btn flex items-center justify-center ${
+                    isCredit ? 'bg-green-500/10' : 'bg-destructive/10'
+                  }`}>
+                    {isCredit
+                      ? <ArrowUpCircle className="w-5 h-5 text-green-400" />
+                      : <ArrowDownCircle className="w-5 h-5 text-destructive" />
+                    }
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-foreground capitalize">{actionLabel}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(tx.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+                  <span className={`text-sm font-bold ${isCredit ? 'text-green-400' : 'text-destructive'}`}>
+                    {isCredit ? '+' : '-'}{tx.amount} crédits
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* History */}
         <h2 className="text-lg font-bold text-foreground mb-4">Historique des générations</h2>
