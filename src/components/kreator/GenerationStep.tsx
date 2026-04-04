@@ -158,7 +158,7 @@ const GenerationStep = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <Button
               variant="outline"
               className="border-foreground/10 text-foreground hover:border-secondary"

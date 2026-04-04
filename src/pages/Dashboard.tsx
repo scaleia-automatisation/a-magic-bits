@@ -78,23 +78,23 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-foreground/5">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
           <span
-            className="text-xl font-black gradient-text cursor-pointer"
+            className="text-lg md:text-xl font-black gradient-text cursor-pointer"
             onClick={() => navigate('/')}
           >
             Kréator
           </span>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-card px-4 py-2 rounded-pill border border-foreground/10">
-              <Coins className="w-4 h-4 text-primary" />
-              <span className="font-bold text-foreground">{profile.credits}</span>
-              <span className="text-xs text-muted-foreground">crédits</span>
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-1.5 md:gap-2 bg-card px-3 py-1.5 md:px-4 md:py-2 rounded-pill border border-foreground/10">
+              <Coins className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
+              <span className="font-bold text-sm md:text-base text-foreground">{profile.credits}</span>
+              <span className="text-xs text-muted-foreground hidden sm:inline">crédits</span>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground p-2"
               onClick={signOut}
             >
               <LogOut className="w-4 h-4" />
@@ -103,14 +103,14 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-foreground mb-6">
+      <main className="max-w-6xl mx-auto px-4 py-6 md:py-8">
+        <h1 className="text-xl md:text-2xl font-bold text-foreground mb-4 md:mb-6">
           Bonjour{profile.display_name ? `, ${profile.display_name}` : ''} 👋
         </h1>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="card-surface p-6 border border-foreground/10 rounded-card">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
+          <div className="card-surface p-4 md:p-6 border border-foreground/10 rounded-card">
             <div className="flex items-center gap-3 mb-2">
               <Coins className="w-5 h-5 text-primary" />
               <span className="text-sm text-muted-foreground">Crédits</span>
@@ -121,7 +121,7 @@ const Dashboard = () => {
             </span>
           </div>
 
-          <div className="card-surface p-6 border border-foreground/10 rounded-card">
+          <div className="card-surface p-4 md:p-6 border border-foreground/10 rounded-card">
             <div className="flex items-center gap-3 mb-2">
               <Image className="w-5 h-5 text-secondary" />
               <span className="text-sm text-muted-foreground">Générations</span>
@@ -129,7 +129,7 @@ const Dashboard = () => {
             <span className="text-3xl font-black text-foreground">{generations.length}</span>
           </div>
 
-          <div className="card-surface p-6 border border-foreground/10 rounded-card cursor-pointer hover:border-primary/30 transition-colors" onClick={handleCopyReferral}>
+          <div className="card-surface p-4 md:p-6 border border-foreground/10 rounded-card cursor-pointer hover:border-primary/30 transition-colors" onClick={handleCopyReferral}>
             <div className="flex items-center gap-3 mb-2">
               <Users className="w-5 h-5 text-primary" />
               <span className="text-sm text-muted-foreground">Parrainage</span>
@@ -143,17 +143,17 @@ const Dashboard = () => {
         </div>
 
         {/* CTAs */}
-        <div className="flex flex-wrap gap-3 mb-8">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-6 md:mb-8">
           <Button
             onClick={() => navigate('/')}
-            className="gradient-bg border-0 text-primary-foreground font-bold px-8 py-6 rounded-btn text-base hover:opacity-90"
+            className="gradient-bg border-0 text-primary-foreground font-bold px-6 md:px-8 py-5 md:py-6 rounded-btn text-sm md:text-base hover:opacity-90 w-full sm:w-auto"
           >
             Créer du contenu ✨
           </Button>
           <Button
             onClick={() => navigate('/pricing')}
             variant="outline"
-            className="border-primary/30 text-primary font-bold px-8 py-6 rounded-btn text-base hover:bg-primary/10"
+            className="border-primary/30 text-primary font-bold px-6 md:px-8 py-5 md:py-6 rounded-btn text-sm md:text-base hover:bg-primary/10 w-full sm:w-auto"
           >
             <Crown className="w-4 h-4 mr-2" />
             {profile.plan === 'free' ? 'Passer Pro' : 'Gérer l\'abonnement'}
@@ -184,13 +184,13 @@ const Dashboard = () => {
                 .replace('video', 'vidéo');
 
               return (
-                <div key={tx.id} className="card-surface p-4 border border-foreground/10 rounded-card flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-btn flex items-center justify-center ${
+                <div key={tx.id} className="card-surface p-3 md:p-4 border border-foreground/10 rounded-card flex items-center gap-3 md:gap-4">
+                  <div className={`w-8 h-8 md:w-10 md:h-10 rounded-btn flex-shrink-0 flex items-center justify-center ${
                     isCredit ? 'bg-green-500/10' : 'bg-destructive/10'
                   }`}>
                     {isCredit
-                      ? <ArrowUpCircle className="w-5 h-5 text-green-400" />
-                      : <ArrowDownCircle className="w-5 h-5 text-destructive" />
+                      ? <ArrowUpCircle className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
+                      : <ArrowDownCircle className="w-4 h-4 md:w-5 md:h-5 text-destructive" />
                     }
                   </div>
                   <div className="flex-1">
@@ -199,8 +199,8 @@ const Dashboard = () => {
                       {new Date(tx.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
-                  <span className={`text-sm font-bold ${isCredit ? 'text-green-400' : 'text-destructive'}`}>
-                    {isCredit ? '+' : '-'}{tx.amount} crédits
+                  <span className={`text-xs md:text-sm font-bold flex-shrink-0 ${isCredit ? 'text-green-400' : 'text-destructive'}`}>
+                    {isCredit ? '+' : '-'}{tx.amount}
                   </span>
                 </div>
               );
@@ -217,15 +217,15 @@ const Dashboard = () => {
         ) : (
           <div className="space-y-3">
             {generations.map((gen) => (
-              <div key={gen.id} className="card-surface p-4 border border-foreground/10 rounded-card flex items-center gap-4">
-                <div className="w-10 h-10 rounded-btn bg-card flex items-center justify-center text-muted-foreground">
+              <div key={gen.id} className="card-surface p-3 md:p-4 border border-foreground/10 rounded-card flex items-center gap-3 md:gap-4">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-btn bg-card flex-shrink-0 flex items-center justify-center text-muted-foreground">
                   {typeIcon(gen.type)}
                 </div>
                 <div className="flex-1">
                   <div className="text-sm font-medium text-foreground capitalize">{gen.type}</div>
                   <div className="text-xs text-muted-foreground">{gen.ai_model} — {new Date(gen.created_at).toLocaleDateString('fr-FR')}</div>
                 </div>
-                <div className="text-sm text-muted-foreground">-{gen.credits_used} crédits</div>
+                <div className="text-xs md:text-sm text-muted-foreground flex-shrink-0">-{gen.credits_used}</div>
                 <span className={`text-xs px-2 py-1 rounded-pill ${
                   gen.status === 'done' ? 'bg-green-500/10 text-green-400' :
                   gen.status === 'error' ? 'bg-destructive/10 text-destructive' :

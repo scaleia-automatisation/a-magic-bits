@@ -14,12 +14,12 @@ const FormatStep = () => {
 
   return (
     <StepContainer stepNumber={2} title="Format">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
         {formats.map((f) => (
           <button
             key={f.value}
             onClick={() => setFormat(f.value)}
-            className={`flex flex-col items-center gap-3 p-5 rounded-card border-[3px] transition-all duration-200 ${
+            className={`flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-5 rounded-card border-[3px] transition-all duration-200 ${
               format === f.value
                 ? 'border-primary bg-card'
                 : 'border-foreground/10 bg-card hover:border-secondary hover:bg-secondary/5'

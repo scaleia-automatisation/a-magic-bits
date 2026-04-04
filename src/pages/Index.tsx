@@ -18,22 +18,24 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-foreground/5">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <span className="text-xl font-black gradient-text cursor-pointer" onClick={() => navigate('/')}>
+        <div className="max-w-4xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
+          <span className="text-lg md:text-xl font-black gradient-text cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
             Kréator
           </span>
-          <div className="flex items-center gap-4">
-            <ModeToggle />
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="hidden sm:block">
+              <ModeToggle />
+            </div>
             {user ? (
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-pill border border-foreground/10">
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="flex items-center gap-1.5 bg-card px-2.5 py-1.5 rounded-pill border border-foreground/10">
                   <Coins className="w-3.5 h-3.5 text-primary" />
                   <span className="font-bold text-sm text-foreground">{profile?.credits ?? 0}</span>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground p-2"
                   onClick={() => navigate('/dashboard')}
                 >
                   <LayoutDashboard className="w-4 h-4" />
@@ -41,7 +43,7 @@ const Index = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground p-2"
                   onClick={signOut}
                 >
                   <LogOut className="w-4 h-4" />
@@ -49,19 +51,23 @@ const Index = () => {
               </div>
             ) : (
               <button
-                className="gradient-bg text-primary-foreground px-4 py-2 rounded-btn text-sm font-semibold hover:opacity-90 transition-opacity"
+                className="gradient-bg text-primary-foreground px-3 md:px-4 py-2 rounded-btn text-xs md:text-sm font-semibold hover:opacity-90 transition-opacity"
                 onClick={() => navigate('/auth')}
               >
-                Commencer gratuitement
+                Commencer
               </button>
             )}
           </div>
         </div>
+        {/* Mobile mode toggle */}
+        <div className="sm:hidden flex justify-center pb-3">
+          <ModeToggle />
+        </div>
       </header>
 
       {/* Main */}
-      <main className="max-w-4xl mx-auto px-4 py-10">
-        <h1 className="text-3xl md:text-5xl font-black text-center mb-10 leading-tight">
+      <main className="max-w-4xl mx-auto px-4 py-6 md:py-10">
+        <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-center mb-6 md:mb-10 leading-tight">
           <span className="gradient-text">L'outil qui crée du contenu</span>
           <br />
           <span className="gradient-text">qui convertit en 3 clics.</span>

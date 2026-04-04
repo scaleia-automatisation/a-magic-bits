@@ -48,18 +48,18 @@ const ContentTypeStep = () => {
   return (
     <StepContainer stepNumber={1} title="Type de contenu">
       {/* Content type cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
         {contentTypes.map(({ type: t, label, icon: Icon }) => (
           <button
             key={t}
             onClick={() => setType(t)}
-            className={`relative flex flex-col items-center justify-center gap-3 p-6 rounded-card border-[3px] transition-all duration-200 ${
+            className={`relative flex flex-col items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 rounded-card border-[3px] transition-all duration-200 ${
               type === t
                 ? 'border-primary bg-card shadow-lg shadow-primary/10'
                 : 'border-foreground/10 bg-card hover:border-secondary hover:bg-secondary/5'
             }`}
           >
-            <Icon className={`w-8 h-8 ${type === t ? 'text-primary' : 'text-muted-foreground'}`} />
+            <Icon className={`w-6 h-6 sm:w-8 sm:h-8 ${type === t ? 'text-primary' : 'text-muted-foreground'}`} />
             <span className={`font-semibold text-sm ${type === t ? 'text-foreground' : 'text-muted-foreground'}`}>
               {label}
             </span>
