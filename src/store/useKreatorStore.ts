@@ -40,6 +40,8 @@ interface KreatorState {
   setInputImageUrl: (url: string) => void;
   input_image_description: string;
   setInputImageDescription: (desc: string) => void;
+  input_photos: string[];
+  setInputPhotos: (photos: string[]) => void;
   input_text: string;
   setInputText: (text: string) => void;
   idea_chosen: string;
@@ -80,6 +82,7 @@ const initialState = {
   format: '9:16' as Format,
   input_image_url: '',
   input_image_description: '',
+  input_photos: [] as string[],
   input_text: '',
   idea_chosen: '',
   options: {
@@ -117,6 +120,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setFormat: (format) => set({ format }),
   setInputImageUrl: (url) => set({ input_image_url: url }),
   setInputImageDescription: (desc) => set({ input_image_description: desc }),
+  setInputPhotos: (photos) => set({ input_photos: photos }),
   setInputText: (text) => set({ input_text: text }),
   setIdeaChosen: (idea) => set({ idea_chosen: idea }),
   setOptions: (opts) => set((state) => ({ options: { ...state.options, ...opts } })),

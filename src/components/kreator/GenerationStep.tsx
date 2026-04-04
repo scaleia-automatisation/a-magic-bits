@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus } from 'lucide-react';
 import StepContainer from './StepContainer';
-import { generateImage, generateCaption } from '@/lib/kreator-ai';
+import { generateImage, generateVideo, generateCaption } from '@/lib/kreator-ai';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -55,8 +55,11 @@ const GenerationStep = () => {
     }, 500);
 
     try {
-      const [imageUrl, captionResult] = await Promise.all([
-        generateImage(prompt_en),
+      const isVideo = type === 'video';
+      const [contentUrl, captionResult] = await Promise.all([
+        isVideo
+          ? generateVideo(prompt_en, ai_model, format)
+          : generateImage(prompt_en, ai_model),
         generateCaption({
           objective,
           idea: idea_chosen || input_text,
@@ -89,12 +92,12 @@ const GenerationStep = () => {
         format,
         prompt_en_final: prompt_en,
         prompt_fr_final: prompt_fr,
-        result_url: imageUrl,
+        result_url: contentUrl,
         credits_used: creditsNeeded,
         status: 'done',
       });
 
-      setResultUrl(imageUrl);
+      setResultUrl(contentUrl);
       setCreditsUsed(creditsNeeded);
       setCaption(captionResult);
       setStatus('done');
