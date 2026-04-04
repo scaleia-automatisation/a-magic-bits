@@ -129,7 +129,7 @@ const Dashboard = () => {
             <span className="text-3xl font-black text-foreground">{generations.length}</span>
           </div>
 
-          <div className="card-surface p-6 border border-foreground/10 rounded-card cursor-pointer hover:border-primary/30 transition-colors" onClick={handleCopyReferral}>
+          <div className="card-surface p-4 md:p-6 border border-foreground/10 rounded-card cursor-pointer hover:border-primary/30 transition-colors" onClick={handleCopyReferral}>
             <div className="flex items-center gap-3 mb-2">
               <Users className="w-5 h-5 text-primary" />
               <span className="text-sm text-muted-foreground">Parrainage</span>
