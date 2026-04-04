@@ -44,6 +44,14 @@ const Dashboard = () => {
       .then(({ data }) => {
         if (data) setGenerations(data as Generation[]);
       });
+    supabase
+      .from('credit_transactions')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(30)
+      .then(({ data }) => {
+        if (data) setTransactions(data as CreditTransaction[]);
+      });
   }, [user]);
 
   const handleCopyReferral = () => {
