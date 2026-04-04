@@ -134,9 +134,7 @@ serve(async (req) => {
       if (!geminiRes.ok) {
         const errText = await geminiRes.text();
         console.error("Gemini image error:", geminiRes.status, errText);
-        return new Response(JSON.stringify({ error: "Erreur Gemini" }), {
-          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return jsonError(geminiRes.status === 429 ? 429 : 500, getProviderErrorMessage(geminiRes.status, errText, "Erreur Gemini"));
       }
 
       const geminiData = await geminiRes.json();
