@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 export type ContentType = 'image' | 'carousel' | 'video';
 export type Format = '9:16' | '16:9' | '1:1';
-export type AIModel = 'dall-e-3' | 'nano-banana-2' | 'nano-banana-pro' | 'imagen' | 'sora-2' | 'veo-3' | 'veo-3-fast';
+export type AIModel = 'dall-e-3' | 'imagen-4' | 'imagen-4-ultra' | 'imagen-4-fast' | 'sora-2' | 'veo-2' | 'veo-3' | 'veo-3-fast' | 'veo-3.1' | 'veo-3.1-fast';
 export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
 
