@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
-import { Download, Save, Share2, RefreshCw } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Download, Save, RefreshCw, Copy, Loader2 } from 'lucide-react';
 import StepContainer from './StepContainer';
-import { generateImage } from '@/lib/kreator-ai';
+import { generateImage, generateCaption } from '@/lib/kreator-ai';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -11,16 +12,17 @@ import { toast } from 'sonner';
 const GenerationStep = () => {
   const { user, refreshProfile } = useAuth();
   const {
-    type, prompt_en, status, setStatus, result_url, setResultUrl,
-    ai_model, format, credits_used, setCreditsUsed, prompt_fr
+    type, prompt_en, prompt_fr, status, setStatus, result_url, setResultUrl,
+    ai_model, format, setCreditsUsed, objective, input_text, idea_chosen,
+    company_sector, company_activity
   } = useKreatorStore();
   const [progress, setProgress] = useState(0);
   const [generating, setGenerating] = useState(false);
-  const [copyText, setCopyText] = useState({ hook: '', description: '', cta: '', hashtags: '' });
+  const [caption, setCaption] = useState({ hook: '', description: '', cta: '', hashtags: '' });
+  const [captionEditing, setCaptionEditing] = useState(false);
 
   const hasPrompt = prompt_en.length > 0;
   const buttonLabel = type === 'image' ? 'Générer le visuel' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
-
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
 
   const handleGenerate = async () => {
@@ -33,19 +35,25 @@ const GenerationStep = () => {
     setStatus('generating');
     setProgress(0);
 
-    // Progress animation
     const interval = setInterval(() => {
       setProgress((p) => (p >= 95 ? p : p + Math.random() * 8));
     }, 500);
 
     try {
-      // Generate image via AI
-      const imageUrl = await generateImage(prompt_en, mapModel(ai_model));
-      
+      const [imageUrl, captionResult] = await Promise.all([
+        generateImage(prompt_en, mapModel(ai_model)),
+        generateCaption({
+          objective,
+          idea: idea_chosen || input_text,
+          contentType: type,
+          sector: company_sector,
+          activity: company_activity,
+        }),
+      ]);
+
       clearInterval(interval);
       setProgress(100);
 
-      // Deduct credits atomically
       const { data: deducted } = await supabase.rpc('deduct_credits', {
         p_user_id: user.id,
         p_amount: creditsNeeded,
@@ -59,7 +67,6 @@ const GenerationStep = () => {
         return;
       }
 
-      // Save generation
       await supabase.from('generations').insert({
         user_id: user.id,
         type,
@@ -74,6 +81,7 @@ const GenerationStep = () => {
 
       setResultUrl(imageUrl);
       setCreditsUsed(creditsNeeded);
+      setCaption(captionResult);
       setStatus('done');
       await refreshProfile();
     } catch (err) {
@@ -86,17 +94,28 @@ const GenerationStep = () => {
     }
   };
 
-  // Simulated copywriting (would be Prompt 5 in full version)
-  useEffect(() => {
-    if (status === 'done') {
-      setCopyText({
-        hook: 'Découvrez ce qui change tout 🔥',
-        description: 'Votre contenu marketing généré par IA, prêt à publier sur vos réseaux sociaux.',
-        cta: 'Essayez maintenant →',
-        hashtags: '#marketing #contenu #ia #créativité #digital #growth',
-      });
-    }
-  }, [status]);
+  const handleCopyCaption = () => {
+    const text = `${caption.hook}\n${caption.description}\n${caption.cta}\n\n${caption.hashtags}`;
+    navigator.clipboard.writeText(text);
+    toast.success('Caption copié !');
+  };
+
+  const handleDownload = () => {
+    if (!result_url) return;
+    const a = document.createElement('a');
+    a.href = result_url;
+    a.download = `kreator-${type}.png`;
+    a.click();
+  };
+
+  const handleSave = async () => {
+    toast.success('Génération sauvegardée dans vos brouillons');
+  };
+
+  const handleRegenerate = () => {
+    setStatus('idle');
+    setResultUrl('');
+  };
 
   if (!hasPrompt) return null;
 
@@ -135,57 +154,100 @@ const GenerationStep = () => {
 
       {status === 'done' && result_url && (
         <div className="space-y-6">
+          {/* Image result */}
           <div className="rounded-card overflow-hidden bg-card border border-foreground/10">
             <img src={result_url} alt="Résultat" className="w-full object-cover" />
           </div>
 
-          <div className="bg-card rounded-card p-5 border border-foreground/10 space-y-3">
-            <div>
-              <span className="text-xs text-muted-foreground font-medium">HOOK</span>
-              <p className="text-sm text-foreground font-semibold">{copyText.hook}</p>
+          {/* Caption section */}
+          <div className="bg-card rounded-card p-4 md:p-5 border border-foreground/10">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wide">Caption</h3>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground h-8 px-2" onClick={handleCopyCaption}>
+                  <Copy className="w-3.5 h-3.5 mr-1" /> Copier
+                </Button>
+                {captionEditing ? (
+                  <Button variant="ghost" size="sm" className="text-primary hover:text-primary h-8 px-2" onClick={() => setCaptionEditing(false)}>
+                    Mettre à jour
+                  </Button>
+                ) : (
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground h-8 px-2" onClick={() => setCaptionEditing(true)}>
+                    Modifier
+                  </Button>
+                )}
+              </div>
             </div>
-            <div>
-              <span className="text-xs text-muted-foreground font-medium">DESCRIPTION</span>
-              <p className="text-sm text-foreground">{copyText.description}</p>
-            </div>
-            <div>
-              <span className="text-xs text-muted-foreground font-medium">CTA</span>
-              <p className="text-sm text-foreground font-semibold">{copyText.cta}</p>
-            </div>
-            <div>
-              <span className="text-xs text-muted-foreground font-medium">HASHTAGS</span>
-              <p className="text-sm text-primary">{copyText.hashtags}</p>
-            </div>
+
+            {captionEditing ? (
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-muted-foreground font-medium mb-1 block">HOOK</label>
+                  <Textarea
+                    value={caption.hook}
+                    onChange={(e) => setCaption(prev => ({ ...prev, hook: e.target.value }))}
+                    className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                    rows={1}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground font-medium mb-1 block">DESCRIPTION</label>
+                  <Textarea
+                    value={caption.description}
+                    onChange={(e) => setCaption(prev => ({ ...prev, description: e.target.value }))}
+                    className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                    rows={1}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground font-medium mb-1 block">APPEL À L'ACTION</label>
+                  <Textarea
+                    value={caption.cta}
+                    onChange={(e) => setCaption(prev => ({ ...prev, cta: e.target.value }))}
+                    className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                    rows={1}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground font-medium mb-1 block">HASHTAGS</label>
+                  <Textarea
+                    value={caption.hashtags}
+                    onChange={(e) => setCaption(prev => ({ ...prev, hashtags: e.target.value }))}
+                    className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                    rows={1}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-sm text-foreground font-semibold">{caption.hook}</p>
+                <p className="text-sm text-foreground">{caption.description}</p>
+                <p className="text-sm text-foreground font-semibold">{caption.cta}</p>
+                <p className="text-sm text-primary mt-2">{caption.hashtags}</p>
+              </div>
+            )}
           </div>
 
+          {/* Actions */}
           <div className="grid grid-cols-2 gap-3">
             <Button
               variant="outline"
               className="border-foreground/10 text-foreground hover:border-secondary"
-              onClick={() => {
-                if (result_url) {
-                  const a = document.createElement('a');
-                  a.href = result_url;
-                  a.download = `kreator-${type}.png`;
-                  a.click();
-                }
-              }}
+              onClick={handleDownload}
             >
               <Download className="w-4 h-4 mr-2" /> Télécharger
-            </Button>
-            <Button variant="outline" className="border-foreground/10 text-foreground hover:border-secondary">
-              <Save className="w-4 h-4 mr-2" /> Sauvegarder
-            </Button>
-            <Button variant="outline" className="border-foreground/10 text-foreground hover:border-secondary">
-              <Share2 className="w-4 h-4 mr-2" /> Partager
             </Button>
             <Button
               variant="outline"
               className="border-foreground/10 text-foreground hover:border-secondary"
-              onClick={() => {
-                setStatus('idle');
-                setResultUrl('');
-              }}
+              onClick={handleSave}
+            >
+              <Save className="w-4 h-4 mr-2" /> Sauvegarder
+            </Button>
+            <Button
+              variant="outline"
+              className="border-foreground/10 text-foreground hover:border-secondary col-span-2"
+              onClick={handleRegenerate}
             >
               <RefreshCw className="w-4 h-4 mr-2" /> Régénérer
             </Button>

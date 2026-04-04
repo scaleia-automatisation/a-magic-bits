@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Menu, X, LayoutDashboard, Crown, LogOut, Coins } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Crown, LogOut, Coins, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const MobileMenu = () => {
@@ -47,6 +47,13 @@ const MobileMenu = () => {
                 >
                   <Crown className="w-4 h-4" />
                   Tarifs
+                </button>
+                <button
+                  onClick={() => go('/generations')}
+                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-btn text-sm font-medium text-foreground hover:bg-card transition-colors"
+                >
+                  <FolderOpen className="w-4 h-4" />
+                  Mes générations
                 </button>
                 <button
                   onClick={() => { signOut(); setOpen(false); }}
