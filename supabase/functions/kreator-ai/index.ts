@@ -5,6 +5,33 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const jsonError = (status: number, error: string) =>
+  new Response(JSON.stringify({ error }), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
+const getProviderErrorMessage = (status: number, rawText: string, fallback: string) => {
+  let message = fallback;
+
+  try {
+    const parsed = JSON.parse(rawText);
+    message = parsed?.error?.message || fallback;
+  } catch {
+    message = rawText || fallback;
+  }
+
+  if (message.includes("not available in your country")) {
+    return "La génération d’images Gemini n’est pas disponible dans votre pays avec cette clé API.";
+  }
+
+  if (status === 429 || message.toLowerCase().includes("quota") || message.toLowerCase().includes("resource_exhausted")) {
+    return "Quota Gemini dépassé. Vérifiez la facturation et les limites de votre clé API Gemini.";
+  }
+
+  return message;
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -55,15 +82,15 @@ serve(async (req) => {
       const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
       if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
 
-      // Map model names to Gemini model IDs
+      // Map model names to valid Gemini image-capable model IDs
       const geminiModelMap: Record<string, string> = {
-        "nano-banana-2": "gemini-2.5-flash",
-        "nano-banana-pro": "gemini-2.5-pro",
+        "nano-banana-2": "gemini-3.1-flash-image-preview",
+        "nano-banana-pro": "gemini-3-pro-image-preview",
         "imagen": "imagen-3.0-generate-002",
       };
 
       const selectedModel = ai_model || model || "nano-banana-2";
-      const geminiModel = geminiModelMap[selectedModel] || "gemini-2.5-flash";
+      const geminiModel = geminiModelMap[selectedModel] || "gemini-3.1-flash-image-preview";
 
       // For Imagen, use the Imagen API
       if (selectedModel === "imagen") {
@@ -79,9 +106,7 @@ serve(async (req) => {
         if (!imagenRes.ok) {
           const errText = await imagenRes.text();
           console.error("Imagen error:", imagenRes.status, errText);
-          return new Response(JSON.stringify({ error: "Erreur Imagen" }), {
-            status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
+          return jsonError(imagenRes.status === 429 ? 429 : 500, getProviderErrorMessage(imagenRes.status, errText, "Erreur Imagen"));
         }
 
         const imagenData = await imagenRes.json();
@@ -109,9 +134,7 @@ serve(async (req) => {
       if (!geminiRes.ok) {
         const errText = await geminiRes.text();
         console.error("Gemini image error:", geminiRes.status, errText);
-        return new Response(JSON.stringify({ error: "Erreur Gemini" }), {
-          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return jsonError(geminiRes.status === 429 ? 429 : 500, getProviderErrorMessage(geminiRes.status, errText, "Erreur Gemini"));
       }
 
       const geminiData = await geminiRes.json();
