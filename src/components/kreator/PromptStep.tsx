@@ -59,6 +59,11 @@ const PromptStep = () => {
 
       setPromptFr(result.prompt_fr || '');
       setPromptEn(result.prompt_en || '');
+      // Reset generation status so user can generate new content with the new prompt
+      if (status === 'done' || status === 'error') {
+        setStatus('idle');
+        setResultUrl('');
+      }
     } catch (err) {
       console.error(err);
       toast.error('Erreur lors de la génération du prompt');
