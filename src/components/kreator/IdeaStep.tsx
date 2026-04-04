@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
-import { Upload, Lightbulb, X, RefreshCw, Loader2, CheckCircle } from 'lucide-react';
+import { Lightbulb, RefreshCw, Loader2, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
