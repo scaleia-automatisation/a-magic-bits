@@ -152,16 +152,7 @@ const IdeaStep = () => {
         </div>
       </div>
 
-      {/* "Je n'ai pas d'idée" button - gradient style */}
-      {!showIdeas && !loadingIdeas && (
-        <Button
-          onClick={handleNoIdea}
-          className="w-full py-6 text-base font-bold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
-        >
-          <Lightbulb className="w-5 h-5 mr-2" />
-          Je n'ai pas d'idée
-        </Button>
-      )}
+      {/* "Je n'ai pas d'idée" - now in header via rightAction */}
 
       {/* Activity/Sector inline fields when "Je n'ai pas d'idée" is clicked */}
       {showIdeaFields && !showIdeas && !loadingIdeas && (

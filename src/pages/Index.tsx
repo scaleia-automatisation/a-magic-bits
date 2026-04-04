@@ -16,6 +16,7 @@ import { useTheme } from 'next-themes';
 const Index = () => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-background">
