@@ -6,6 +6,7 @@ interface AICallOptions {
   messages: { role: string; content: string }[];
   system_prompt?: string;
   model?: string;
+  image_base64s?: string[];
 }
 
 export async function callKreatorAI(options: AICallOptions) {
