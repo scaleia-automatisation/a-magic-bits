@@ -40,6 +40,8 @@ interface KreatorState {
   setInputImageUrl: (url: string) => void;
   input_image_description: string;
   setInputImageDescription: (desc: string) => void;
+  input_photos: string[];
+  setInputPhotos: (photos: string[]) => void;
   input_text: string;
   setInputText: (text: string) => void;
   idea_chosen: string;
