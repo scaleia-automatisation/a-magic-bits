@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
-import { Upload, Lightbulb, X, RefreshCw, Loader2, CheckCircle } from 'lucide-react';
+import { Lightbulb, RefreshCw, Loader2, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -13,29 +13,15 @@ import { useAuth } from '@/contexts/AuthContext';
 const IdeaStep = () => {
   const { user, profile } = useAuth();
   const {
-    type, input_text, setInputText, input_image_url, setInputImageUrl,
-    input_image_description, setInputImageDescription, idea_chosen, setIdeaChosen,
+    type, input_text, setInputText, idea_chosen, setIdeaChosen,
     company_activity, setCompanyActivity, company_sector, setCompanySector, objective
   } = useKreatorStore();
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
   const [showIdeaFields, setShowIdeaFields] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isVideo = type === 'video';
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error('Fichier trop volumineux (max 10 Mo)');
-        return;
-      }
-      const url = URL.createObjectURL(file);
-      setInputImageUrl(url);
-    }
-  };
 
   const handleNoIdea = async () => {
     if (!user) {
@@ -98,49 +84,7 @@ const IdeaStep = () => {
         </Button>
       ) : undefined
     }>
-      {/* Upload zone */}
-      <div className="mb-6">
-        <label className="text-sm font-medium text-muted-foreground mb-2 block">
-          {isVideo ? 'Insérer l\'image de votre produit (optionnel)' : 'Image de référence (optionnel)'}
-        </label>
-        {input_image_url ? (
-          <div className="relative inline-block">
-            <img src={input_image_url} alt="Upload" className="max-h-40 rounded-card object-cover" />
-            <button
-              onClick={() => setInputImageUrl('')}
-              className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive flex items-center justify-center"
-            >
-              <X className="w-3 h-3 text-destructive-foreground" />
-            </button>
-            <div className="mt-2">
-              <Input
-                value={input_image_description}
-                onChange={(e) => setInputImageDescription(e.target.value)}
-                placeholder="Décris ton image..."
-                className="bg-card border-foreground/10 text-foreground text-sm placeholder:text-muted-foreground"
-              />
-            </div>
-          </div>
-        ) : (
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-foreground/10 rounded-card p-8 flex flex-col items-center justify-center cursor-pointer hover:border-secondary transition-colors"
-          >
-            <Upload className="w-8 h-8 text-muted-foreground mb-2" />
-            <span className="text-sm text-muted-foreground">Glisser ou cliquer pour importer</span>
-            <span className="text-xs text-muted-foreground mt-1">JPG, PNG, WEBP — max 10 Mo</span>
-          </div>
-        )}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".jpg,.jpeg,.png,.webp"
-          className="hidden"
-          onChange={handleFileUpload}
-        />
-      </div>
-
-      {/* Photo upload (up to 4 reference photos) */}
+      {/* Images de référence (max 3) */}
       <div className="mb-6">
         <PhotoUpload />
       </div>
