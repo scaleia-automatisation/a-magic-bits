@@ -62,6 +62,19 @@ const IdeaStep = () => {
     }
   };
 
+  // Convert blob URL to base64 if needed
+  const toBase64 = async (url: string): Promise<string> => {
+    if (url.startsWith('data:')) return url; // already base64
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
   const handleGenerateIdeaFromImages = async () => {
     if (!user) {
       toast.error('Connectez-vous pour générer une idée');
@@ -74,9 +87,11 @@ const IdeaStep = () => {
     }
     setLoadingImageIdea(true);
     try {
+      // Ensure all images are base64
+      const base64Images = await Promise.all(uploadedPhotos.map(p => toBase64(p.url)));
       const result = await generateIdeaFromImages({
         imageDescriptions: uploadedPhotos.map(p => p.description?.trim() || ''),
-        imageBase64s: uploadedPhotos.map(p => p.url),
+        imageBase64s: base64Images,
         contentType: type,
         objective,
         format,
