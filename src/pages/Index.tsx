@@ -9,8 +9,9 @@ import PromptStep from '@/components/kreator/PromptStep';
 import GenerationStep from '@/components/kreator/GenerationStep';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Coins, LayoutDashboard, LogOut } from 'lucide-react';
+import { Coins, LayoutDashboard, LogOut, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTheme } from 'next-themes';
 
 const Index = () => {
   const { user, profile, signOut } = useAuth();
