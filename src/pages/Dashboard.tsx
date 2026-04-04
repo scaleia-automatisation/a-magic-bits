@@ -78,23 +78,23 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-foreground/5">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
           <span
-            className="text-xl font-black gradient-text cursor-pointer"
+            className="text-lg md:text-xl font-black gradient-text cursor-pointer"
             onClick={() => navigate('/')}
           >
             Kréator
           </span>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-card px-4 py-2 rounded-pill border border-foreground/10">
-              <Coins className="w-4 h-4 text-primary" />
-              <span className="font-bold text-foreground">{profile.credits}</span>
-              <span className="text-xs text-muted-foreground">crédits</span>
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-1.5 md:gap-2 bg-card px-3 py-1.5 md:px-4 md:py-2 rounded-pill border border-foreground/10">
+              <Coins className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
+              <span className="font-bold text-sm md:text-base text-foreground">{profile.credits}</span>
+              <span className="text-xs text-muted-foreground hidden sm:inline">crédits</span>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground p-2"
               onClick={signOut}
             >
               <LogOut className="w-4 h-4" />
@@ -103,8 +103,8 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-foreground mb-6">
+      <main className="max-w-6xl mx-auto px-4 py-6 md:py-8">
+        <h1 className="text-xl md:text-2xl font-bold text-foreground mb-4 md:mb-6">
           Bonjour{profile.display_name ? `, ${profile.display_name}` : ''} 👋
         </h1>
 
