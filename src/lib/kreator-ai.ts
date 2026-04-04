@@ -69,6 +69,17 @@ export async function generatePrompt(params: {
 }) {
   const systemPrompt = `Tu es un expert en création de prompts pour la génération d'images et vidéos par IA.
 Génère un prompt FR et EN de 300 à 350 mots chacun.
+
+CONSIGNES OBLIGATOIRES pour les prompts générés :
+- Le visuel doit être en qualité ULTRA HD, photoréaliste et professionnel
+- Optimisé pour les réseaux sociaux (Instagram, TikTok, LinkedIn, Facebook)
+- NE JAMAIS inclure de texte, lettres, mots ou typographie DANS l'image générée (sauf si l'utilisateur a explicitement demandé du texte overlay)
+- Éviter les éléments flous, déformés ou artificiels
+- Respecter les codes couleurs et le style de la marque si fournis
+- Pour les carrousels : chaque slide doit avoir une cohérence visuelle (même palette, même style, même ambiance)
+- Préciser l'éclairage, l'angle de caméra, la profondeur de champ et l'ambiance
+- Le prompt doit être directement utilisable par un modèle de génération d'image IA
+
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","prompt_en":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
 

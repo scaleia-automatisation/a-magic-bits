@@ -1,4 +1,3 @@
-import { Switch } from '@/components/ui/switch';
 import { useKreatorStore } from '@/store/useKreatorStore';
 
 const ModeToggle = () => {
@@ -6,18 +5,27 @@ const ModeToggle = () => {
   const isExpert = user_mode === 'expert';
 
   return (
-    <div className="flex items-center gap-3">
-      <span className={`text-sm font-medium transition-colors ${!isExpert ? 'text-foreground' : 'text-muted-foreground'}`}>
+    <div className="inline-flex items-center rounded-full bg-card border border-foreground/10 p-1">
+      <button
+        onClick={() => setUserMode('beginner')}
+        className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+          !isExpert
+            ? 'bg-foreground text-background shadow-sm'
+            : 'text-muted-foreground hover:text-foreground'
+        }`}
+      >
         Simple
-      </span>
-      <Switch
-        checked={isExpert}
-        onCheckedChange={(checked) => setUserMode(checked ? 'expert' : 'beginner')}
-        className="data-[state=checked]:bg-primary"
-      />
-      <span className={`text-sm font-medium transition-colors ${isExpert ? 'text-foreground' : 'text-muted-foreground'}`}>
+      </button>
+      <button
+        onClick={() => setUserMode('expert')}
+        className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+          isExpert
+            ? 'bg-foreground text-background shadow-sm'
+            : 'text-muted-foreground hover:text-foreground'
+        }`}
+      >
         Expert
-      </span>
+      </button>
     </div>
   );
 };
