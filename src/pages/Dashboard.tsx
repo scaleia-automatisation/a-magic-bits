@@ -189,8 +189,8 @@ const Dashboard = () => {
                     isCredit ? 'bg-green-500/10' : 'bg-destructive/10'
                   }`}>
                     {isCredit
-                      ? <ArrowUpCircle className="w-5 h-5 text-green-400" />
-                      : <ArrowDownCircle className="w-5 h-5 text-destructive" />
+                      ? <ArrowUpCircle className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
+                      : <ArrowDownCircle className="w-4 h-4 md:w-5 md:h-5 text-destructive" />
                     }
                   </div>
                   <div className="flex-1">
