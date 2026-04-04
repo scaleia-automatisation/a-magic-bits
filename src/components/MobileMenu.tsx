@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Menu, X, LayoutDashboard, Crown, LogOut, Coins } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Crown, LogOut, Coins, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const MobileMenu = () => {
