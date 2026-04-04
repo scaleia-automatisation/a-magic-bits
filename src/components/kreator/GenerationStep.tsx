@@ -299,7 +299,7 @@ const GenerationStep = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-card border-foreground/10">
                   <DropdownMenuItem onClick={() => handleShare('whatsapp')} className="text-foreground focus:bg-secondary/20 cursor-pointer">
-                    <MessageCircle className="w-4 h-4 mr-2 text-green-500" /> WhatsApp
+                    <MessageCircle className="w-4 h-4 mr-2 text-secondary" /> WhatsApp
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleShare('telegram')} className="text-foreground focus:bg-secondary/20 cursor-pointer">
                     <Send className="w-4 h-4 mr-2 text-blue-400" /> Telegram
