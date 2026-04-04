@@ -217,7 +217,7 @@ const Dashboard = () => {
         ) : (
           <div className="space-y-3">
             {generations.map((gen) => (
-              <div key={gen.id} className="card-surface p-4 border border-foreground/10 rounded-card flex items-center gap-4">
+              <div key={gen.id} className="card-surface p-3 md:p-4 border border-foreground/10 rounded-card flex items-center gap-3 md:gap-4">
                 <div className="w-10 h-10 rounded-btn bg-card flex items-center justify-center text-muted-foreground">
                   {typeIcon(gen.type)}
                 </div>
