@@ -14,7 +14,7 @@ const FormatStep = () => {
 
   return (
     <StepContainer stepNumber={2} title="Format">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
         {formats.map((f) => (
           <button
             key={f.value}
