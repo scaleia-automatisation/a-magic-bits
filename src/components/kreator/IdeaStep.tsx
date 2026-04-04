@@ -125,6 +125,22 @@ const IdeaStep = () => {
       {/* Images de référence (max 3) */}
       <div className="mb-6">
         <PhotoUpload />
+        {/* Bouton Générer une idée à partir des images */}
+        {input_photos.some(p => p.url) && (
+          <Button
+            onClick={handleGenerateIdeaFromImages}
+            disabled={loadingImageIdea}
+            size="sm"
+            className="mt-3 gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs font-bold px-4"
+          >
+            {loadingImageIdea ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-1.5" />
+            ) : (
+              <ImageIcon className="w-4 h-4 mr-1.5" />
+            )}
+            Générer une idée à partir des images
+          </Button>
+        )}
       </div>
 
       {/* Text idea */}
