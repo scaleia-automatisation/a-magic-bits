@@ -55,8 +55,11 @@ const GenerationStep = () => {
     }, 500);
 
     try {
-      const [imageUrl, captionResult] = await Promise.all([
-        generateImage(prompt_en),
+      const isVideo = type === 'video';
+      const [contentUrl, captionResult] = await Promise.all([
+        isVideo
+          ? generateVideo(prompt_en, ai_model, format)
+          : generateImage(prompt_en, ai_model),
         generateCaption({
           objective,
           idea: idea_chosen || input_text,
