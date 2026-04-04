@@ -199,8 +199,8 @@ const Dashboard = () => {
                       {new Date(tx.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
-                  <span className={`text-sm font-bold ${isCredit ? 'text-green-400' : 'text-destructive'}`}>
-                    {isCredit ? '+' : '-'}{tx.amount} crédits
+                  <span className={`text-xs md:text-sm font-bold flex-shrink-0 ${isCredit ? 'text-green-400' : 'text-destructive'}`}>
+                    {isCredit ? '+' : '-'}{tx.amount}
                   </span>
                 </div>
               );
