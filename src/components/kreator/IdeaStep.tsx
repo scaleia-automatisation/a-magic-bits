@@ -129,6 +129,11 @@ const IdeaStep = () => {
         />
       </div>
 
+      {/* Photo upload (up to 4 reference photos) */}
+      <div className="mb-6">
+        <PhotoUpload />
+      </div>
+
       {/* Text idea */}
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">
