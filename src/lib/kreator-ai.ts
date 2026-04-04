@@ -122,8 +122,8 @@ CONTEXTE COMMUN OBLIGATOIRE — Tu DOIS intégrer TOUTES les informations suivan
 1. ACTIVITÉ DE L'ENTREPRISE et SECTEUR D'ACTIVITÉ : adapter le vocabulaire, l'ambiance, les décors et les éléments visuels au domaine métier
 2. TYPE DE CONTENU : adapter le format et la structure du prompt (image, carrousel, vidéo)
 3. OBJECTIF DU CONTENU (TRÈS IMPORTANT) : c'est le fil conducteur principal, tout le prompt doit servir cet objectif (vendre, engager, éduquer, inspirer…)
-4. ANALYSE DES IMAGES DE RÉFÉRENCE : s'inspirer des éléments visuels décrits, les intégrer dans le prompt
-5. IDÉE DÉCRITE ou IDÉE CHOISIE : le sujet central du visuel, à respecter fidèlement
+4. ANALYSE DES IMAGES DE RÉFÉRENCE (OBLIGATOIRE SI PRÉSENTES) : les images de référence doivent TOUJOURS être analysées et intégrées dans le prompt de façon cohérente avec l'objectif et l'idée. Elles définissent l'univers visuel, l'ambiance, les couleurs et les éléments clés du contenu à générer
+5. IDÉE DÉCRITE ou IDÉE CHOISIE : le sujet central du visuel, à respecter fidèlement. Les images de référence viennent enrichir et illustrer cette idée
 6. RÉGLAGES AVANCÉS (ton, style visuel, texte overlay, palette) : appliquer systématiquement s'ils sont actifs
 
 Tous ces éléments forment un CONTEXTE UNIFIÉ et COHÉRENT. Ne pas les traiter séparément mais les fusionner en un prompt fluide et naturel.
