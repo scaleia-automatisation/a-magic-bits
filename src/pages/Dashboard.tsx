@@ -225,7 +225,7 @@ const Dashboard = () => {
                   <div className="text-sm font-medium text-foreground capitalize">{gen.type}</div>
                   <div className="text-xs text-muted-foreground">{gen.ai_model} — {new Date(gen.created_at).toLocaleDateString('fr-FR')}</div>
                 </div>
-                <div className="text-sm text-muted-foreground">-{gen.credits_used} crédits</div>
+                <div className="text-xs md:text-sm text-muted-foreground flex-shrink-0">-{gen.credits_used}</div>
                 <span className={`text-xs px-2 py-1 rounded-pill ${
                   gen.status === 'done' ? 'bg-green-500/10 text-green-400' :
                   gen.status === 'error' ? 'bg-destructive/10 text-destructive' :

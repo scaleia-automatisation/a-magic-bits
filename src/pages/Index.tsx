@@ -66,8 +66,8 @@ const Index = () => {
       </header>
 
       {/* Main */}
-      <main className="max-w-4xl mx-auto px-4 py-10">
-        <h1 className="text-3xl md:text-5xl font-black text-center mb-10 leading-tight">
+      <main className="max-w-4xl mx-auto px-4 py-6 md:py-10">
+        <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-center mb-6 md:mb-10 leading-tight">
           <span className="gradient-text">L'outil qui crée du contenu</span>
           <br />
           <span className="gradient-text">qui convertit en 3 clics.</span>

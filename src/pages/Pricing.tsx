@@ -87,7 +87,7 @@ const Pricing = () => {
               return (
                 <div
                   key={key}
-                  className={`relative card-surface p-8 border rounded-card flex flex-col ${
+                  className={`relative card-surface p-6 md:p-8 border rounded-card flex flex-col ${
                     isPopular
                       ? 'border-primary shadow-lg shadow-primary/10'
                       : 'border-foreground/10'

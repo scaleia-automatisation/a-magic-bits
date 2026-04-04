@@ -59,7 +59,7 @@ const ContentTypeStep = () => {
                 : 'border-foreground/10 bg-card hover:border-secondary hover:bg-secondary/5'
             }`}
           >
-            <Icon className={`w-8 h-8 ${type === t ? 'text-primary' : 'text-muted-foreground'}`} />
+            <Icon className={`w-6 h-6 sm:w-8 sm:h-8 ${type === t ? 'text-primary' : 'text-muted-foreground'}`} />
             <span className={`font-semibold text-sm ${type === t ? 'text-foreground' : 'text-muted-foreground'}`}>
               {label}
             </span>
