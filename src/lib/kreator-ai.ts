@@ -258,6 +258,7 @@ export async function generateImage(promptEn: string, aiModel: AIModel = 'dall-e
   });
 
   if (error) throw error;
+  if (data?.error) throw new Error(data.error);
 
   const imageUrl = data?.image_url;
   if (!imageUrl) throw new Error('No image generated');
