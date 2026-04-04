@@ -102,7 +102,6 @@ const IdeaStep = () => {
       <div className="mb-6">
         <PhotoUpload />
       </div>
-      </div>
 
       {/* Text idea */}
       <div className="mb-6">
