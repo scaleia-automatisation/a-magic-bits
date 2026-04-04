@@ -118,6 +118,16 @@ export async function generatePrompt(params: {
   const systemPrompt = `Tu es un expert en création de prompts pour la génération d'images et vidéos par IA.
 Génère un prompt FR et EN de 300 à 350 mots chacun.
 
+CONTEXTE COMMUN OBLIGATOIRE — Tu DOIS intégrer TOUTES les informations suivantes dans le prompt généré si elles sont fournies :
+1. ACTIVITÉ DE L'ENTREPRISE et SECTEUR D'ACTIVITÉ : adapter le vocabulaire, l'ambiance, les décors et les éléments visuels au domaine métier
+2. TYPE DE CONTENU : adapter le format et la structure du prompt (image, carrousel, vidéo)
+3. OBJECTIF DU CONTENU (TRÈS IMPORTANT) : c'est le fil conducteur principal, tout le prompt doit servir cet objectif (vendre, engager, éduquer, inspirer…)
+4. ANALYSE DES IMAGES DE RÉFÉRENCE : s'inspirer des éléments visuels décrits, les intégrer dans le prompt
+5. IDÉE DÉCRITE ou IDÉE CHOISIE : le sujet central du visuel, à respecter fidèlement
+6. RÉGLAGES AVANCÉS (ton, style visuel, texte overlay, palette) : appliquer systématiquement s'ils sont actifs
+
+Tous ces éléments forment un CONTEXTE UNIFIÉ et COHÉRENT. Ne pas les traiter séparément mais les fusionner en un prompt fluide et naturel.
+
 CONSIGNES OBLIGATOIRES pour les prompts générés :
 - Le visuel DOIT être en qualité ULTRA HD 8K, photoréaliste et professionnel, indistinguable d'une vraie photo prise par un photographe professionnel
 - IMPÉRATIF : le rendu doit être ULTRA RÉALISTE, on ne doit JAMAIS pouvoir deviner que c'est une image générée par IA
