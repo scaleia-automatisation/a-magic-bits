@@ -110,7 +110,7 @@ const Dashboard = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
-          <div className="card-surface p-6 border border-foreground/10 rounded-card">
+          <div className="card-surface p-4 md:p-6 border border-foreground/10 rounded-card">
             <div className="flex items-center gap-3 mb-2">
               <Coins className="w-5 h-5 text-primary" />
               <span className="text-sm text-muted-foreground">Crédits</span>
