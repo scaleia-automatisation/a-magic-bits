@@ -16,10 +16,19 @@ interface Generation {
   result_url: string | null;
 }
 
+interface CreditTransaction {
+  id: string;
+  type: string;
+  amount: number;
+  action: string;
+  created_at: string;
+}
+
 const Dashboard = () => {
   const { user, profile, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const [generations, setGenerations] = useState<Generation[]>([]);
+  const [transactions, setTransactions] = useState<CreditTransaction[]>([]);
 
   useEffect(() => {
     if (!loading && !user) navigate('/auth');
