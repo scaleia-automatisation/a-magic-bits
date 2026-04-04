@@ -50,7 +50,55 @@ Génère 3 idées originales et engageantes.`;
   }
 }
 
-export async function generatePrompt(params: {
+export async function generateIdeaFromImages(params: {
+  imageDescriptions: string[];
+  contentType: string;
+  objective: string;
+  format: string;
+  activity: string;
+  sector: string;
+  ton?: string;
+  visualStyle?: string;
+}) {
+  const imageCount = params.imageDescriptions.length;
+  const systemPrompt = `Tu es un expert en marketing digital et création de contenu visuel.
+À partir de ${imageCount} image(s) de référence décrite(s), génère UNE idée de contenu unique, créative et engageante.
+L'idée doit être cohérente avec toutes les images fournies, le type de contenu, l'objectif et le contexte métier.
+
+RETOURNE UNIQUEMENT un JSON valide sans markdown:
+{"idea":{"title":"max 30 chars avec emoji","angle":"Éducatif|Storytelling|Engagement|Preuve sociale|Urgence","description":"max 80 chars décrivant l'idée en détail"}}`;
+
+  const userPrompt = `Images de référence:
+${params.imageDescriptions.map((d, i) => `- Image ${i + 1}: ${d}`).join('\n')}
+
+Type de contenu: ${params.contentType}
+Format: ${params.format}
+${params.objective ? `Objectif: ${params.objective}` : ''}
+${params.activity ? `Activité: ${params.activity}` : ''}
+${params.sector ? `Secteur: ${params.sector}` : ''}
+${params.ton ? `Ton: ${params.ton}` : ''}
+${params.visualStyle ? `Style visuel: ${params.visualStyle}` : ''}
+
+Génère une idée originale inspirée des images de référence.`;
+
+  const data = await callKreatorAI({
+    action: 'generate_idea_from_images',
+    messages: [{ role: 'user', content: userPrompt }],
+    system_prompt: systemPrompt,
+  });
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+
+  try {
+    const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch {
+    throw new Error('Failed to parse AI response');
+  }
+}
+
+
   contentType: string;
   format: string;
   objective: string;
