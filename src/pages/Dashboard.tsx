@@ -184,7 +184,7 @@ const Dashboard = () => {
                 .replace('video', 'vidéo');
 
               return (
-                <div key={tx.id} className="card-surface p-4 border border-foreground/10 rounded-card flex items-center gap-4">
+                <div key={tx.id} className="card-surface p-3 md:p-4 border border-foreground/10 rounded-card flex items-center gap-3 md:gap-4">
                   <div className={`w-10 h-10 rounded-btn flex items-center justify-center ${
                     isCredit ? 'bg-green-500/10' : 'bg-destructive/10'
                   }`}>
