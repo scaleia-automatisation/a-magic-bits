@@ -57,13 +57,13 @@ serve(async (req) => {
 
       // Map model names to Gemini model IDs
       const geminiModelMap: Record<string, string> = {
-        "nano-banana-2": "gemini-2.0-flash-exp",
-        "nano-banana-pro": "gemini-2.0-flash-exp",
+        "nano-banana-2": "gemini-2.5-flash",
+        "nano-banana-pro": "gemini-2.5-pro",
         "imagen": "imagen-3.0-generate-002",
       };
 
       const selectedModel = ai_model || model || "nano-banana-2";
-      const geminiModel = geminiModelMap[selectedModel] || "gemini-2.0-flash-exp";
+      const geminiModel = geminiModelMap[selectedModel] || "gemini-2.5-flash";
 
       // For Imagen, use the Imagen API
       if (selectedModel === "imagen") {
