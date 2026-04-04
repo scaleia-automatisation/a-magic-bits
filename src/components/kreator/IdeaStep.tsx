@@ -67,15 +67,15 @@ const IdeaStep = () => {
       toast.error('Connectez-vous pour générer une idée');
       return;
     }
-    const photosWithDesc = input_photos.filter(p => p.url && p.description);
-    if (photosWithDesc.length === 0) {
-      toast.error('Ajoutez au moins une image de référence avec une description');
+    const uploadedPhotos = input_photos.filter(p => p.url);
+    if (uploadedPhotos.length === 0) {
+      toast.error('Ajoutez au moins une image de référence');
       return;
     }
     setLoadingImageIdea(true);
     try {
       const result = await generateIdeaFromImages({
-        imageDescriptions: photosWithDesc.map(p => p.description),
+        imageDescriptions: uploadedPhotos.map(p => p.description?.trim() || 'Image uploadée — analyser visuellement'),
         contentType: type,
         objective,
         format,
