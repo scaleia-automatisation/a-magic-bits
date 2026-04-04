@@ -370,14 +370,5 @@ const GenerationStep = () => {
   );
 };
 
-function mapModel(model: string): string {
-  switch (model) {
-    case 'dall-e-3': return 'google/gemini-3.1-flash-image-preview';
-    case 'nano-banana-2': return 'google/gemini-3.1-flash-image-preview';
-    case 'nano-banana-pro': return 'google/gemini-3-pro-image-preview';
-    case 'imagen': return 'google/gemini-3.1-flash-image-preview';
-    default: return 'google/gemini-3.1-flash-image-preview';
-  }
-}
 
 export default GenerationStep;
