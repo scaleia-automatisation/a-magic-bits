@@ -17,11 +17,9 @@ interface KreatorOptions {
 }
 
 interface KreatorState {
-  // Mode
   user_mode: UserMode;
   setUserMode: (mode: UserMode) => void;
 
-  // Step 1
   type: ContentType;
   setType: (type: ContentType) => void;
   slides_count: number;
@@ -35,11 +33,9 @@ interface KreatorState {
   company_sector: string;
   setCompanySector: (val: string) => void;
 
-  // Step 2
   format: Format;
   setFormat: (format: Format) => void;
 
-  // Step 3
   input_image_url: string;
   setInputImageUrl: (url: string) => void;
   input_image_description: string;
@@ -49,13 +45,11 @@ interface KreatorState {
   idea_chosen: string;
   setIdeaChosen: (idea: string) => void;
 
-  // Step 4
   options: KreatorOptions;
   setOptions: (opts: Partial<KreatorOptions>) => void;
   showAdvanced: boolean;
   setShowAdvanced: (show: boolean) => void;
 
-  // Step 5
   prompt_fr: string;
   setPromptFr: (p: string) => void;
   prompt_en: string;
@@ -63,7 +57,6 @@ interface KreatorState {
   prompt_en_final: string;
   setPromptEnFinal: (p: string) => void;
 
-  // Step 6
   status: GenerationStatus;
   setStatus: (s: GenerationStatus) => void;
   result_url: string;
@@ -72,41 +65,23 @@ interface KreatorState {
   setResultUrls: (urls: string[]) => void;
   credits_used: number;
   setCreditsUsed: (c: number) => void;
+
+  resetProject: () => void;
 }
 
-export const useKreatorStore = create<KreatorState>((set) => ({
-  user_mode: 'beginner',
-  setUserMode: (mode) => set({ user_mode: mode }),
-
-  type: 'image',
-  setType: (type) => {
-    const defaultModel = type === 'video' ? 'sora-2' : 'dall-e-3';
-    const format = type === 'video' ? '9:16' as Format : '9:16' as Format;
-    set({ type, ai_model: defaultModel, format });
-  },
+const initialState = {
+  user_mode: 'beginner' as UserMode,
+  type: 'image' as ContentType,
   slides_count: 2,
-  setSlidesCount: (count) => set({ slides_count: count }),
-  ai_model: 'dall-e-3',
-  setAiModel: (model) => set({ ai_model: model }),
+  ai_model: 'dall-e-3' as AIModel,
   objective: '',
-  setObjective: (obj) => set({ objective: obj }),
   company_activity: '',
-  setCompanyActivity: (val) => set({ company_activity: val }),
   company_sector: '',
-  setCompanySector: (val) => set({ company_sector: val }),
-
-  format: '9:16',
-  setFormat: (format) => set({ format }),
-
+  format: '9:16' as Format,
   input_image_url: '',
-  setInputImageUrl: (url) => set({ input_image_url: url }),
   input_image_description: '',
-  setInputImageDescription: (desc) => set({ input_image_description: desc }),
   input_text: '',
-  setInputText: (text) => set({ input_text: text }),
   idea_chosen: '',
-  setIdeaChosen: (idea) => set({ idea_chosen: idea }),
-
   options: {
     show_text: false,
     text_content: '',
@@ -116,23 +91,42 @@ export const useKreatorStore = create<KreatorState>((set) => ({
     objective: '',
     visual_style: '',
   },
-  setOptions: (opts) => set((state) => ({ options: { ...state.options, ...opts } })),
   showAdvanced: false,
-  setShowAdvanced: (show) => set({ showAdvanced: show }),
-
   prompt_fr: '',
-  setPromptFr: (p) => set({ prompt_fr: p }),
   prompt_en: '',
-  setPromptEn: (p) => set({ prompt_en: p }),
   prompt_en_final: '',
-  setPromptEnFinal: (p) => set({ prompt_en_final: p }),
-
-  status: 'idle',
-  setStatus: (s) => set({ status: s }),
+  status: 'idle' as GenerationStatus,
   result_url: '',
-  setResultUrl: (url) => set({ result_url: url }),
   result_urls: [],
-  setResultUrls: (urls) => set({ result_urls: urls }),
   credits_used: 0,
+};
+
+export const useKreatorStore = create<KreatorState>((set) => ({
+  ...initialState,
+  setUserMode: (mode) => set({ user_mode: mode }),
+  setType: (type) => {
+    const defaultModel = type === 'video' ? 'sora-2' : 'dall-e-3';
+    const format = type === 'video' ? '9:16' as Format : '9:16' as Format;
+    set({ type, ai_model: defaultModel, format });
+  },
+  setSlidesCount: (count) => set({ slides_count: count }),
+  setAiModel: (model) => set({ ai_model: model }),
+  setObjective: (obj) => set({ objective: obj }),
+  setCompanyActivity: (val) => set({ company_activity: val }),
+  setCompanySector: (val) => set({ company_sector: val }),
+  setFormat: (format) => set({ format }),
+  setInputImageUrl: (url) => set({ input_image_url: url }),
+  setInputImageDescription: (desc) => set({ input_image_description: desc }),
+  setInputText: (text) => set({ input_text: text }),
+  setIdeaChosen: (idea) => set({ idea_chosen: idea }),
+  setOptions: (opts) => set((state) => ({ options: { ...state.options, ...opts } })),
+  setShowAdvanced: (show) => set({ showAdvanced: show }),
+  setPromptFr: (p) => set({ prompt_fr: p }),
+  setPromptEn: (p) => set({ prompt_en: p }),
+  setPromptEnFinal: (p) => set({ prompt_en_final: p }),
+  setStatus: (s) => set({ status: s }),
+  setResultUrl: (url) => set({ result_url: url }),
+  setResultUrls: (urls) => set({ result_urls: urls }),
   setCreditsUsed: (c) => set({ credits_used: c }),
+  resetProject: () => set({ ...initialState }),
 }));

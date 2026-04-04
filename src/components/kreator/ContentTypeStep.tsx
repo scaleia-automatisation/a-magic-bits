@@ -1,7 +1,6 @@
 import { useKreatorStore, type ContentType, type AIModel } from '@/store/useKreatorStore';
 import { Image, Layers, Video } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import StepContainer from './StepContainer';
 
 const contentTypes: { type: ContentType; label: string; icon: typeof Image }[] = [
@@ -39,8 +38,7 @@ const objectives = [
 const ContentTypeStep = () => {
   const {
     type, setType, slides_count, setSlidesCount,
-    ai_model, setAiModel, objective, setObjective,
-    company_activity, setCompanyActivity, company_sector, setCompanySector
+    ai_model, setAiModel, objective, setObjective
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
@@ -110,7 +108,7 @@ const ContentTypeStep = () => {
       </div>
 
       {/* Objective */}
-      <div className="mb-6">
+      <div>
         <label className="text-sm font-medium text-muted-foreground mb-2 block">Objectif du contenu</label>
         <Select value={objective} onValueChange={setObjective}>
           <SelectTrigger className="bg-card border-foreground/10 text-foreground">
@@ -127,28 +125,6 @@ const ContentTypeStep = () => {
             </SelectItem>
           </SelectContent>
         </Select>
-      </div>
-
-      {/* Activity & Sector */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Activité principale</label>
-          <Input
-            value={company_activity}
-            onChange={(e) => setCompanyActivity(e.target.value)}
-            placeholder="Ex: Coach fitness, Boulangerie..."
-            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-          />
-        </div>
-        <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Secteur d'activité</label>
-          <Input
-            value={company_sector}
-            onChange={(e) => setCompanySector(e.target.value)}
-            placeholder="Ex: Santé, Alimentation..."
-            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-          />
-        </div>
       </div>
     </StepContainer>
   );

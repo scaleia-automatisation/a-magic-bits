@@ -1,5 +1,6 @@
 import ModeToggle from '@/components/kreator/ModeToggle';
 import MobileMenu from '@/components/MobileMenu';
+import ActivitySectorFields from '@/components/kreator/ActivitySectorFields';
 import ContentTypeStep from '@/components/kreator/ContentTypeStep';
 import FormatStep from '@/components/kreator/FormatStep';
 import IdeaStep from '@/components/kreator/IdeaStep';
@@ -79,6 +80,7 @@ const Index = () => {
         </div>
 
         <div className="space-y-6">
+          <ActivitySectorFields />
           <ContentTypeStep />
           <FormatStep />
           <IdeaStep />
