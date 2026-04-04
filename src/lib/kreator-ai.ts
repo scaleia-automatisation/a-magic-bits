@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { AIModel } from '@/store/useKreatorStore';
 
 interface AICallOptions {
   action: string;
@@ -160,12 +161,12 @@ ${params.activity ? `Activité: ${params.activity}` : ''}`;
   }
 }
 
-export async function generateImage(promptEn: string, _model?: string) {
-  // Always use DALL-E 3 via OpenAI for image generation
+export async function generateImage(promptEn: string, aiModel: AIModel = 'dall-e-3') {
   const { data, error } = await supabase.functions.invoke('kreator-ai', {
     body: {
-      action: 'generate_image_dalle',
+      action: 'generate_image',
       prompt: promptEn,
+      ai_model: aiModel,
       size: '1024x1024',
       quality: 'hd',
     },
@@ -173,8 +174,26 @@ export async function generateImage(promptEn: string, _model?: string) {
 
   if (error) throw error;
 
-  const imageUrl = data?.data?.[0]?.url;
+  const imageUrl = data?.image_url;
   if (!imageUrl) throw new Error('No image generated');
 
   return imageUrl;
+}
+
+export async function generateVideo(promptEn: string, aiModel: AIModel = 'sora-2', format: string = '9:16') {
+  const { data, error } = await supabase.functions.invoke('kreator-ai', {
+    body: {
+      action: 'generate_video',
+      prompt: promptEn,
+      ai_model: aiModel,
+      size: format,
+    },
+  });
+
+  if (error) throw error;
+
+  const videoUrl = data?.video_url;
+  if (!videoUrl) throw new Error('No video generated');
+
+  return videoUrl;
 }

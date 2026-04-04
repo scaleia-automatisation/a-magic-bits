@@ -9,13 +9,17 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
+    const { action, messages, system_prompt, model, prompt, size, quality, ai_model } = await req.json();
 
-    const { action, messages, system_prompt, model, prompt, size, quality } = await req.json();
+    // Determine which API key to use based on model
+    const isGeminiModel = ["nano-banana-2", "nano-banana-pro", "imagen"].includes(ai_model || model || "");
+    const isVeo = ["veo-3", "veo-3-fast"].includes(ai_model || "");
 
-    // === DALL-E 3 image generation ===
-    if (action === "generate_image_dalle") {
+    // === DALL-E 3 image generation (OpenAI) ===
+    if (action === "generate_image" && !isGeminiModel) {
+      const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+      if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
+
       const dalleRes = await fetch("https://api.openai.com/v1/images/generations", {
         method: "POST",
         headers: {
@@ -24,7 +28,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           model: "dall-e-3",
-          prompt: prompt || messages?.[0]?.content || "",
+          prompt: prompt || "",
           n: 1,
           size: size || "1024x1024",
           quality: quality || "hd",
@@ -35,24 +39,100 @@ serve(async (req) => {
       if (!dalleRes.ok) {
         const errText = await dalleRes.text();
         console.error("DALL-E 3 error:", dalleRes.status, errText);
-        if (dalleRes.status === 429) {
-          return new Response(JSON.stringify({ error: "Limite de requêtes OpenAI atteinte." }), {
-            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        return new Response(JSON.stringify({ error: "Erreur DALL-E 3" }), {
-          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        return new Response(JSON.stringify({ error: dalleRes.status === 429 ? "Limite de requêtes OpenAI atteinte." : "Erreur DALL-E 3" }), {
+          status: dalleRes.status === 429 ? 429 : 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
       const dalleData = await dalleRes.json();
-      return new Response(JSON.stringify(dalleData), {
+      return new Response(JSON.stringify({ image_url: dalleData?.data?.[0]?.url }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // === Sora 2 video generation ===
-    if (action === "generate_video_sora") {
+    // === Gemini image generation (Nano Banana 2, Nano Banana Pro, Imagen) ===
+    if (action === "generate_image" && isGeminiModel) {
+      const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+      if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
+
+      // Map model names to Gemini model IDs
+      const geminiModelMap: Record<string, string> = {
+        "nano-banana-2": "gemini-2.0-flash-exp-image-generation",
+        "nano-banana-pro": "gemini-2.0-flash-exp-image-generation",
+        "imagen": "imagen-3.0-generate-002",
+      };
+
+      const selectedModel = ai_model || model || "nano-banana-2";
+      const geminiModel = geminiModelMap[selectedModel] || "gemini-2.0-flash-exp-image-generation";
+
+      // For Imagen, use the Imagen API
+      if (selectedModel === "imagen") {
+        const imagenRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            instances: [{ prompt: prompt || "" }],
+            parameters: { sampleCount: 1, aspectRatio: size === "1024x1792" ? "9:16" : size === "1792x1024" ? "16:9" : "1:1" },
+          }),
+        });
+
+        if (!imagenRes.ok) {
+          const errText = await imagenRes.text();
+          console.error("Imagen error:", imagenRes.status, errText);
+          return new Response(JSON.stringify({ error: "Erreur Imagen" }), {
+            status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        const imagenData = await imagenRes.json();
+        const b64 = imagenData?.predictions?.[0]?.bytesBase64Encoded;
+        if (b64) {
+          return new Response(JSON.stringify({ image_url: `data:image/png;base64,${b64}` }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        return new Response(JSON.stringify({ error: "Pas d'image générée" }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // For Nano Banana models, use Gemini generateContent with image output
+      const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt || "" }] }],
+          generationConfig: { responseModalities: ["TEXT", "IMAGE"] },
+        }),
+      });
+
+      if (!geminiRes.ok) {
+        const errText = await geminiRes.text();
+        console.error("Gemini image error:", geminiRes.status, errText);
+        return new Response(JSON.stringify({ error: "Erreur Gemini" }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const geminiData = await geminiRes.json();
+      const parts = geminiData?.candidates?.[0]?.content?.parts || [];
+      const imagePart = parts.find((p: any) => p.inlineData);
+      if (imagePart?.inlineData) {
+        const mimeType = imagePart.inlineData.mimeType || "image/png";
+        return new Response(JSON.stringify({ image_url: `data:${mimeType};base64,${imagePart.inlineData.data}` }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return new Response(JSON.stringify({ error: "Pas d'image générée par Gemini" }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // === Sora 2 video generation (OpenAI) ===
+    if (action === "generate_video" && !isVeo) {
+      const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+      if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
+
       const soraRes = await fetch("https://api.openai.com/v1/images/generations", {
         method: "POST",
         headers: {
@@ -61,7 +141,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           model: "sora-2",
-          prompt: prompt || messages?.[0]?.content || "",
+          prompt: prompt || "",
           n: 1,
           size: size || "1920x1080",
         }),
@@ -70,31 +150,58 @@ serve(async (req) => {
       if (!soraRes.ok) {
         const errText = await soraRes.text();
         console.error("Sora 2 error:", soraRes.status, errText);
-        if (soraRes.status === 429) {
-          return new Response(JSON.stringify({ error: "Limite de requêtes OpenAI atteinte." }), {
-            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        return new Response(JSON.stringify({ error: "Erreur Sora 2" }), {
-          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        return new Response(JSON.stringify({ error: soraRes.status === 429 ? "Limite de requêtes OpenAI atteinte." : "Erreur Sora 2" }), {
+          status: soraRes.status === 429 ? 429 : 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
       const soraData = await soraRes.json();
-      return new Response(JSON.stringify(soraData), {
+      return new Response(JSON.stringify({ video_url: soraData?.data?.[0]?.url }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // === Veo 3 video generation (Google) ===
+    if (action === "generate_video" && isVeo) {
+      const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+      if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
+
+      const veoModel = ai_model === "veo-3-fast" ? "veo-3.0-generate-preview" : "veo-3.0-generate-preview";
+      
+      const veoRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${veoModel}:predictLongRunning?key=${GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          instances: [{ prompt: prompt || "" }],
+          parameters: { aspectRatio: size === "9:16" ? "9:16" : "16:9", durationSeconds: 8 },
+        }),
+      });
+
+      if (!veoRes.ok) {
+        const errText = await veoRes.text();
+        console.error("Veo 3 error:", veoRes.status, errText);
+        return new Response(JSON.stringify({ error: "Erreur Veo 3" }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const veoData = await veoRes.json();
+      return new Response(JSON.stringify(veoData), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     // === OpenAI Chat Completions for prompts, ideas, captions ===
-    if (!action || !messages) {
-      return new Response(JSON.stringify({ error: "Missing action or messages" }), {
+    if (!messages) {
+      return new Response(JSON.stringify({ error: "Missing messages" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const selectedModel = model || "gpt-4o";
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
 
+    const selectedModel = model || "gpt-4o";
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -113,13 +220,8 @@ serve(async (req) => {
     if (!response.ok) {
       const text = await response.text();
       console.error("OpenAI error:", response.status, text);
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Limite de requêtes OpenAI atteinte." }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      return new Response(JSON.stringify({ error: "Erreur du service OpenAI" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ error: response.status === 429 ? "Limite de requêtes OpenAI atteinte." : "Erreur du service OpenAI" }), {
+        status: response.status === 429 ? 429 : 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
