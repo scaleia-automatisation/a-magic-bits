@@ -11,15 +11,18 @@ const contentTypes: { type: ContentType; label: string; icon: typeof Image }[] =
 
 const imageModels: { value: AIModel; label: string }[] = [
   { value: 'dall-e-3', label: 'DALL-E 3' },
-  { value: 'nano-banana-2', label: 'Nano Banana 2' },
-  { value: 'nano-banana-pro', label: 'Nano Banana Pro' },
-  { value: 'imagen', label: 'Imagen' },
+  { value: 'imagen-4', label: 'Imagen 4' },
+  { value: 'imagen-4-ultra', label: 'Imagen 4 Ultra' },
+  { value: 'imagen-4-fast', label: 'Imagen 4 Fast' },
 ];
 
 const videoModels: { value: AIModel; label: string }[] = [
   { value: 'sora-2', label: 'Sora 2' },
+  { value: 'veo-2', label: 'Veo 2' },
   { value: 'veo-3', label: 'Veo 3' },
-  { value: 'veo-3-fast', label: 'Veo 3 Fast Preview' },
+  { value: 'veo-3-fast', label: 'Veo 3 Fast' },
+  { value: 'veo-3.1', label: 'Veo 3.1' },
+  { value: 'veo-3.1-fast', label: 'Veo 3.1 Fast' },
 ];
 
 const objectives = [

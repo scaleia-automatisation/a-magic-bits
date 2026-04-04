@@ -108,7 +108,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   ...initialState,
   setUserMode: (mode) => set({ user_mode: mode }),
   setType: (type) => {
-    const defaultModel = type === 'video' ? 'sora-2' : 'dall-e-3';
+    const defaultModel = type === 'video' ? 'veo-3' as AIModel : 'dall-e-3' as AIModel;
     const format = type === 'video' ? '9:16' as Format : '9:16' as Format;
     set({ type, ai_model: defaultModel, format });
   },
