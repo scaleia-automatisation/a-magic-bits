@@ -92,9 +92,9 @@ serve(async (req) => {
       const selectedModel = ai_model || model || "nano-banana-2";
       const geminiModel = geminiModelMap[selectedModel] || "gemini-3.1-flash-image-preview";
 
-      // For Imagen, use the Imagen API
+      // For Imagen, use the Imagen predict API
       if (selectedModel === "imagen") {
-        const imagenRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`, {
+        const imagenRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:predict?key=${GEMINI_API_KEY}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
