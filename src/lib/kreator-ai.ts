@@ -52,6 +52,7 @@ Génère 3 idées originales et engageantes.`;
 
 export async function generateIdeaFromImages(params: {
   imageDescriptions: string[];
+  imageBase64s: string[];
   contentType: string;
   objective: string;
   format: string;
@@ -60,12 +61,12 @@ export async function generateIdeaFromImages(params: {
   ton?: string;
   visualStyle?: string;
 }) {
-  const imageCount = params.imageDescriptions.length;
+  const imageCount = params.imageBase64s.length;
   const systemPrompt = `Tu es un expert en marketing digital et création de contenu visuel.
-À partir de ${imageCount} image(s) de référence, génère UNE idée de contenu unique, créative et engageante.
+Analyse visuellement les ${imageCount} image(s) de référence fournies et génère UNE idée de contenu unique, créative et engageante.
 
 RÈGLES OBLIGATOIRES — L'idée générée DOIT prendre en compte et fusionner de façon cohérente :
-1. L'ANALYSE DES IMAGES DE RÉFÉRENCE : éléments visuels, ambiance, couleurs, objets, personnes, contexte
+1. L'ANALYSE VISUELLE DES IMAGES DE RÉFÉRENCE : éléments visuels, ambiance, couleurs, objets, personnes, contexte — ANALYSE les images directement
 2. L'OBJECTIF DU CONTENU (PRIORITAIRE) : l'idée doit directement servir cet objectif (vendre, engager, éduquer, inspirer…)
 3. L'ACTIVITÉ PRINCIPALE de l'entreprise : adapter l'idée au métier et au contexte professionnel
 4. LE SECTEUR D'ACTIVITÉ : utiliser les codes et le vocabulaire du secteur
@@ -77,10 +78,7 @@ Tous ces éléments forment un CONTEXTE UNIFIÉ. L'idée doit être pertinente e
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"idea":{"title":"max 30 chars avec emoji","angle":"Éducatif|Storytelling|Engagement|Preuve sociale|Urgence","description":"max 80 chars décrivant l'idée en détail"}}`;
 
-  const userPrompt = `=== IMAGES DE RÉFÉRENCE ===
-${params.imageDescriptions.map((d, i) => `- Image ${i + 1}: ${d}`).join('\n')}
-
-=== CONTEXTE ENTREPRISE ===
+  const contextText = `=== CONTEXTE ENTREPRISE ===
 ${params.activity ? `Activité principale: ${params.activity}` : 'Activité: non renseignée'}
 ${params.sector ? `Secteur d'activité: ${params.sector}` : 'Secteur: non renseigné'}
 
@@ -90,12 +88,14 @@ Format: ${params.format}
 ${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
 ${params.ton ? `Ton: ${params.ton}` : ''}
 ${params.visualStyle ? `Style visuel: ${params.visualStyle}` : ''}
+${params.imageDescriptions.some(d => d) ? `\n=== DESCRIPTIONS FOURNIES ===\n${params.imageDescriptions.map((d, i) => d ? `Image ${i + 1}: ${d}` : '').filter(Boolean).join('\n')}` : ''}
 
-Génère une idée originale qui fusionne l'analyse des images avec le contexte entreprise et l'objectif.`;
+Analyse visuellement les images de référence et génère une idée originale cohérente avec le contexte.`;
 
   const data = await callKreatorAI({
     action: 'generate_idea_from_images',
-    messages: [{ role: 'user', content: userPrompt }],
+    image_base64s: params.imageBase64s,
+    messages: [{ role: 'user', content: contextText }],
     system_prompt: systemPrompt,
   });
 
