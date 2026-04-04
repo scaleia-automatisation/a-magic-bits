@@ -2,19 +2,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Coins, Image, Layers, Video, LogOut, Copy, Users, Crown, ArrowUpCircle, ArrowDownCircle, History } from 'lucide-react';
+import { Coins, Image, Layers, Video, LogOut, Copy, Users, Crown, ArrowUpCircle, ArrowDownCircle, History, FolderOpen, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-
-interface Generation {
-  id: string;
-  type: string;
-  ai_model: string;
-  credits_used: number;
-  status: string;
-  created_at: string;
-  result_url: string | null;
-}
+import { STRIPE_PLANS, PlanKey } from '@/lib/stripe-plans';
 
 interface CreditTransaction {
   id: string;
@@ -27,8 +18,8 @@ interface CreditTransaction {
 const Dashboard = () => {
   const { user, profile, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const [generations, setGenerations] = useState<Generation[]>([]);
   const [transactions, setTransactions] = useState<CreditTransaction[]>([]);
+  const [genCount, setGenCount] = useState(0);
 
   useEffect(() => {
     if (!loading && !user) navigate('/auth');
@@ -38,12 +29,8 @@ const Dashboard = () => {
     if (!user) return;
     supabase
       .from('generations')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(20)
-      .then(({ data }) => {
-        if (data) setGenerations(data as Generation[]);
-      });
+      .select('id', { count: 'exact', head: true })
+      .then(({ count }) => setGenCount(count ?? 0));
     supabase
       .from('credit_transactions')
       .select('*')
@@ -61,10 +48,17 @@ const Dashboard = () => {
     }
   };
 
-  const typeIcon = (type: string) => {
-    if (type === 'carousel') return <Layers className="w-4 h-4" />;
-    if (type === 'video') return <Video className="w-4 h-4" />;
-    return <Image className="w-4 h-4" />;
+  const handleSubscribe = async (planKey: PlanKey) => {
+    if (planKey === 'free') return;
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { price_id: STRIPE_PLANS[planKey].price_id },
+      });
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch {
+      toast.error('Erreur lors de la redirection vers le paiement');
+    }
   };
 
   if (loading || !profile) {
@@ -79,10 +73,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b border-foreground/5">
         <div className="max-w-6xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
-          <span
-            className="text-lg md:text-xl font-black gradient-text cursor-pointer"
-            onClick={() => navigate('/')}
-          >
+          <span className="text-lg md:text-xl font-black gradient-text cursor-pointer" onClick={() => navigate('/')}>
             Kréator
           </span>
           <div className="flex items-center gap-2 md:gap-4">
@@ -91,12 +82,7 @@ const Dashboard = () => {
               <span className="font-bold text-sm md:text-base text-foreground">{profile.credits}</span>
               <span className="text-xs text-muted-foreground hidden sm:inline">crédits</span>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground p-2"
-              onClick={signOut}
-            >
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground p-2" onClick={signOut}>
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -126,7 +112,7 @@ const Dashboard = () => {
               <Image className="w-5 h-5 text-secondary" />
               <span className="text-sm text-muted-foreground">Générations</span>
             </div>
-            <span className="text-3xl font-black text-foreground">{generations.length}</span>
+            <span className="text-3xl font-black text-foreground">{genCount}</span>
           </div>
 
           <div className="card-surface p-4 md:p-6 border border-foreground/10 rounded-card cursor-pointer hover:border-primary/30 transition-colors" onClick={handleCopyReferral}>
@@ -144,26 +130,58 @@ const Dashboard = () => {
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-6 md:mb-8">
-          <Button
-            onClick={() => navigate('/')}
-            className="gradient-bg border-0 text-primary-foreground font-bold px-6 md:px-8 py-5 md:py-6 rounded-btn text-sm md:text-base hover:opacity-90 w-full sm:w-auto"
-          >
+          <Button onClick={() => navigate('/')} className="gradient-bg border-0 text-primary-foreground font-bold px-6 md:px-8 py-5 md:py-6 rounded-btn text-sm md:text-base hover:opacity-90 w-full sm:w-auto">
             Créer du contenu ✨
           </Button>
-          <Button
-            onClick={() => navigate('/pricing')}
-            variant="outline"
-            className="border-primary/30 text-primary font-bold px-6 md:px-8 py-5 md:py-6 rounded-btn text-sm md:text-base hover:bg-primary/10 w-full sm:w-auto"
-          >
-            <Crown className="w-4 h-4 mr-2" />
-            {profile.plan === 'free' ? 'Passer Pro' : 'Gérer l\'abonnement'}
+          <Button onClick={() => navigate('/generations')} variant="outline" className="border-foreground/10 text-foreground font-bold px-6 md:px-8 py-5 md:py-6 rounded-btn text-sm md:text-base w-full sm:w-auto">
+            <FolderOpen className="w-4 h-4 mr-2" /> Mes générations
           </Button>
+        </div>
+
+        {/* Plans */}
+        <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+          <Crown className="w-5 h-5 text-primary" /> Plans disponibles
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          {(Object.keys(STRIPE_PLANS) as PlanKey[]).map((key) => {
+            const plan = STRIPE_PLANS[key];
+            const isCurrent = profile.plan === key;
+            return (
+              <div key={key} className={`card-surface p-5 border rounded-card ${isCurrent ? 'border-primary' : 'border-foreground/10'}`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-base font-bold text-foreground">{plan.name}</h3>
+                  {isCurrent && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-pill font-medium">Actuel</span>}
+                </div>
+                <div className="mb-3">
+                  <span className="text-2xl font-black text-foreground">{plan.price === 0 ? 'Gratuit' : `${plan.price}€`}</span>
+                  {plan.price > 0 && <span className="text-xs text-muted-foreground">/mois</span>}
+                </div>
+                <ul className="space-y-1.5 mb-4">
+                  {plan.features.map((f, i) => (
+                    <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                {!isCurrent && key !== 'free' && (
+                  <Button onClick={() => handleSubscribe(key)} size="sm" className="w-full gradient-bg border-0 text-primary-foreground text-xs">
+                    Passer à {plan.name}
+                  </Button>
+                )}
+                {isCurrent && (
+                  <Button disabled size="sm" variant="outline" className="w-full text-xs">
+                    Plan actuel
+                  </Button>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Credit Transactions */}
         <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-          <History className="w-5 h-5 text-primary" />
-          Historique des crédits
+          <History className="w-5 h-5 text-primary" /> Historique des crédits
         </h2>
         {transactions.length === 0 ? (
           <div className="card-surface p-8 border border-foreground/10 rounded-card text-center mb-8">
@@ -185,16 +203,11 @@ const Dashboard = () => {
 
               return (
                 <div key={tx.id} className="card-surface p-3 md:p-4 border border-foreground/10 rounded-card flex items-center gap-3 md:gap-4">
-                  <div className={`w-8 h-8 md:w-10 md:h-10 rounded-btn flex-shrink-0 flex items-center justify-center ${
-                    isCredit ? 'bg-green-500/10' : 'bg-destructive/10'
-                  }`}>
-                    {isCredit
-                      ? <ArrowUpCircle className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
-                      : <ArrowDownCircle className="w-4 h-4 md:w-5 md:h-5 text-destructive" />
-                    }
+                  <div className={`w-8 h-8 md:w-10 md:h-10 rounded-btn flex-shrink-0 flex items-center justify-center ${isCredit ? 'bg-green-500/10' : 'bg-destructive/10'}`}>
+                    {isCredit ? <ArrowUpCircle className="w-4 h-4 md:w-5 md:h-5 text-green-400" /> : <ArrowDownCircle className="w-4 h-4 md:w-5 md:h-5 text-destructive" />}
                   </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-foreground capitalize">{actionLabel}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-foreground capitalize truncate">{actionLabel}</div>
                     <div className="text-xs text-muted-foreground">
                       {new Date(tx.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </div>
@@ -205,36 +218,6 @@ const Dashboard = () => {
                 </div>
               );
             })}
-          </div>
-        )}
-
-        {/* History */}
-        <h2 className="text-lg font-bold text-foreground mb-4">Historique des générations</h2>
-        {generations.length === 0 ? (
-          <div className="card-surface p-8 border border-foreground/10 rounded-card text-center">
-            <p className="text-muted-foreground">Aucune génération pour le moment</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {generations.map((gen) => (
-              <div key={gen.id} className="card-surface p-3 md:p-4 border border-foreground/10 rounded-card flex items-center gap-3 md:gap-4">
-                <div className="w-8 h-8 md:w-10 md:h-10 rounded-btn bg-card flex-shrink-0 flex items-center justify-center text-muted-foreground">
-                  {typeIcon(gen.type)}
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-foreground capitalize">{gen.type}</div>
-                  <div className="text-xs text-muted-foreground">{gen.ai_model} — {new Date(gen.created_at).toLocaleDateString('fr-FR')}</div>
-                </div>
-                <div className="text-xs md:text-sm text-muted-foreground flex-shrink-0">-{gen.credits_used}</div>
-                <span className={`text-xs px-2 py-1 rounded-pill ${
-                  gen.status === 'done' ? 'bg-green-500/10 text-green-400' :
-                  gen.status === 'error' ? 'bg-destructive/10 text-destructive' :
-                  'bg-primary/10 text-primary'
-                }`}>
-                  {gen.status === 'done' ? 'Terminé' : gen.status === 'error' ? 'Erreur' : 'En cours'}
-                </span>
-              </div>
-            ))}
           </div>
         )}
       </main>
