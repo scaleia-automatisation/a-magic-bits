@@ -62,6 +62,41 @@ const IdeaStep = () => {
     }
   };
 
+  const handleGenerateIdeaFromImages = async () => {
+    if (!user) {
+      toast.error('Connectez-vous pour générer une idée');
+      return;
+    }
+    const photosWithDesc = input_photos.filter(p => p.url && p.description);
+    if (photosWithDesc.length === 0) {
+      toast.error('Ajoutez au moins une image de référence avec une description');
+      return;
+    }
+    setLoadingImageIdea(true);
+    try {
+      const result = await generateIdeaFromImages({
+        imageDescriptions: photosWithDesc.map(p => p.description),
+        contentType: type,
+        objective,
+        format,
+        activity: company_activity,
+        sector: company_sector,
+        ton: options.ton,
+        visualStyle: options.visual_style,
+      });
+      const idea = result.idea;
+      setGeneratedImageIdea(`${idea.title} — ${idea.description}`);
+      setIdeaChosen(`${idea.title} — ${idea.description}`);
+      setInputText(`${idea.title} — ${idea.description}`);
+      toast.success('Idée générée à partir des images !');
+    } catch (err) {
+      console.error(err);
+      toast.error('Erreur lors de la génération de l\'idée');
+    } finally {
+      setLoadingImageIdea(false);
+    }
+  };
+
   const handleGenerateMore = async () => {
     setLoadingIdeas(true);
     try {
