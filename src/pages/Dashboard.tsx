@@ -121,7 +121,7 @@ const Dashboard = () => {
             </span>
           </div>
 
-          <div className="card-surface p-6 border border-foreground/10 rounded-card">
+          <div className="card-surface p-4 md:p-6 border border-foreground/10 rounded-card">
             <div className="flex items-center gap-3 mb-2">
               <Image className="w-5 h-5 text-secondary" />
               <span className="text-sm text-muted-foreground">Générations</span>
