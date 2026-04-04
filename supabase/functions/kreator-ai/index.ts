@@ -9,7 +9,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { action, messages, system_prompt, model, prompt, size, quality, ai_model } = await req.json();
+    const { action, messages, system_prompt, model, prompt, size, quality, ai_model, image_base64s } = await req.json();
 
     // Determine which API key to use based on model
     const isGeminiModel = ["nano-banana-2", "nano-banana-pro", "imagen"].includes(ai_model || model || "");
