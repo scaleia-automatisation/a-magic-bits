@@ -120,6 +120,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setFormat: (format) => set({ format }),
   setInputImageUrl: (url) => set({ input_image_url: url }),
   setInputImageDescription: (desc) => set({ input_image_description: desc }),
+  setInputPhotos: (photos) => set({ input_photos: photos }),
   setInputText: (text) => set({ input_text: text }),
   setIdeaChosen: (idea) => set({ idea_chosen: idea }),
   setOptions: (opts) => set((state) => ({ options: { ...state.options, ...opts } })),
