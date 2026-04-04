@@ -56,7 +56,7 @@ const GenerationStep = () => {
 
     try {
       const [imageUrl, captionResult] = await Promise.all([
-        generateImage(prompt_en, mapModel(ai_model)),
+        generateImage(prompt_en),
         generateCaption({
           objective,
           idea: idea_chosen || input_text,
