@@ -153,7 +153,7 @@ const Dashboard = () => {
           <Button
             onClick={() => navigate('/pricing')}
             variant="outline"
-            className="border-primary/30 text-primary font-bold px-8 py-6 rounded-btn text-base hover:bg-primary/10"
+            className="border-primary/30 text-primary font-bold px-6 md:px-8 py-5 md:py-6 rounded-btn text-sm md:text-base hover:bg-primary/10 w-full sm:w-auto"
           >
             <Crown className="w-4 h-4 mr-2" />
             {profile.plan === 'free' ? 'Passer Pro' : 'Gérer l\'abonnement'}
