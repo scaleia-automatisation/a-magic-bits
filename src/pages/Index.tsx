@@ -73,6 +73,7 @@ const Index = () => {
               </>
             )}
           </div>
+        </div>
       </header>
 
       {/* Main */}
