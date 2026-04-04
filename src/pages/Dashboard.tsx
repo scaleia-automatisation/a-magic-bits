@@ -146,7 +146,7 @@ const Dashboard = () => {
         <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-6 md:mb-8">
           <Button
             onClick={() => navigate('/')}
-            className="gradient-bg border-0 text-primary-foreground font-bold px-8 py-6 rounded-btn text-base hover:opacity-90"
+            className="gradient-bg border-0 text-primary-foreground font-bold px-6 md:px-8 py-5 md:py-6 rounded-btn text-sm md:text-base hover:opacity-90 w-full sm:w-auto"
           >
             Créer du contenu ✨
           </Button>
