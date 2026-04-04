@@ -25,6 +25,10 @@ const getProviderErrorMessage = (status: number, rawText: string, fallback: stri
     return "La génération d’images Gemini n’est pas disponible dans votre pays avec cette clé API.";
   }
 
+  if (message.toLowerCase().includes("only available on paid plans") || message.toLowerCase().includes("upgrade your account")) {
+    return "Imagen nécessite un compte Google AI payant avec facturation activée sur cette clé API.";
+  }
+
   if (status === 429 || message.toLowerCase().includes("quota") || message.toLowerCase().includes("resource_exhausted")) {
     return "Quota Gemini dépassé. Vérifiez la facturation et les limites de votre clé API Gemini.";
   }
