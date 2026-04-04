@@ -68,9 +68,9 @@ const Pricing = () => {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-black text-foreground mb-3">
+      <main className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+        <div className="text-center mb-8 md:mb-12">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mb-3">
             Choisissez votre plan
           </h1>
           <p className="text-muted-foreground text-lg">
