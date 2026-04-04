@@ -49,6 +49,13 @@ const MobileMenu = () => {
                   Tarifs
                 </button>
                 <button
+                  onClick={() => go('/generations')}
+                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-btn text-sm font-medium text-foreground hover:bg-card transition-colors"
+                >
+                  <FolderOpen className="w-4 h-4" />
+                  Mes générations
+                </button>
+                <button
                   onClick={() => { signOut(); setOpen(false); }}
                   className="flex items-center gap-3 w-full px-3 py-2.5 rounded-btn text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
                 >
