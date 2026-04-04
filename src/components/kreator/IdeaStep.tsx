@@ -23,18 +23,6 @@ const IdeaStep = () => {
 
   const isVideo = type === 'video';
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error('Fichier trop volumineux (max 10 Mo)');
-        return;
-      }
-      const url = URL.createObjectURL(file);
-      setInputImageUrl(url);
-    }
-  };
-
   const handleNoIdea = async () => {
     if (!user) {
       toast.error('Connectez-vous pour générer des idées');
