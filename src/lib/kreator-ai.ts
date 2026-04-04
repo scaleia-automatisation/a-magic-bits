@@ -160,16 +160,20 @@ ${params.activity ? `Activité: ${params.activity}` : ''}`;
   }
 }
 
-export async function generateImage(promptEn: string, model?: string) {
-  const aiModel = model || 'google/gemini-3.1-flash-image-preview';
-  
-  const data = await callKreatorAI({
-    action: 'generate_image',
-    messages: [{ role: 'user', content: promptEn }],
-    model: aiModel,
+export async function generateImage(promptEn: string, _model?: string) {
+  // Always use DALL-E 3 via OpenAI for image generation
+  const { data, error } = await supabase.functions.invoke('kreator-ai', {
+    body: {
+      action: 'generate_image_dalle',
+      prompt: promptEn,
+      size: '1024x1024',
+      quality: 'hd',
+    },
   });
 
-  const imageUrl = data?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  if (error) throw error;
+
+  const imageUrl = data?.data?.[0]?.url;
   if (!imageUrl) throw new Error('No image generated');
 
   return imageUrl;

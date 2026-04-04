@@ -56,7 +56,7 @@ const GenerationStep = () => {
 
     try {
       const [imageUrl, captionResult] = await Promise.all([
-        generateImage(prompt_en, mapModel(ai_model)),
+        generateImage(prompt_en),
         generateCaption({
           objective,
           idea: idea_chosen || input_text,
@@ -370,14 +370,5 @@ const GenerationStep = () => {
   );
 };
 
-function mapModel(model: string): string {
-  switch (model) {
-    case 'dall-e-3': return 'google/gemini-3.1-flash-image-preview';
-    case 'nano-banana-2': return 'google/gemini-3.1-flash-image-preview';
-    case 'nano-banana-pro': return 'google/gemini-3-pro-image-preview';
-    case 'imagen': return 'google/gemini-3.1-flash-image-preview';
-    default: return 'google/gemini-3.1-flash-image-preview';
-  }
-}
 
 export default GenerationStep;
