@@ -86,7 +86,7 @@ serve(async (req) => {
       const geminiModelMap: Record<string, string> = {
         "nano-banana-2": "gemini-3.1-flash-image-preview",
         "nano-banana-pro": "gemini-3-pro-image-preview",
-        "imagen": "imagen-3.0-generate-002",
+        "imagen": "imagen-4.0-generate-001",
       };
 
       const selectedModel = ai_model || model || "nano-banana-2";
