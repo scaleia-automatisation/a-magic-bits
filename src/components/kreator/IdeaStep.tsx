@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
-import { Lightbulb, RefreshCw, Loader2, CheckCircle } from 'lucide-react';
+import { Lightbulb, RefreshCw, Loader2, CheckCircle, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import StepContainer from './StepContainer';
 import PhotoUpload from './PhotoUpload';
-import { generateIdeas } from '@/lib/kreator-ai';
+import { generateIdeas, generateIdeaFromImages } from '@/lib/kreator-ai';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 
