@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus } from 'lucide-react';
 import StepContainer from './StepContainer';
-import { generateImage, generateCaption } from '@/lib/kreator-ai';
+import { generateImage, generateVideo, generateCaption } from '@/lib/kreator-ai';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
