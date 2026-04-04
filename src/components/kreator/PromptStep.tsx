@@ -17,12 +17,16 @@ const PromptStep = () => {
     options, slides_count
   } = useKreatorStore();
 
-  // Synthesize reference image descriptions
+  // Synthesize reference image descriptions — always include uploaded images
   const getImageSynthesis = () => {
-    const photos = input_photos.filter(p => p.url && p.description);
-    if (photos.length === 0) return input_image_description || '';
-    if (photos.length === 1) return `Image de référence : ${photos[0].description}`;
-    return `Synthèse de ${photos.length} images de référence : ${photos.map((p, i) => `Image ${i + 1}: ${p.description}`).join(' | ')}. Créer un visuel cohérent qui fusionne ces éléments.`;
+    const uploadedPhotos = input_photos.filter(p => p.url);
+    if (uploadedPhotos.length === 0) return input_image_description || '';
+    const described = uploadedPhotos.map((p, i) => {
+      const desc = p.description?.trim() || 'image uploadée sans description textuelle — analyser visuellement';
+      return `Image ${i + 1}: ${desc}`;
+    });
+    if (uploadedPhotos.length === 1) return `Image de référence : ${described[0]}`;
+    return `Synthèse de ${uploadedPhotos.length} images de référence : ${described.join(' | ')}. Créer un visuel cohérent qui fusionne harmonieusement ces éléments en lien avec l'objectif et l'idée.`;
   };
   const [isGenerating, setIsGenerating] = useState(false);
   const [editingEn, setEditingEn] = useState(false);
