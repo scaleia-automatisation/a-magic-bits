@@ -13,9 +13,17 @@ const PromptStep = () => {
   const {
     prompt_fr, setPromptFr, prompt_en, setPromptEn,
     type, format, objective, company_activity, company_sector,
-    input_text, idea_chosen, input_image_description,
+    input_text, idea_chosen, input_image_description, input_photos,
     options, slides_count
   } = useKreatorStore();
+
+  // Synthesize reference image descriptions
+  const getImageSynthesis = () => {
+    const photos = input_photos.filter(p => p.url && p.description);
+    if (photos.length === 0) return input_image_description || '';
+    if (photos.length === 1) return `Image de référence : ${photos[0].description}`;
+    return `Synthèse de ${photos.length} images de référence : ${photos.map((p, i) => `Image ${i + 1}: ${p.description}`).join(' | ')}. Créer un visuel cohérent qui fusionne ces éléments.`;
+  };
   const [isGenerating, setIsGenerating] = useState(false);
   const [editingEn, setEditingEn] = useState(false);
 
