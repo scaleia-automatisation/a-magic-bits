@@ -48,7 +48,7 @@ const ContentTypeStep = () => {
   return (
     <StepContainer stepNumber={1} title="Type de contenu">
       {/* Content type cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
         {contentTypes.map(({ type: t, label, icon: Icon }) => (
           <button
             key={t}
