@@ -106,9 +106,7 @@ serve(async (req) => {
         if (!imagenRes.ok) {
           const errText = await imagenRes.text();
           console.error("Imagen error:", imagenRes.status, errText);
-          return new Response(JSON.stringify({ error: "Erreur Imagen" }), {
-            status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
+          return jsonError(imagenRes.status === 429 ? 429 : 500, getProviderErrorMessage(imagenRes.status, errText, "Erreur Imagen"));
         }
 
         const imagenData = await imagenRes.json();
