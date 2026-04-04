@@ -82,7 +82,7 @@ const initialState = {
   format: '9:16' as Format,
   input_image_url: '',
   input_image_description: '',
-  input_photos: [] as string[],
+  input_photos: [] as { url: string; description: string }[],
   input_text: '',
   idea_chosen: '',
   options: {
