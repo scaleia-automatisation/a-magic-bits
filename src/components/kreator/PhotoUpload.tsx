@@ -28,10 +28,15 @@ const PhotoUpload = () => {
       return;
     }
 
-    const url = URL.createObjectURL(file);
-    const newPhotos = [...input_photos];
-    newPhotos[index] = { url, description: newPhotos[index]?.description || '' };
-    setInputPhotos(newPhotos);
+    // Convert to base64 for AI vision analysis
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      const newPhotos = [...input_photos];
+      newPhotos[index] = { url: base64, description: newPhotos[index]?.description || '' };
+      setInputPhotos(newPhotos);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleRemove = (index: number) => {

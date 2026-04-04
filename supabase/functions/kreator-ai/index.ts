@@ -9,7 +9,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { action, messages, system_prompt, model, prompt, size, quality, ai_model } = await req.json();
+    const { action, messages, system_prompt, model, prompt, size, quality, ai_model, image_base64s } = await req.json();
 
     // Determine which API key to use based on model
     const isGeminiModel = ["nano-banana-2", "nano-banana-pro", "imagen"].includes(ai_model || model || "");
@@ -202,6 +202,31 @@ serve(async (req) => {
     if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
 
     const selectedModel = model || "gpt-4o";
+    
+    // Build messages - if image_base64s provided, use vision format
+    const builtMessages: any[] = [];
+    if (system_prompt) {
+      builtMessages.push({ role: "system", content: system_prompt });
+    }
+    
+    if (image_base64s && image_base64s.length > 0) {
+      // Build multimodal message with images + text
+      const userContent: any[] = [];
+      for (const b64 of image_base64s) {
+        // b64 is "data:image/...;base64,..." format
+        userContent.push({
+          type: "image_url",
+          image_url: { url: b64, detail: "low" },
+        });
+      }
+      // Add text content from messages
+      const textContent = messages.map((m: any) => m.content).join('\n');
+      userContent.push({ type: "text", text: textContent });
+      builtMessages.push({ role: "user", content: userContent });
+    } else {
+      builtMessages.push(...messages);
+    }
+
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -210,10 +235,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: selectedModel,
-        messages: [
-          ...(system_prompt ? [{ role: "system", content: system_prompt }] : []),
-          ...messages,
-        ],
+        messages: builtMessages,
       }),
     });
 

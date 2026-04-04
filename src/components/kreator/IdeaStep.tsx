@@ -75,7 +75,8 @@ const IdeaStep = () => {
     setLoadingImageIdea(true);
     try {
       const result = await generateIdeaFromImages({
-        imageDescriptions: uploadedPhotos.map(p => p.description?.trim() || 'Image uploadée — analyser visuellement'),
+        imageDescriptions: uploadedPhotos.map(p => p.description?.trim() || ''),
+        imageBase64s: uploadedPhotos.map(p => p.url),
         contentType: type,
         objective,
         format,
