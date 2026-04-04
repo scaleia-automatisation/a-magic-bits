@@ -97,7 +97,7 @@ const GenerationStep = () => {
         status: 'done',
       });
 
-      setResultUrl(imageUrl);
+      setResultUrl(contentUrl);
       setCreditsUsed(creditsNeeded);
       setCaption(captionResult);
       setStatus('done');
