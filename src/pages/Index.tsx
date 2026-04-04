@@ -26,7 +26,15 @@ const Index = () => {
           <span className="text-lg md:text-xl font-black gradient-text cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
             Kréator
           </span>
-          <div className="flex items-center gap-2 md:gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground h-9 w-9"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
+            <div className="flex items-center gap-2 md:gap-4">
             {user ? (
               <>
                 <div className="hidden md:flex items-center gap-3">
