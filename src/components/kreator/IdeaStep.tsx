@@ -21,6 +21,8 @@ const IdeaStep = () => {
   const [showIdeas, setShowIdeas] = useState(false);
   const [showIdeaFields, setShowIdeaFields] = useState(false);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
+  const [generatedImageIdea, setGeneratedImageIdea] = useState('');
+  const [loadingImageIdea, setLoadingImageIdea] = useState(false);
 
   const isVideo = type === 'video';
 
