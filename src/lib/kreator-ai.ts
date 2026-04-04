@@ -98,7 +98,7 @@ Génère une idée originale inspirée des images de référence.`;
   }
 }
 
-
+export async function generatePrompt(params: {
   contentType: string;
   format: string;
   objective: string;
