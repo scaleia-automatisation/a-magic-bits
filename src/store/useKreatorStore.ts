@@ -79,6 +79,7 @@ const initialState = {
   slides_count: 2,
   ai_model: 'dall-e-3' as AIModel,
   objective: '',
+  render_style: '',
   company_activity: '',
   company_sector: '',
   format: '9:16' as Format,
