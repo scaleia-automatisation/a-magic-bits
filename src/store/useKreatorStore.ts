@@ -84,6 +84,7 @@ const initialState = {
   render_style: '',
   company_activity: '',
   company_sector: '',
+  video_render_style: '',
   format: '9:16' as Format,
   input_image_url: '',
   input_image_description: '',
