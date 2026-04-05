@@ -59,7 +59,8 @@ const objectives = [
 const ContentTypeStep = () => {
   const {
     type, setType, slides_count, setSlidesCount,
-    ai_model, setAiModel, objective, setObjective
+    ai_model, setAiModel, objective, setObjective,
+    render_style, setRenderStyle
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
