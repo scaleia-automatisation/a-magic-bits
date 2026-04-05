@@ -28,6 +28,8 @@ interface KreatorState {
   setAiModel: (model: AIModel) => void;
   objective: string;
   setObjective: (obj: string) => void;
+  render_style: string;
+  setRenderStyle: (val: string) => void;
   company_activity: string;
   setCompanyActivity: (val: string) => void;
   company_sector: string;
