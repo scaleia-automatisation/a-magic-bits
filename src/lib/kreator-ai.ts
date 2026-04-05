@@ -127,9 +127,38 @@ export async function generatePrompt(params: {
   paletteHex: string[];
   imageDescription: string;
   referenceImageCount?: number;
+  aiModel?: string;
 }) {
+  const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
+  const formatLabelEn = params.format === '1:1' ? 'square (1:1)' : params.format === '16:9' ? 'wide horizontal (16:9)' : 'vertical full-screen (9:16)';
+  
+  const aiModelName = params.aiModel || 'dall-e-3';
+  let formatAdaptation = '';
+  if (['imagen-4', 'imagen-4-ultra', 'imagen-4-fast'].includes(aiModelName)) {
+    formatAdaptation = `Modèle IA: ${aiModelName} — Préciser explicitement "aspect ratio ${params.format}" dans le prompt EN.`;
+  } else if (aiModelName === 'dall-e-3') {
+    const dalleFormat = params.format === '1:1' ? 'square image' : params.format === '16:9' ? 'wide cinematic frame' : 'vertical mobile format';
+    formatAdaptation = `Modèle IA: DALL·E 3 — Intégrer "${dalleFormat}" dans la description du prompt EN.`;
+  } else if (['veo-2', 'veo-3', 'veo-3-fast', 'veo-3.1', 'veo-3.1-fast'].includes(aiModelName)) {
+    const veoFormat = params.format === '9:16' ? 'vertical 9:16 video' : params.format === '16:9' ? 'horizontal 16:9 video' : 'square 1:1 video';
+    formatAdaptation = `Modèle IA: ${aiModelName} — Préciser "${veoFormat}" et optimiser le cadrage pour ce ratio.`;
+  } else if (aiModelName === 'sora-2') {
+    formatAdaptation = `Modèle IA: Sora 2 — Préciser "aspect ratio ${params.format}" et adapter le type de framing.`;
+  }
+
   const systemPrompt = `Tu es un expert en création de prompts pour la génération d'images et vidéos par IA.
 Génère un prompt FR et EN de 300 à 350 mots chacun.
+
+RÈGLE ABSOLUE — FORMAT / RATIO :
+Tu DOIS STRICTEMENT respecter le format ${params.format} (${formatLabel}).
+- Si FORMAT = "1:1" → visuel carré parfaitement centré
+- Si FORMAT = "16:9" → visuel horizontal large
+- Si FORMAT = "9:16" → visuel vertical plein écran, optimisé mobile
+Le ratio ${params.format} est PRIORITAIRE sur tout le reste. Aucune génération ne doit ignorer ce paramètre.
+Adapter la composition, le cadrage et le framing à ce ratio. Éviter tout élément coupé ou hors zone visible.
+${params.contentType === 'video' ? `Pour la vidéo : TOUJOURS respecter le ratio ${params.format}, cadrage optimisé pour mobile si 9:16, sujet centré et lisible.` : `Pour ${params.contentType === 'carousel' ? 'le carrousel' : "l'image"} : adapter la composition au ratio (centrage, marges, lisibilité), optimiser pour affichage plateforme.`}
+${formatAdaptation}
+Préciser explicitement "aspect ratio ${params.format}" (ou "${formatLabelEn}") dans le prompt EN généré.
 
 CONTEXTE COMMUN OBLIGATOIRE — Tu DOIS intégrer TOUTES les informations suivantes dans le prompt généré si elles sont fournies :
 1. ACTIVITÉ DE L'ENTREPRISE et SECTEUR D'ACTIVITÉ : adapter le vocabulaire, l'ambiance, les décors et les éléments visuels au domaine métier

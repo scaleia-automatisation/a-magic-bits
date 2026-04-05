@@ -55,6 +55,7 @@ const PromptStep = () => {
         paletteHex: options.palette_hex,
         imageDescription: getImageSynthesis(),
         referenceImageCount: input_photos.filter(p => p.url).length,
+        aiModel: ai_model,
       });
 
       setPromptFr(result.prompt_fr || '');
