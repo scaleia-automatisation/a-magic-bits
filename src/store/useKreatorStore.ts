@@ -30,6 +30,8 @@ interface KreatorState {
   setObjective: (obj: string) => void;
   render_style: string;
   setRenderStyle: (val: string) => void;
+  video_render_style: string;
+  setVideoRenderStyle: (val: string) => void;
   company_activity: string;
   setCompanyActivity: (val: string) => void;
   company_sector: string;
@@ -82,6 +84,7 @@ const initialState = {
   render_style: '',
   company_activity: '',
   company_sector: '',
+  video_render_style: '',
   format: '9:16' as Format,
   input_image_url: '',
   input_image_description: '',
@@ -119,6 +122,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setAiModel: (model) => set({ ai_model: model }),
   setObjective: (obj) => set({ objective: obj }),
   setRenderStyle: (val) => set({ render_style: val }),
+  setVideoRenderStyle: (val) => set({ video_render_style: val }),
   setCompanyActivity: (val) => set({ company_activity: val }),
   setCompanySector: (val) => set({ company_sector: val }),
   setFormat: (format) => set({ format }),

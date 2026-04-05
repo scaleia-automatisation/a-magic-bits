@@ -43,6 +43,17 @@ const renderStyles = [
   'Style réseaux sociaux (moderne, tendance)',
 ];
 
+const videoRenderStyles = [
+  'Lifestyle (usage réel)',
+  'Premium / luxe (cinématographique)',
+  'Storytelling émotionnel',
+  'UGC (authentique, mobile)',
+  'Publicité directe (conversion)',
+  'Minimaliste (clean, impact rapide)',
+  'Avant / après (transformation)',
+  'Démo produit (mise en valeur)',
+];
+
 const objectives = [
   'Présenter le produit ou service',
   'Développer la notoriété de la marque',
@@ -60,14 +71,14 @@ const ContentTypeStep = () => {
   const {
     type, setType, slides_count, setSlidesCount,
     ai_model, setAiModel, objective, setObjective,
-    render_style, setRenderStyle
+    render_style, setRenderStyle,
+    video_render_style, setVideoRenderStyle
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
 
   return (
     <StepContainer stepNumber={1} title="Type de contenu">
-      {/* Content type cards */}
       <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
         {contentTypes.map(({ type: t, label, icon: Icon }) => (
           <button
@@ -90,7 +101,6 @@ const ContentTypeStep = () => {
         ))}
       </div>
 
-      {/* Slides count for carousel */}
       {type === 'carousel' && (
         <div className="mb-6">
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Nombre de slides</label>
@@ -112,7 +122,6 @@ const ContentTypeStep = () => {
         </div>
       )}
 
-      {/* AI Model */}
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">Modèle IA</label>
         <Select value={ai_model} onValueChange={(v) => setAiModel(v as AIModel)}>
@@ -129,8 +138,7 @@ const ContentTypeStep = () => {
         </Select>
       </div>
 
-      {/* Objective */}
-      <div>
+      <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">Objectif du contenu</label>
         <Select value={objective} onValueChange={setObjective}>
           <SelectTrigger className="bg-card border-foreground/10 text-foreground">
@@ -149,22 +157,41 @@ const ContentTypeStep = () => {
         </Select>
       </div>
 
-      {/* Render Style */}
-      <div>
-        <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu</label>
-        <Select value={render_style} onValueChange={setRenderStyle}>
-          <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-            <SelectValue placeholder="Choisir un type de rendu..." />
-          </SelectTrigger>
-          <SelectContent className="bg-card border-foreground/10">
-            {renderStyles.map((r) => (
-              <SelectItem key={r} value={r} className="text-foreground focus:bg-secondary/20">
-                {r}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {type !== 'video' && (
+        <div>
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu</label>
+          <Select value={render_style} onValueChange={setRenderStyle}>
+            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+              <SelectValue placeholder="Choisir un type de rendu..." />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-foreground/10">
+              {renderStyles.map((r) => (
+                <SelectItem key={r} value={r} className="text-foreground focus:bg-secondary/20">
+                  {r}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {type === 'video' && (
+        <div>
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu vidéo</label>
+          <Select value={video_render_style} onValueChange={setVideoRenderStyle}>
+            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+              <SelectValue placeholder="Choisir un type de rendu vidéo..." />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-foreground/10">
+              {videoRenderStyles.map((r) => (
+                <SelectItem key={r} value={r} className="text-foreground focus:bg-secondary/20">
+                  {r}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
     </StepContainer>
   );
 };
