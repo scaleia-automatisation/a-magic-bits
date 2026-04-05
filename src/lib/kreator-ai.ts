@@ -129,6 +129,7 @@ export async function generatePrompt(params: {
   referenceImageCount?: number;
   aiModel?: string;
   renderStyle?: string;
+  videoRenderStyle?: string;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
   
@@ -151,6 +152,48 @@ export async function generatePrompt(params: {
     : params.contentType === 'carousel'
       ? `Pour le carrousel : adapter la composition au ratio (centrage, marges, lisibilité), cohérence visuelle parfaite entre slides, optimiser pour affichage plateforme.`
       : `Pour l'image : adapter la composition au ratio (centrage, marges, lisibilité), optimiser pour affichage plateforme.`;
+
+  // Video-specific directives
+  const videoDirectives = params.contentType === 'video' ? `
+
+CONSIGNES VIDÉO OBLIGATOIRES :
+🎬 Logique de création (niveau production) :
+- Micro-vidéo ultra impactante (6–8 secondes)
+- Émotion naturelle, réalisme élevé, rythme rapide, message clair + CTA
+- 2 à 3 plans MAX (pas plus), chaque plan = 2–3 secondes
+- 1 idée forte par vidéo
+- Continuité visuelle parfaite (lumière, sujet, couleurs)
+- Mouvement de caméra subtil mais professionnel
+
+🎥 Structure du script (obligatoire) :
+Plan 1 (Hook – 0-2s) : Attirer l'attention immédiatement, mouvement léger caméra, déclencheur émotionnel ou curiosité
+Plan 2 (Value – 2-5s) : Montrer usage / bénéfice, interaction humaine ou contexte réel, montée émotionnelle
+Plan 3 (Impact + CTA – 5-8s) : Image forte / résultat, texte court, call to action
+
+🎧 Direction sonore :
+- Bruitages réalistes (pas exagérés)
+- Musique cohérente avec l'émotion (douce → lifestyle, épique → premium, rythmée → pub)
+- Voix off optionnelle : naturelle, humaine, courte, max 1 phrase
+
+🎥 Mouvements caméra pro :
+- Travelling lent (cinéma), zoom léger (focus émotion), handheld subtil (UGC réaliste)
+- Slow motion léger (premium), rack focus (focus dynamique)
+
+✨ Effets visuels (réalisme avant tout) :
+- Lumière naturelle cohérente, profondeur de champ, motion blur léger
+- Reflets réalistes, aucun effet "fake IA"
+
+🧠 Niveau expert :
+- Micro-expressions humaines = + engagement
+- Imperfections réalistes = + crédibilité
+- Rythme rapide mais fluide = + rétention
+- 1 message = + conversion
+
+${params.videoRenderStyle ? `TYPE DE RENDU VIDÉO SÉLECTIONNÉ : "${params.videoRenderStyle}" — Adapter TOUTE la direction artistique, l'ambiance, le cadrage et le style de montage à ce rendu vidéo.` : ''}
+` : '';
+
+  // Determine the active render style
+  const activeRenderStyle = params.contentType === 'video' ? params.videoRenderStyle : params.renderStyle;
 
   const systemPrompt = `Tu es un expert en création de prompts pour la génération d'images et vidéos par IA.
 
@@ -175,10 +218,10 @@ RÈGLES PLATEFORMES :
 CONTEXTE COMMUN OBLIGATOIRE — Tu DOIS intégrer TOUTES les informations suivantes dans le prompt généré si elles sont fournies :
 1. ACTIVITÉ DE L'ENTREPRISE et SECTEUR D'ACTIVITÉ : adapter le vocabulaire, l'ambiance, les décors et les éléments visuels au domaine métier
 2. TYPE DE CONTENU : adapter le format et la structure du prompt (image, carrousel, vidéo)
-3. OBJECTIF DU CONTENU (TRÈS IMPORTANT) : c'est le fil conducteur principal, tout le prompt doit servir cet objectif (vendre, engager, éduquer, inspirer…)
-4. TYPE DE RENDU : définit l'ambiance visuelle et le style de mise en scène du contenu (mise en situation réelle, fond blanc, luxe, storytelling, etc.). Adapter le prompt pour refléter fidèlement ce rendu
-5. ANALYSE DES IMAGES DE RÉFÉRENCE (OBLIGATOIRE SI PRÉSENTES) : les images doivent TOUJOURS être analysées et intégrées de façon cohérente avec l'objectif et l'idée. Elles définissent l'univers visuel, l'ambiance, les couleurs et les éléments clés du contenu à générer
-6. IDÉE DÉCRITE ou IDÉE CHOISIE : le sujet central du visuel, à respecter fidèlement. Les images de référence viennent enrichir et illustrer cette idée
+3. OBJECTIF DU CONTENU (TRÈS IMPORTANT) : c'est le fil conducteur principal, tout le prompt doit servir cet objectif
+4. TYPE DE RENDU${params.contentType === 'video' ? ' VIDÉO' : ''} : définit l'ambiance visuelle et le style de mise en scène du contenu. Adapter le prompt pour refléter fidèlement ce rendu
+5. ANALYSE DES IMAGES DE RÉFÉRENCE (OBLIGATOIRE SI PRÉSENTES) : les images doivent TOUJOURS être analysées et intégrées de façon cohérente avec l'objectif et l'idée
+6. IDÉE DÉCRITE ou IDÉE CHOISIE : le sujet central du visuel, à respecter fidèlement
 7. RÉGLAGES AVANCÉS (ton, style visuel, texte overlay, palette) : appliquer systématiquement s'ils sont actifs
 
 Tous ces éléments forment un CONTEXTE UNIFIÉ et COHÉRENT. Ne pas les traiter séparément mais les fusionner en un prompt fluide et naturel.
@@ -191,13 +234,12 @@ CONSIGNES OBLIGATOIRES pour le prompt généré :
 - Optimisé pour les réseaux sociaux (Instagram, TikTok, LinkedIn, Facebook)
 - NE JAMAIS inclure de texte, lettres, mots ou typographie DANS l'image générée SAUF si l'utilisateur a explicitement demandé du texte overlay ou si l'image de base en contenait
 - Si du texte overlay est demandé : typographie parfaitement lisible, stylisée et professionnelle
-- Pour les vidéos : décrire le contenu comme le ferait un réalisateur expert de renommée internationale
 - Éviter absolument les éléments flous, déformés, artificiels ou « plastiques »
 - Respecter les codes couleurs et le style de la marque si fournis
 - Pour les carrousels : cohérence visuelle parfaite entre slides (même palette, même style, même ambiance, même éclairage)
 - Préciser l'éclairage, l'angle de caméra, la profondeur de champ, le bokeh et l'ambiance
 - Le prompt doit être directement utilisable par un modèle de génération d'image IA
-
+${videoDirectives}
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","prompt_en":"... (traduction anglaise fidèle du prompt FR, optimisée pour le modèle IA)","palette_used":["#HEX"],"marketing_angle":"..."}`;
 
@@ -209,7 +251,7 @@ ${params.companySector ? `Secteur d'activité: ${params.companySector}` : 'Secte
 Type de contenu: ${params.contentType}
 Format: ${params.format}
 ${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
-${params.renderStyle ? `Type de rendu: ${params.renderStyle}` : 'Type de rendu: automatique'}
+${activeRenderStyle ? `Type de rendu${params.contentType === 'video' ? ' vidéo' : ''}: ${activeRenderStyle}` : 'Type de rendu: automatique'}
 
 === IDÉE ===
 ${params.inputText ? `Idée décrite: "${params.inputText}"` : ''}

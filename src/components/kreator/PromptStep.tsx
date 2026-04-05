@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Copy, Pencil, Loader2 } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { toast } from 'sonner';
-import { generatePrompt } from '@/lib/kreator-ai';
+import { generatePrompt, callKreatorAI } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 
 const PromptStep = () => {
@@ -15,10 +15,9 @@ const PromptStep = () => {
     type, format, objective, company_activity, company_sector,
     input_text, idea_chosen, input_image_description, input_photos,
     options, slides_count, status, setStatus, setResultUrl, ai_model,
-    render_style
+    render_style, video_render_style
   } = useKreatorStore();
 
-  // Synthesize reference image descriptions — always include uploaded images
   const getImageSynthesis = () => {
     const uploadedPhotos = input_photos.filter(p => p.url);
     if (uploadedPhotos.length === 0) return input_image_description || '';
@@ -29,8 +28,11 @@ const PromptStep = () => {
     if (uploadedPhotos.length === 1) return `Image de référence : ${described[0]}`;
     return `Synthèse de ${uploadedPhotos.length} images de référence : ${described.join(' | ')}. Créer un visuel cohérent qui fusionne harmonieusement ces éléments en lien avec l'objectif et l'idée.`;
   };
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [editingEn, setEditingEn] = useState(false);
+  const [isSyncingEn, setIsSyncingEn] = useState(false);
+  const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleGenerate = async () => {
     if (!user) {
@@ -58,11 +60,11 @@ const PromptStep = () => {
         referenceImageCount: input_photos.filter(p => p.url).length,
         aiModel: ai_model,
         renderStyle: render_style,
+        videoRenderStyle: video_render_style,
       });
 
       setPromptFr(result.prompt_fr || '');
       setPromptEn(result.prompt_en || '');
-      // Reset generation status so user can generate new content with the new prompt
       if (status === 'done' || status === 'error') {
         setStatus('idle');
         setResultUrl('');
@@ -75,6 +77,38 @@ const PromptStep = () => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const syncEnglishPrompt = useCallback(async (frenchText: string) => {
+    if (!frenchText.trim()) return;
+    setIsSyncingEn(true);
+    try {
+      const data = await callKreatorAI({
+        action: 'translate_prompt',
+        messages: [{ role: 'user', content: frenchText }],
+        system_prompt: `Tu es un traducteur expert. Traduis fidèlement ce prompt français en anglais, optimisé pour un modèle de génération d'image/vidéo IA. Conserve tous les détails techniques, le style, l'ambiance et les instructions. RETOURNE UNIQUEMENT la traduction anglaise, rien d'autre.`,
+      });
+      const content = data?.choices?.[0]?.message?.content;
+      if (content) {
+        setPromptEn(content.trim());
+      }
+    } catch (err) {
+      console.error('Erreur sync EN:', err);
+    } finally {
+      setIsSyncingEn(false);
+    }
+  }, [setPromptEn]);
+
+  const handleFrChange = (newText: string) => {
+    setPromptFr(newText);
+    if (status === 'done' || status === 'error') {
+      setStatus('idle');
+      setResultUrl('');
+    }
+    if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+    syncTimeoutRef.current = setTimeout(() => {
+      syncEnglishPrompt(newText);
+    }, 1500);
   };
 
   const handleCopy = (text: string) => {
@@ -113,7 +147,7 @@ const PromptStep = () => {
             </div>
             <Textarea
               value={prompt_fr}
-              onChange={(e) => setPromptFr(e.target.value)}
+              onChange={(e) => handleFrChange(e.target.value)}
               className="bg-card border-foreground/10 text-foreground text-sm min-h-[80px] resize-none"
             />
             <div className="flex gap-2 mt-2">
@@ -125,7 +159,9 @@ const PromptStep = () => {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-foreground">🇬🇧 Prompt English</label>
+              <label className="text-sm font-medium text-foreground">
+                🇬🇧 Prompt English {isSyncingEn && <Loader2 className="w-3 h-3 animate-spin inline ml-1" />}
+              </label>
               <span className="text-xs text-muted-foreground">{prompt_en.length} car.</span>
             </div>
             <Textarea
@@ -144,7 +180,6 @@ const PromptStep = () => {
             </div>
           </div>
 
-          {/* Re-generate button - bigger and bolder */}
           <div className="flex justify-center mt-6">
             <Button
               onClick={handleGenerate}
