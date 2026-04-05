@@ -30,6 +30,8 @@ interface KreatorState {
   setObjective: (obj: string) => void;
   render_style: string;
   setRenderStyle: (val: string) => void;
+  video_render_style: string;
+  setVideoRenderStyle: (val: string) => void;
   company_activity: string;
   setCompanyActivity: (val: string) => void;
   company_sector: string;
