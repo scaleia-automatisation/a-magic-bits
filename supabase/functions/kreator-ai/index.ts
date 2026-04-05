@@ -149,9 +149,12 @@ serve(async (req) => {
       const veoModel = veoModelMap[ai_model] || "veo-3.0-generate-001";
       const aspectRatio = size === "9:16" ? "9:16" : "16:9";
 
-      const veoStartRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${veoModel}:predictLongRunning?key=${VERTEX_API_KEY}`, {
+      const veoStartRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${veoModel}:predictLongRunning`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": VERTEX_API_KEY,
+        },
         body: JSON.stringify({
           instances: [{ prompt: prompt || "" }],
           parameters: { aspectRatio },
@@ -180,9 +183,12 @@ serve(async (req) => {
         if (operation?.done) break;
         await new Promise((resolve) => setTimeout(resolve, 5000));
 
-        const pollRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${VERTEX_API_KEY}`, {
+        const pollRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/${operationName}`, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": VERTEX_API_KEY,
+          },
         });
 
         if (!pollRes.ok) {
