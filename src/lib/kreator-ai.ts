@@ -128,6 +128,7 @@ export async function generatePrompt(params: {
   imageDescription: string;
   referenceImageCount?: number;
   aiModel?: string;
+  renderStyle?: string;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
   
@@ -175,9 +176,10 @@ CONTEXTE COMMUN OBLIGATOIRE — Tu DOIS intégrer TOUTES les informations suivan
 1. ACTIVITÉ DE L'ENTREPRISE et SECTEUR D'ACTIVITÉ : adapter le vocabulaire, l'ambiance, les décors et les éléments visuels au domaine métier
 2. TYPE DE CONTENU : adapter le format et la structure du prompt (image, carrousel, vidéo)
 3. OBJECTIF DU CONTENU (TRÈS IMPORTANT) : c'est le fil conducteur principal, tout le prompt doit servir cet objectif (vendre, engager, éduquer, inspirer…)
-4. ANALYSE DES IMAGES DE RÉFÉRENCE (OBLIGATOIRE SI PRÉSENTES) : les images doivent TOUJOURS être analysées et intégrées de façon cohérente avec l'objectif et l'idée. Elles définissent l'univers visuel, l'ambiance, les couleurs et les éléments clés du contenu à générer
-5. IDÉE DÉCRITE ou IDÉE CHOISIE : le sujet central du visuel, à respecter fidèlement. Les images de référence viennent enrichir et illustrer cette idée
-6. RÉGLAGES AVANCÉS (ton, style visuel, texte overlay, palette) : appliquer systématiquement s'ils sont actifs
+4. TYPE DE RENDU : définit l'ambiance visuelle et le style de mise en scène du contenu (mise en situation réelle, fond blanc, luxe, storytelling, etc.). Adapter le prompt pour refléter fidèlement ce rendu
+5. ANALYSE DES IMAGES DE RÉFÉRENCE (OBLIGATOIRE SI PRÉSENTES) : les images doivent TOUJOURS être analysées et intégrées de façon cohérente avec l'objectif et l'idée. Elles définissent l'univers visuel, l'ambiance, les couleurs et les éléments clés du contenu à générer
+6. IDÉE DÉCRITE ou IDÉE CHOISIE : le sujet central du visuel, à respecter fidèlement. Les images de référence viennent enrichir et illustrer cette idée
+7. RÉGLAGES AVANCÉS (ton, style visuel, texte overlay, palette) : appliquer systématiquement s'ils sont actifs
 
 Tous ces éléments forment un CONTEXTE UNIFIÉ et COHÉRENT. Ne pas les traiter séparément mais les fusionner en un prompt fluide et naturel.
 
@@ -207,6 +209,7 @@ ${params.companySector ? `Secteur d'activité: ${params.companySector}` : 'Secte
 Type de contenu: ${params.contentType}
 Format: ${params.format}
 ${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
+${params.renderStyle ? `Type de rendu: ${params.renderStyle}` : 'Type de rendu: automatique'}
 
 === IDÉE ===
 ${params.inputText ? `Idée décrite: "${params.inputText}"` : ''}

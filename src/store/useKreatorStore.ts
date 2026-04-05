@@ -28,6 +28,8 @@ interface KreatorState {
   setAiModel: (model: AIModel) => void;
   objective: string;
   setObjective: (obj: string) => void;
+  render_style: string;
+  setRenderStyle: (val: string) => void;
   company_activity: string;
   setCompanyActivity: (val: string) => void;
   company_sector: string;
@@ -77,6 +79,7 @@ const initialState = {
   slides_count: 2,
   ai_model: 'dall-e-3' as AIModel,
   objective: '',
+  render_style: '',
   company_activity: '',
   company_sector: '',
   format: '9:16' as Format,
@@ -115,6 +118,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setSlidesCount: (count) => set({ slides_count: count }),
   setAiModel: (model) => set({ ai_model: model }),
   setObjective: (obj) => set({ objective: obj }),
+  setRenderStyle: (val) => set({ render_style: val }),
   setCompanyActivity: (val) => set({ company_activity: val }),
   setCompanySector: (val) => set({ company_sector: val }),
   setFormat: (format) => set({ format }),

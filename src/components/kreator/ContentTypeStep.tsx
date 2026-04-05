@@ -25,6 +25,24 @@ const videoModels: { value: AIModel; label: string }[] = [
   { value: 'veo-3.1-fast', label: 'Veo 3.1 Fast' },
 ];
 
+const renderStyles = [
+  'Mise en situation réelle (utilisation dans la vie quotidienne)',
+  'Fond blanc / neutre (propre, e-commerce)',
+  'Style haut de gamme / luxe (éclairage travaillé, rendu premium)',
+  'Ambiance naturelle (lumière douce, aspect authentique)',
+  'Style storytelling (qui raconte une histoire)',
+  'Moment de vie (spontané, humain, naturel)',
+  'Avant / après (montre une transformation)',
+  'Style épuré / minimaliste (peu d\'éléments)',
+  'Style créatif (original, différent)',
+  'Réaliste avec effet "waouh" (surprenant mais crédible)',
+  'Rendu produit amélioré (plus net, plus propre)',
+  'Gros plan détail (zoom sur texture / qualité)',
+  'Visuel avec texte (explicatif, marketing)',
+  'Style utilisateur (pris sur le vif, authentique)',
+  'Style réseaux sociaux (moderne, tendance)',
+];
+
 const objectives = [
   'Présenter le produit ou service',
   'Développer la notoriété de la marque',
@@ -41,7 +59,8 @@ const objectives = [
 const ContentTypeStep = () => {
   const {
     type, setType, slides_count, setSlidesCount,
-    ai_model, setAiModel, objective, setObjective
+    ai_model, setAiModel, objective, setObjective,
+    render_style, setRenderStyle
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
@@ -126,6 +145,23 @@ const ContentTypeStep = () => {
             <SelectItem value="custom" className="text-foreground focus:bg-secondary/20">
               Objectif personnalisé
             </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Render Style */}
+      <div>
+        <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu</label>
+        <Select value={render_style} onValueChange={setRenderStyle}>
+          <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+            <SelectValue placeholder="Choisir un type de rendu..." />
+          </SelectTrigger>
+          <SelectContent className="bg-card border-foreground/10">
+            {renderStyles.map((r) => (
+              <SelectItem key={r} value={r} className="text-foreground focus:bg-secondary/20">
+                {r}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

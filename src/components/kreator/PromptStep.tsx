@@ -14,7 +14,8 @@ const PromptStep = () => {
     prompt_fr, setPromptFr, prompt_en, setPromptEn,
     type, format, objective, company_activity, company_sector,
     input_text, idea_chosen, input_image_description, input_photos,
-    options, slides_count, status, setStatus, setResultUrl, ai_model
+    options, slides_count, status, setStatus, setResultUrl, ai_model,
+    render_style
   } = useKreatorStore();
 
   // Synthesize reference image descriptions — always include uploaded images
@@ -56,6 +57,7 @@ const PromptStep = () => {
         imageDescription: getImageSynthesis(),
         referenceImageCount: input_photos.filter(p => p.url).length,
         aiModel: ai_model,
+        renderStyle: render_style,
       });
 
       setPromptFr(result.prompt_fr || '');
