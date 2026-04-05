@@ -148,6 +148,23 @@ const ContentTypeStep = () => {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Render Style */}
+      <div>
+        <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu</label>
+        <Select value={render_style} onValueChange={setRenderStyle}>
+          <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+            <SelectValue placeholder="Choisir un type de rendu..." />
+          </SelectTrigger>
+          <SelectContent className="bg-card border-foreground/10">
+            {renderStyles.map((r) => (
+              <SelectItem key={r} value={r} className="text-foreground focus:bg-secondary/20">
+                {r}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </StepContainer>
   );
 };
