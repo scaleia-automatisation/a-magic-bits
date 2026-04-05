@@ -208,6 +208,7 @@ ${params.companySector ? `Secteur d'activité: ${params.companySector}` : 'Secte
 Type de contenu: ${params.contentType}
 Format: ${params.format}
 ${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
+${params.renderStyle ? `Type de rendu: ${params.renderStyle}` : 'Type de rendu: automatique'}
 
 === IDÉE ===
 ${params.inputText ? `Idée décrite: "${params.inputText}"` : ''}

@@ -57,6 +57,7 @@ const PromptStep = () => {
         imageDescription: getImageSynthesis(),
         referenceImageCount: input_photos.filter(p => p.url).length,
         aiModel: ai_model,
+        renderStyle: render_style,
       });
 
       setPromptFr(result.prompt_fr || '');
