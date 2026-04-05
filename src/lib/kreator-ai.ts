@@ -130,63 +130,74 @@ export async function generatePrompt(params: {
   aiModel?: string;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
-  const formatLabelEn = params.format === '1:1' ? 'square (1:1)' : params.format === '16:9' ? 'wide horizontal (16:9)' : 'vertical full-screen (9:16)';
   
   const aiModelName = params.aiModel || 'dall-e-3';
   let formatAdaptation = '';
   if (['imagen-4', 'imagen-4-ultra', 'imagen-4-fast'].includes(aiModelName)) {
-    formatAdaptation = `Modèle IA: ${aiModelName} — Préciser explicitement "aspect ratio ${params.format}" dans le prompt EN.`;
+    formatAdaptation = `Modèle IA: ${aiModelName} — Préciser explicitement "aspect ratio ${params.format}" dans le prompt FR.`;
   } else if (aiModelName === 'dall-e-3') {
-    const dalleFormat = params.format === '1:1' ? 'square image' : params.format === '16:9' ? 'wide cinematic frame' : 'vertical mobile format';
-    formatAdaptation = `Modèle IA: DALL·E 3 — Intégrer "${dalleFormat}" dans la description du prompt EN.`;
+    const dalleFormat = params.format === '1:1' ? 'image carrée' : params.format === '16:9' ? 'cadre cinématographique large' : 'format vertical mobile';
+    formatAdaptation = `Modèle IA: DALL·E 3 — Intégrer "${dalleFormat}" dans la description du prompt FR.`;
   } else if (['veo-2', 'veo-3', 'veo-3-fast', 'veo-3.1', 'veo-3.1-fast'].includes(aiModelName)) {
-    const veoFormat = params.format === '9:16' ? 'vertical 9:16 video' : params.format === '16:9' ? 'horizontal 16:9 video' : 'square 1:1 video';
+    const veoFormat = params.format === '9:16' ? 'vidéo verticale 9:16' : params.format === '16:9' ? 'vidéo horizontale 16:9' : 'vidéo carrée 1:1';
     formatAdaptation = `Modèle IA: ${aiModelName} — Préciser "${veoFormat}" et optimiser le cadrage pour ce ratio.`;
   } else if (aiModelName === 'sora-2') {
     formatAdaptation = `Modèle IA: Sora 2 — Préciser "aspect ratio ${params.format}" et adapter le type de framing.`;
   }
 
+  const contentTypeAdaptation = params.contentType === 'video'
+    ? `Pour la vidéo : TOUJOURS respecter le ratio ${params.format}, cadrage optimisé pour mobile si 9:16, sujet centré et lisible.`
+    : params.contentType === 'carousel'
+      ? `Pour le carrousel : adapter la composition au ratio (centrage, marges, lisibilité), cohérence visuelle parfaite entre slides, optimiser pour affichage plateforme.`
+      : `Pour l'image : adapter la composition au ratio (centrage, marges, lisibilité), optimiser pour affichage plateforme.`;
+
   const systemPrompt = `Tu es un expert en création de prompts pour la génération d'images et vidéos par IA.
-Génère un prompt FR et EN de 300 à 350 mots chacun.
+
+Génère un prompt FR de 300 à 350 mots.
 
 RÈGLE ABSOLUE — FORMAT / RATIO :
 Tu DOIS STRICTEMENT respecter le format ${params.format} (${formatLabel}).
 - Si FORMAT = "1:1" → visuel carré parfaitement centré
 - Si FORMAT = "16:9" → visuel horizontal large
 - Si FORMAT = "9:16" → visuel vertical plein écran, optimisé mobile
+
 Le ratio ${params.format} est PRIORITAIRE sur tout le reste. Aucune génération ne doit ignorer ce paramètre.
 Adapter la composition, le cadrage et le framing à ce ratio. Éviter tout élément coupé ou hors zone visible.
-${params.contentType === 'video' ? `Pour la vidéo : TOUJOURS respecter le ratio ${params.format}, cadrage optimisé pour mobile si 9:16, sujet centré et lisible.` : `Pour ${params.contentType === 'carousel' ? 'le carrousel' : "l'image"} : adapter la composition au ratio (centrage, marges, lisibilité), optimiser pour affichage plateforme.`}
+${contentTypeAdaptation}
 ${formatAdaptation}
-Préciser explicitement "aspect ratio ${params.format}" (ou "${formatLabelEn}") dans le prompt EN généré.
+Préciser explicitement "aspect ratio ${params.format}" dans le prompt français généré pour que l'image ou visuel produit respecte systématiquement le ratio.
+
+RÈGLES PLATEFORMES :
+- TikTok : images et carrousels → FORMAT = "9:16", vidéos → FORMAT = "16:9"
+- Instagram : posts images et carrousels → FORMAT = "1:1", stories → FORMAT = "1:1", vidéos → FORMAT = "9:16"
 
 CONTEXTE COMMUN OBLIGATOIRE — Tu DOIS intégrer TOUTES les informations suivantes dans le prompt généré si elles sont fournies :
 1. ACTIVITÉ DE L'ENTREPRISE et SECTEUR D'ACTIVITÉ : adapter le vocabulaire, l'ambiance, les décors et les éléments visuels au domaine métier
 2. TYPE DE CONTENU : adapter le format et la structure du prompt (image, carrousel, vidéo)
 3. OBJECTIF DU CONTENU (TRÈS IMPORTANT) : c'est le fil conducteur principal, tout le prompt doit servir cet objectif (vendre, engager, éduquer, inspirer…)
-4. ANALYSE DES IMAGES DE RÉFÉRENCE (OBLIGATOIRE SI PRÉSENTES) : les images de référence doivent TOUJOURS être analysées et intégrées dans le prompt de façon cohérente avec l'objectif et l'idée. Elles définissent l'univers visuel, l'ambiance, les couleurs et les éléments clés du contenu à générer
+4. ANALYSE DES IMAGES DE RÉFÉRENCE (OBLIGATOIRE SI PRÉSENTES) : les images doivent TOUJOURS être analysées et intégrées de façon cohérente avec l'objectif et l'idée. Elles définissent l'univers visuel, l'ambiance, les couleurs et les éléments clés du contenu à générer
 5. IDÉE DÉCRITE ou IDÉE CHOISIE : le sujet central du visuel, à respecter fidèlement. Les images de référence viennent enrichir et illustrer cette idée
 6. RÉGLAGES AVANCÉS (ton, style visuel, texte overlay, palette) : appliquer systématiquement s'ils sont actifs
 
 Tous ces éléments forment un CONTEXTE UNIFIÉ et COHÉRENT. Ne pas les traiter séparément mais les fusionner en un prompt fluide et naturel.
 
-CONSIGNES OBLIGATOIRES pour les prompts générés :
-- Le visuel DOIT être en qualité ULTRA HD 8K, photoréaliste et professionnel, indistinguable d'une vraie photo prise par un photographe professionnel
-- IMPÉRATIF : le rendu doit être ULTRA RÉALISTE, on ne doit JAMAIS pouvoir deviner que c'est une image générée par IA
-- Préciser des détails réalistes : grain de peau naturel, reflets naturels dans les yeux, imperfections subtiles, texture des matériaux authentique
+CONSIGNES OBLIGATOIRES pour le prompt généré :
+- Ultra HD, photo hyper réaliste et professionnel, indistinguable d'une vraie photo prise par un photographe professionnel
+- Rendu ULTRA RÉALISTE, on ne doit JAMAIS deviner que c'est une image générée par IA
+- Grain de peau naturel, reflets naturels dans les yeux, imperfections subtiles, texture des matériaux authentique
 - Éclairage naturel et cinématographique, ombres douces et réalistes
 - Optimisé pour les réseaux sociaux (Instagram, TikTok, LinkedIn, Facebook)
-- NE JAMAIS inclure de texte, lettres, mots ou typographie DANS l'image générée SAUF si l'utilisateur a explicitement demandé du texte overlay
-- Si du texte overlay est demandé : le rédiger comme le ferait un graphiste infographiste de renommée internationale expert en marketing et publicité, avec une typographie parfaitement lisible, stylisée et professionnelle
+- NE JAMAIS inclure de texte, lettres, mots ou typographie DANS l'image générée SAUF si l'utilisateur a explicitement demandé du texte overlay ou si l'image de base en contenait
+- Si du texte overlay est demandé : typographie parfaitement lisible, stylisée et professionnelle
 - Pour les vidéos : décrire le contenu comme le ferait un réalisateur expert de renommée internationale
 - Éviter absolument les éléments flous, déformés, artificiels ou « plastiques »
 - Respecter les codes couleurs et le style de la marque si fournis
-- Pour les carrousels : chaque slide doit avoir une cohérence visuelle parfaite (même palette, même style, même ambiance, même éclairage)
+- Pour les carrousels : cohérence visuelle parfaite entre slides (même palette, même style, même ambiance, même éclairage)
 - Préciser l'éclairage, l'angle de caméra, la profondeur de champ, le bokeh et l'ambiance
 - Le prompt doit être directement utilisable par un modèle de génération d'image IA
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
-{"prompt_fr":"...","prompt_en":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
+{"prompt_fr":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
 
   const userPrompt = `=== CONTEXTE ENTREPRISE ===
 ${params.companyActivity ? `Activité principale: ${params.companyActivity}` : 'Activité: non renseignée'}
