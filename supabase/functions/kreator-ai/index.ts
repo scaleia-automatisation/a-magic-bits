@@ -149,31 +149,62 @@ serve(async (req) => {
       const veoModel = veoModelMap[ai_model] || "veo-3.0-generate-001";
       const aspectRatio = size === "9:16" ? "9:16" : "16:9";
 
-      const veoRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${veoModel}:generateVideos?key=${VERTEX_API_KEY}`, {
+      const veoStartRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${veoModel}:predictLongRunning?key=${VERTEX_API_KEY}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          generateVideoConfig: { aspectRatio, numberOfVideos: 1, durationSeconds: 8, personGeneration: "allow_all" },
-          prompt: { text: prompt || "" },
+          instances: [{ prompt: prompt || "" }],
+          parameters: { aspectRatio },
         }),
       });
 
-      if (!veoRes.ok) {
-        const errText = await veoRes.text();
-        console.error("Veo error:", veoRes.status, errText);
+      if (!veoStartRes.ok) {
+        const errText = await veoStartRes.text();
+        console.error("Veo error:", veoStartRes.status, errText);
         let msg = "Erreur Veo";
         try {
           const parsed = JSON.parse(errText);
           msg = parsed?.error?.message || msg;
         } catch { msg = errText || msg; }
-        if (veoRes.status === 429 || msg.toLowerCase().includes("quota")) {
+        if (veoStartRes.status === 429 || msg.toLowerCase().includes("quota")) {
           msg = "Quota Vertex AI dépassé pour Veo.";
         }
-        return jsonError(veoRes.status === 429 ? 429 : 500, msg);
+        return jsonError(veoStartRes.status === 429 ? 429 : 500, msg);
       }
 
-      const veoData = await veoRes.json();
-      return jsonResp(veoData);
+      let operation = await veoStartRes.json();
+      const operationName = operation?.name;
+      if (!operationName) return jsonError(500, "Réponse Veo invalide: opération absente");
+
+      for (let attempt = 0; attempt < 24; attempt++) {
+        if (operation?.done) break;
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+
+        const pollRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${VERTEX_API_KEY}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!pollRes.ok) {
+          const errText = await pollRes.text();
+          console.error("Veo polling error:", pollRes.status, errText);
+          return jsonError(500, "Erreur lors du suivi de génération Veo");
+        }
+
+        operation = await pollRes.json();
+      }
+
+      if (!operation?.done) {
+        return jsonError(504, "La génération vidéo prend trop de temps. Réessayez dans un instant.");
+      }
+
+      const videoUrl = operation?.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri;
+      if (!videoUrl) {
+        console.error("Veo response without video URL:", JSON.stringify(operation));
+        return jsonError(500, "Aucune vidéo générée par Veo");
+      }
+
+      return jsonResp({ video_url: videoUrl, operation: operationName });
     }
 
     // === OpenAI Chat Completions for prompts, ideas, captions ===
