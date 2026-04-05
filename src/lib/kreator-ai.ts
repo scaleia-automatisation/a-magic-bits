@@ -128,6 +128,7 @@ export async function generatePrompt(params: {
   imageDescription: string;
   referenceImageCount?: number;
   aiModel?: string;
+  renderStyle?: string;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
   
