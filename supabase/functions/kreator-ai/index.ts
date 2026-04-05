@@ -140,21 +140,21 @@ serve(async (req) => {
 
       const veoModelMap: Record<string, string> = {
         "veo-2": "veo-2.0-generate-001",
-        "veo-3": "veo-3.0-generate-preview",
-        "veo-3-fast": "veo-3.0-fast-generate-preview",
+        "veo-3": "veo-3.0-generate-001",
+        "veo-3-fast": "veo-3.0-fast-generate-001",
         "veo-3.1": "veo-3.1-generate-preview",
         "veo-3.1-fast": "veo-3.1-fast-generate-preview",
       };
 
-      const veoModel = veoModelMap[ai_model] || "veo-3.0-generate-preview";
+      const veoModel = veoModelMap[ai_model] || "veo-3.0-generate-001";
       const aspectRatio = size === "9:16" ? "9:16" : "16:9";
 
-      const veoRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${veoModel}:predictLongRunning?key=${VERTEX_API_KEY}`, {
+      const veoRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${veoModel}:generateVideos?key=${VERTEX_API_KEY}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          instances: [{ prompt: prompt || "" }],
-          parameters: { aspectRatio, durationSeconds: 8 },
+          generateVideoConfig: { aspectRatio, numberOfVideos: 1, durationSeconds: 8, personGeneration: "allow_all" },
+          prompt: { text: prompt || "" },
         }),
       });
 
