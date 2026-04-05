@@ -197,7 +197,7 @@ CONSIGNES OBLIGATOIRES pour le prompt généré :
 - Le prompt doit être directement utilisable par un modèle de génération d'image IA
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
-{"prompt_fr":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
+{"prompt_fr":"...","prompt_en":"... (traduction anglaise fidèle du prompt FR, optimisée pour le modèle IA)","palette_used":["#HEX"],"marketing_angle":"..."}`;
 
   const userPrompt = `=== CONTEXTE ENTREPRISE ===
 ${params.companyActivity ? `Activité principale: ${params.companyActivity}` : 'Activité: non renseignée'}
