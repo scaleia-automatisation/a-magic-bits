@@ -351,20 +351,85 @@ export async function generateImage(promptEn: string, aiModel: AIModel = 'dall-e
   return imageUrl;
 }
 
-export async function generateVideo(promptEn: string, aiModel: AIModel = 'sora-2', format: string = '9:16') {
-  const { data, error } = await supabase.functions.invoke('kreator-ai', {
+export async function generateVideo(
+  promptEn: string,
+  aiModel: AIModel = 'sora-2',
+  format: string = '9:16',
+  onProgress?: (pct: number) => void
+) {
+  const isVeoModel = ['veo-2', 'veo-3', 'veo-3-fast'].includes(aiModel);
+
+  if (!isVeoModel) {
+    // Sora 2 — synchronous call
+    const { data, error } = await supabase.functions.invoke('kreator-ai', {
+      body: {
+        action: 'generate_video',
+        prompt: promptEn,
+        ai_model: aiModel,
+        size: format,
+      },
+    });
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    const videoUrl = data?.video_url;
+    if (!videoUrl) throw new Error('No video generated');
+    return videoUrl;
+  }
+
+  // Veo models — start + client-side polling
+  const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
     body: {
-      action: 'generate_video',
+      action: 'start_video',
       prompt: promptEn,
       ai_model: aiModel,
       size: format,
     },
   });
 
-  if (error) throw error;
+  if (startError) throw startError;
+  if (startData?.error) throw new Error(startData.error);
 
-  const videoUrl = data?.video_url;
-  if (!videoUrl) throw new Error('No video generated');
+  // Immediate result
+  if (startData?.done && startData?.video_url) {
+    return startData.video_url;
+  }
 
-  return videoUrl;
+  const operationName = startData?.operation_name;
+  if (!operationName) throw new Error('No operation returned from Veo');
+
+  // Poll every 5 seconds, up to 5 minutes
+  const maxAttempts = 60;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    if (onProgress) {
+      // Progress: 10% to 95% during polling
+      const pct = 10 + Math.min(85, (attempt / maxAttempts) * 85);
+      onProgress(pct);
+    }
+
+    const { data: pollData, error: pollError } = await supabase.functions.invoke('kreator-ai', {
+      body: {
+        action: 'poll_video',
+        operation_name: operationName,
+      },
+    });
+
+    if (pollError) {
+      console.warn('Poll error, retrying...', pollError);
+      continue;
+    }
+
+    if (pollData?.error) {
+      console.warn('Poll API error, retrying...', pollData.error);
+      continue;
+    }
+
+    if (pollData?.done && pollData?.video_url) {
+      if (onProgress) onProgress(100);
+      return pollData.video_url;
+    }
+  }
+
+  throw new Error('La génération vidéo a pris trop de temps. Réessayez.');
 }

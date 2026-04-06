@@ -50,15 +50,15 @@ const GenerationStep = () => {
     setStatus('generating');
     setProgress(0);
 
-    const interval = setInterval(() => {
+    const isVideo = type === 'video';
+    const progressInterval = !isVideo ? setInterval(() => {
       setProgress((p) => (p >= 95 ? p : p + Math.random() * 8));
-    }, 500);
+    }, 500) : null;
 
     try {
-      const isVideo = type === 'video';
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
-          ? generateVideo(prompt_en, ai_model, format)
+          ? generateVideo(prompt_en, ai_model, format, (pct) => setProgress(pct))
           : generateImage(prompt_en, ai_model),
         generateCaption({
           objective,
@@ -69,7 +69,7 @@ const GenerationStep = () => {
         }),
       ]);
 
-      clearInterval(interval);
+      if (progressInterval) clearInterval(progressInterval);
       setProgress(100);
 
       const { data: deducted } = await supabase.rpc('deduct_credits', {
@@ -103,7 +103,7 @@ const GenerationStep = () => {
       setStatus('done');
       await refreshProfile();
     } catch (err) {
-      clearInterval(interval);
+      if (progressInterval) clearInterval(progressInterval);
       console.error(err);
       toast.error('Erreur lors de la génération. Aucun crédit déduit.');
       setStatus('error');

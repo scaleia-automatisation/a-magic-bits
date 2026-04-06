@@ -18,7 +18,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { action, messages, system_prompt, model, prompt, size, quality, ai_model, image_base64s } = await req.json();
+    const { action, messages, system_prompt, model, prompt, size, quality, ai_model, image_base64s, operation_name } = await req.json();
 
     const isVertexModel = [
       "imagen-4", "imagen-4-ultra", "imagen-4-fast",
@@ -134,8 +134,8 @@ serve(async (req) => {
       return jsonResp({ video_url: soraData?.data?.[0]?.url });
     }
 
-    // === Veo video generation (Vertex AI via Service Account OAuth2) ===
-    if (action === "generate_video" && isVeoModel) {
+    // === Veo: Helper to get OAuth2 access token from service account ===
+    const getVeoAccessToken = async () => {
       const serviceAccountJson = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_JSON");
       if (!serviceAccountJson) throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON is not configured");
 
@@ -146,7 +146,6 @@ serve(async (req) => {
         throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON");
       }
 
-      // Build JWT for OAuth2 token using Web Crypto
       const b64url = (data: Uint8Array | string) => {
         const str = typeof data === "string" ? data : String.fromCharCode(...data);
         return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
@@ -154,7 +153,7 @@ serve(async (req) => {
 
       const now = Math.floor(Date.now() / 1000);
       const header = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
-      const payload = b64url(JSON.stringify({
+      const jwtPayload = b64url(JSON.stringify({
         iss: sa.client_email,
         scope: "https://www.googleapis.com/auth/cloud-platform",
         aud: "https://oauth2.googleapis.com/token",
@@ -175,11 +174,10 @@ serve(async (req) => {
         ["sign"]
       );
 
-      const sigInput = new TextEncoder().encode(`${header}.${payload}`);
+      const sigInput = new TextEncoder().encode(`${header}.${jwtPayload}`);
       const sigBytes = new Uint8Array(await crypto.subtle.sign("RSASSA-PKCS1-v1_5", cryptoKey, sigInput));
-      const signedJwt = `${header}.${payload}.${b64url(sigBytes)}`;
+      const signedJwt = `${header}.${jwtPayload}.${b64url(sigBytes)}`;
 
-      // Exchange JWT for access token
       const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -193,6 +191,12 @@ serve(async (req) => {
       }
 
       const { access_token } = await tokenRes.json();
+      return { access_token, project_id: sa.project_id };
+    };
+
+    // === Veo: START video generation (returns operation name immediately) ===
+    if (action === "start_video" && isVeoModel) {
+      const { access_token, project_id } = await getVeoAccessToken();
 
       const veoModelMap: Record<string, string> = {
         "veo-2": "veo-2.0-generate-001",
@@ -202,10 +206,8 @@ serve(async (req) => {
 
       const veoModel = veoModelMap[ai_model] || "veo-3.0-generate-001";
       const aspectRatio = size === "9:16" ? "9:16" : "16:9";
-      const projectId = sa.project_id;
 
-      // Start video generation via Vertex AI REST API
-      const generateUrl = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId}/locations/us-central1/publishers/google/models/${veoModel}:predictLongRunning`;
+      const generateUrl = `https://us-central1-aiplatform.googleapis.com/v1/projects/${project_id}/locations/us-central1/publishers/google/models/${veoModel}:predictLongRunning`;
 
       const generateRes = await fetch(generateUrl, {
         method: "POST",
@@ -221,7 +223,7 @@ serve(async (req) => {
 
       if (!generateRes.ok) {
         const errText = await generateRes.text();
-        console.error("Veo generate error:", generateRes.status, errText);
+        console.error("Veo start error:", generateRes.status, errText);
         let msg = "Erreur Veo";
         try {
           const parsed = JSON.parse(errText);
@@ -231,48 +233,49 @@ serve(async (req) => {
       }
 
       const generateData = await generateRes.json();
-      
-      // Check if result is immediate or requires polling
-      let videoUrl = generateData?.predictions?.[0]?.video?.uri;
-      
-      if (!videoUrl && generateData?.name) {
-        // Long-running operation - poll for completion
-        // The operation name from predictLongRunning includes the model path,
-        // but polling must use the shorter /operations/ path
-        const operationName = generateData.name;
-        // Extract: projects/{p}/locations/{l}/operations/{id} from
-        // projects/{p}/locations/{l}/publishers/google/models/{m}/operations/{id}
-        const shortOpName = operationName.replace(/\/publishers\/google\/models\/[^/]+/, '');
-        
-        for (let attempt = 0; attempt < 60; attempt++) {
-          await new Promise((resolve) => setTimeout(resolve, 5000));
-          
-          const pollRes = await fetch(`https://us-central1-aiplatform.googleapis.com/v1/${shortOpName}`, {
-            headers: { Authorization: `Bearer ${access_token}` },
-          });
-          
-          if (!pollRes.ok) {
-            const pollErr = await pollRes.text();
-            console.error("Veo poll error:", pollRes.status, pollErr);
-            continue;
-          }
-          
-          const pollData = await pollRes.json();
-          
-          if (pollData.done) {
-            videoUrl = pollData?.response?.predictions?.[0]?.video?.uri 
-                    || pollData?.response?.generatedVideos?.[0]?.video?.uri;
-            break;
-          }
+
+      // Check immediate result
+      const immediateUrl = generateData?.predictions?.[0]?.video?.uri;
+      if (immediateUrl) {
+        return jsonResp({ video_url: immediateUrl, done: true });
+      }
+
+      // Return operation name for client-side polling
+      if (generateData?.name) {
+        const operationName = generateData.name.replace(/\/publishers\/google\/models\/[^/]+/, '');
+        return jsonResp({ operation_name: operationName, done: false });
+      }
+
+      return jsonError(500, "Aucune opération retournée par Veo");
+    }
+
+    // === Veo: POLL video generation status ===
+    if (action === "poll_video") {
+      if (!operation_name) return jsonError(400, "Missing operation_name");
+      const { access_token } = await getVeoAccessToken();
+
+      const pollRes = await fetch(`https://us-central1-aiplatform.googleapis.com/v1/${operation_name}`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+
+      if (!pollRes.ok) {
+        const pollErr = await pollRes.text();
+        console.error("Veo poll error:", pollRes.status, pollErr);
+        return jsonError(pollRes.status, "Erreur lors du polling Veo");
+      }
+
+      const pollData = await pollRes.json();
+
+      if (pollData.done) {
+        const videoUrl = pollData?.response?.predictions?.[0]?.video?.uri
+                      || pollData?.response?.generatedVideos?.[0]?.video?.uri;
+        if (videoUrl) {
+          return jsonResp({ video_url: videoUrl, done: true });
         }
+        return jsonError(500, "Opération terminée mais aucune vidéo générée");
       }
 
-      if (!videoUrl) {
-        console.error("Veo: no video URL in response:", JSON.stringify(generateData));
-        return jsonError(500, "Aucune vidéo générée par Veo");
-      }
-
-      return jsonResp({ video_url: videoUrl });
+      return jsonResp({ done: false });
     }
 
     // === OpenAI Chat Completions for prompts, ideas, captions ===
