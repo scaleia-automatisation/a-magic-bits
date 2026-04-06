@@ -237,12 +237,17 @@ serve(async (req) => {
       
       if (!videoUrl && generateData?.name) {
         // Long-running operation - poll for completion
+        // The operation name from predictLongRunning includes the model path,
+        // but polling must use the shorter /operations/ path
         const operationName = generateData.name;
+        // Extract: projects/{p}/locations/{l}/operations/{id} from
+        // projects/{p}/locations/{l}/publishers/google/models/{m}/operations/{id}
+        const shortOpName = operationName.replace(/\/publishers\/google\/models\/[^/]+/, '');
         
         for (let attempt = 0; attempt < 60; attempt++) {
           await new Promise((resolve) => setTimeout(resolve, 5000));
           
-          const pollRes = await fetch(`https://us-central1-aiplatform.googleapis.com/v1/${operationName}`, {
+          const pollRes = await fetch(`https://us-central1-aiplatform.googleapis.com/v1/${shortOpName}`, {
             headers: { Authorization: `Bearer ${access_token}` },
           });
           
