@@ -147,7 +147,7 @@ serve(async (req) => {
       }
 
       // Build JWT for OAuth2 token
-      const { default: jwt } = await import("https://deno.land/x/djwt@v3.0.2/mod.ts");
+      const { create } = await import("https://deno.land/x/djwt@v3.0.2/mod.ts");
 
       const now = Math.floor(Date.now() / 1000);
       const jwtPayload = {
@@ -172,7 +172,7 @@ serve(async (req) => {
         ["sign"]
       );
 
-      const signedJwt = await jwt.create(
+      const signedJwt = await create(
         { alg: "RS256", typ: "JWT" },
         jwtPayload,
         cryptoKey
