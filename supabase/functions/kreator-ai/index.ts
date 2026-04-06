@@ -254,7 +254,7 @@ serve(async (req) => {
       if (!operation_name) return jsonError(400, "Missing operation_name");
       const { access_token } = await getVeoAccessToken();
 
-      const pollRes = await fetch(`https://us-central1-aiplatform.googleapis.com/v1/${opName}`, {
+      const pollRes = await fetch(`https://us-central1-aiplatform.googleapis.com/v1/${operation_name}`, {
         headers: { Authorization: `Bearer ${access_token}` },
       });
 
