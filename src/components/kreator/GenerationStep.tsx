@@ -105,13 +105,19 @@ const GenerationStep = () => {
       setCaption(captionResult);
       setStatus('done');
       await refreshProfile();
-    } catch (err) {
+    } catch (err: any) {
       if (progressInterval) clearInterval(progressInterval);
-      console.error(err);
-      toast.error('Erreur lors de la génération. Aucun crédit déduit.');
-      setStatus('error');
+      if (err?.name === 'AbortError' || err?.message === 'Generation cancelled') {
+        toast.info('Génération annulée');
+        setStatus('idle');
+      } else {
+        console.error(err);
+        toast.error('Erreur lors de la génération. Aucun crédit déduit.');
+        setStatus('error');
+      }
     } finally {
       setGenerating(false);
+      abortControllerRef.current = null;
     }
   };
 
