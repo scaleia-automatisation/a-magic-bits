@@ -122,6 +122,7 @@ const GenerationStep = () => {
     } finally {
       setGenerating(false);
       abortControllerRef.current = null;
+      if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null; }
     }
   };
 
