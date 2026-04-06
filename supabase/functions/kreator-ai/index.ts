@@ -240,9 +240,10 @@ serve(async (req) => {
         return jsonResp({ video_url: immediateUrl, done: true });
       }
 
-      // Return operation name for client-side polling
+      // Return operation name + model endpoint for client-side polling
       if (generateData?.name) {
-        return jsonResp({ operation_name: generateData.name, done: false });
+        const modelEndpoint = `projects/${project_id}/locations/us-central1/publishers/google/models/${veoModel}`;
+        return jsonResp({ operation_name: generateData.name, model_endpoint: modelEndpoint, done: false });
       }
 
       return jsonError(500, "Aucune opération retournée par Veo");
@@ -253,8 +254,26 @@ serve(async (req) => {
       if (!operation_name) return jsonError(400, "Missing operation_name");
       const { access_token } = await getVeoAccessToken();
 
-      const pollRes = await fetch(`https://us-central1-aiplatform.googleapis.com/v1/${operation_name}`, {
-        headers: { Authorization: `Bearer ${access_token}` },
+      // Extract model endpoint from the operation name
+      // Format: projects/{p}/locations/{l}/publishers/google/models/{m}/operations/{id}
+      const modelMatch = operation_name.match(/^(projects\/[^/]+\/locations\/[^/]+\/publishers\/google\/models\/[^/]+)\/operations\/(.+)$/);
+      
+      let pollUrl: string;
+      if (modelMatch) {
+        // Use fetchPredictLongRunningOperation for publisher model operations
+        pollUrl = `https://us-central1-aiplatform.googleapis.com/v1/${modelMatch[1]}:fetchPredictLongRunningOperation`;
+      } else {
+        // Fallback to standard operations endpoint
+        pollUrl = `https://us-central1-aiplatform.googleapis.com/v1/${operation_name}`;
+      }
+
+      const pollRes = await fetch(pollUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ operationName: operation_name }),
       });
 
       if (!pollRes.ok) {
