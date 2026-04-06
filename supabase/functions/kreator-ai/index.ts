@@ -283,14 +283,47 @@ serve(async (req) => {
       }
 
       const pollData = await pollRes.json();
+      console.log("Veo poll response:", JSON.stringify(pollData).substring(0, 2000));
 
       if (pollData.done) {
+        // Search for video URL in multiple possible response structures
         const videoUrl = pollData?.response?.predictions?.[0]?.video?.uri
-                      || pollData?.response?.generatedVideos?.[0]?.video?.uri;
+                      || pollData?.response?.generatedVideos?.[0]?.video?.uri
+                      || pollData?.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri
+                      || pollData?.response?.videos?.[0]?.uri
+                      || pollData?.response?.generatedSamples?.[0]?.video?.uri
+                      || pollData?.metadata?.generatedVideos?.[0]?.video?.uri;
+        
+        // Deep search: find any "uri" that looks like a video URL
         if (videoUrl) {
           return jsonResp({ video_url: videoUrl, done: true });
         }
-        return jsonError(500, "Opération terminée mais aucune vidéo générée");
+
+        // Try to find uri anywhere in the response recursively
+        const findUri = (obj: any): string | null => {
+          if (!obj || typeof obj !== 'object') return null;
+          if (typeof obj.uri === 'string' && obj.uri.startsWith('http')) return obj.uri;
+          if (typeof obj.gcsUri === 'string') return obj.gcsUri;
+          for (const key of Object.keys(obj)) {
+            const found = findUri(obj[key]);
+            if (found) return found;
+          }
+          return null;
+        };
+
+        const deepUrl = findUri(pollData);
+        if (deepUrl) {
+          return jsonResp({ video_url: deepUrl, done: true });
+        }
+
+        // Check for error in the operation result
+        if (pollData.error) {
+          console.error("Veo operation error:", JSON.stringify(pollData.error));
+          return jsonError(500, pollData.error.message || "Erreur Veo lors de la génération");
+        }
+
+        console.error("Veo done but no video found. Full response:", JSON.stringify(pollData));
+        return jsonError(500, "Opération terminée mais aucune vidéo générée. Vérifiez les logs pour la structure de réponse.");
       }
 
       return jsonResp({ done: false });
