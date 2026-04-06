@@ -198,8 +198,6 @@ serve(async (req) => {
         "veo-2": "veo-2.0-generate-001",
         "veo-3": "veo-3.0-generate-001",
         "veo-3-fast": "veo-3.0-fast-generate-001",
-        "veo-3.1": "veo-3.1-generate-preview",
-        "veo-3.1-fast": "veo-3.1-fast-generate-preview",
       };
 
       const veoModel = veoModelMap[ai_model] || "veo-3.0-generate-001";
