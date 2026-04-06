@@ -120,9 +120,10 @@ const GenerationStep = () => {
 
   const handleDownload = () => {
     if (!result_url) return;
+    const ext = type === 'video' ? 'mp4' : 'png';
     const a = document.createElement('a');
     a.href = result_url;
-    a.download = `kreator-${type}.png`;
+    a.download = `kreator-${type}.${ext}`;
     a.click();
   };
 
@@ -201,9 +202,21 @@ const GenerationStep = () => {
 
         {status === 'done' && result_url && (
           <div className="space-y-6">
-            {/* Image result */}
+            {/* Result preview */}
             <div className="rounded-card overflow-hidden bg-card border border-foreground/10">
-              <img src={result_url} alt="Résultat" className="w-full object-cover" />
+              {type === 'video' ? (
+                <video
+                  src={result_url}
+                  controls
+                  autoPlay
+                  loop
+                  playsInline
+                  className="w-full rounded-card"
+                  style={{ maxHeight: '70vh' }}
+                />
+              ) : (
+                <img src={result_url} alt="Résultat" className="w-full object-cover" />
+              )}
             </div>
 
             {/* Download button directly below image */}
