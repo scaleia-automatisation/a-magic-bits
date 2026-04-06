@@ -251,9 +251,8 @@ serve(async (req) => {
 
     // === Veo: POLL video generation status ===
     if (action === "poll_video") {
+      if (!operation_name) return jsonError(400, "Missing operation_name");
       const { access_token } = await getVeoAccessToken();
-      const opName = (await req.clone().json()).operation_name;
-      if (!opName) return jsonError(400, "Missing operation_name");
 
       const pollRes = await fetch(`https://us-central1-aiplatform.googleapis.com/v1/${opName}`, {
         headers: { Authorization: `Bearer ${access_token}` },
