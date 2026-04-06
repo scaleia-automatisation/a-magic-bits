@@ -242,8 +242,7 @@ serve(async (req) => {
 
       // Return operation name for client-side polling
       if (generateData?.name) {
-        const operationName = generateData.name.replace(/\/publishers\/google\/models\/[^/]+/, '');
-        return jsonResp({ operation_name: operationName, done: false });
+        return jsonResp({ operation_name: generateData.name, done: false });
       }
 
       return jsonError(500, "Aucune opération retournée par Veo");
