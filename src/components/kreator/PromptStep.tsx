@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Pencil, Loader2 } from 'lucide-react';
+import { Copy, Loader2 } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { toast } from 'sonner';
 import { generatePrompt, callKreatorAI } from '@/lib/kreator-ai';
@@ -30,7 +30,6 @@ const PromptStep = () => {
   };
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const [editingEn, setEditingEn] = useState(false);
   const [isSyncingEn, setIsSyncingEn] = useState(false);
   const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -148,7 +147,8 @@ const PromptStep = () => {
             <Textarea
               value={prompt_fr}
               onChange={(e) => handleFrChange(e.target.value)}
-              className="bg-card border-foreground/10 text-foreground text-sm min-h-[80px] resize-none"
+              className="bg-card border-foreground/10 text-foreground text-sm resize-none"
+              style={{ minHeight: `${Math.max(120, Math.ceil(prompt_fr.length / 60) * 24)}px` }}
             />
             <div className="flex gap-2 mt-2">
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => handleCopy(prompt_fr)}>
@@ -157,28 +157,6 @@ const PromptStep = () => {
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-foreground">
-                🇬🇧 Prompt English {isSyncingEn && <Loader2 className="w-3 h-3 animate-spin inline ml-1" />}
-              </label>
-              <span className="text-xs text-muted-foreground">{prompt_en.length} car.</span>
-            </div>
-            <Textarea
-              value={prompt_en}
-              onChange={(e) => setPromptEn(e.target.value)}
-              className="bg-card border-foreground/10 text-foreground text-sm min-h-[80px] resize-none"
-              readOnly={!editingEn}
-            />
-            <div className="flex gap-2 mt-2">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => handleCopy(prompt_en)}>
-                <Copy className="w-3 h-3 mr-1" /> Copier
-              </Button>
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => setEditingEn(!editingEn)}>
-                <Pencil className="w-3 h-3 mr-1" /> {editingEn ? 'Verrouiller' : 'Modifier'}
-              </Button>
-            </div>
-          </div>
 
           <div className="flex justify-center mt-6">
             <Button
