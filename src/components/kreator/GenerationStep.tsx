@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus } from 'lucide-react';
+import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { generateImage, generateVideo, generateCaption } from '@/lib/kreator-ai';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,6 +35,7 @@ const GenerationStep = () => {
   const [caption, setCaption] = useState({ hook: '', description: '', cta: '', hashtags: '' });
   const [captionEditing, setCaptionEditing] = useState(false);
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const hasPrompt = prompt_en.length > 0;
   const buttonLabel = type === 'image' ? 'Générer le visuel' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
@@ -49,6 +50,8 @@ const GenerationStep = () => {
     setGenerating(true);
     setStatus('generating');
     setProgress(0);
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
 
     const isVideo = type === 'video';
     const progressInterval = !isVideo ? setInterval(() => {
@@ -58,7 +61,7 @@ const GenerationStep = () => {
     try {
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
-          ? generateVideo(prompt_en, ai_model, format, (pct) => setProgress(pct))
+          ? generateVideo(prompt_en, ai_model, format, (pct) => setProgress(pct), abortController.signal)
           : generateImage(prompt_en, ai_model),
         generateCaption({
           objective,
@@ -102,13 +105,19 @@ const GenerationStep = () => {
       setCaption(captionResult);
       setStatus('done');
       await refreshProfile();
-    } catch (err) {
+    } catch (err: any) {
       if (progressInterval) clearInterval(progressInterval);
-      console.error(err);
-      toast.error('Erreur lors de la génération. Aucun crédit déduit.');
-      setStatus('error');
+      if (err?.name === 'AbortError' || err?.message === 'Generation cancelled') {
+        toast.info('Génération annulée');
+        setStatus('idle');
+      } else {
+        console.error(err);
+        toast.error('Erreur lors de la génération. Aucun crédit déduit.');
+        setStatus('error');
+      }
     } finally {
       setGenerating(false);
+      abortControllerRef.current = null;
     }
   };
 
@@ -197,6 +206,14 @@ const GenerationStep = () => {
               />
             </div>
             <span className="text-xs text-muted-foreground mt-2">{Math.round(Math.min(progress, 100))}%</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-4 text-muted-foreground hover:text-destructive"
+              onClick={() => abortControllerRef.current?.abort()}
+            >
+              <XCircle className="w-4 h-4 mr-1" /> Annuler
+            </Button>
           </div>
         )}
 

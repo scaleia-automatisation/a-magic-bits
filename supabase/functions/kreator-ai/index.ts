@@ -260,8 +260,8 @@ serve(async (req) => {
       
       let pollUrl: string;
       if (modelMatch) {
-        // Use fetchPredictLongRunningOperation for publisher model operations
-        pollUrl = `https://us-central1-aiplatform.googleapis.com/v1/${modelMatch[1]}:fetchPredictLongRunningOperation`;
+        // Use fetchPredictOperation for publisher model operations
+        pollUrl = `https://us-central1-aiplatform.googleapis.com/v1/${modelMatch[1]}:fetchPredictOperation`;
       } else {
         // Fallback to standard operations endpoint
         pollUrl = `https://us-central1-aiplatform.googleapis.com/v1/${operation_name}`;

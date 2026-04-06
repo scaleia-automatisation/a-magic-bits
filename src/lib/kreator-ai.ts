@@ -355,7 +355,8 @@ export async function generateVideo(
   promptEn: string,
   aiModel: AIModel = 'sora-2',
   format: string = '9:16',
-  onProgress?: (pct: number) => void
+  onProgress?: (pct: number) => void,
+  abortSignal?: AbortSignal
 ) {
   const isVeoModel = ['veo-2', 'veo-3', 'veo-3-fast'].includes(aiModel);
 
@@ -400,10 +401,18 @@ export async function generateVideo(
   // Poll every 5 seconds, up to 5 minutes
   const maxAttempts = 60;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    // Check cancellation
+    if (abortSignal?.aborted) {
+      throw new DOMException('Generation cancelled', 'AbortError');
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 5000));
 
+    if (abortSignal?.aborted) {
+      throw new DOMException('Generation cancelled', 'AbortError');
+    }
+
     if (onProgress) {
-      // Progress: 10% to 95% during polling
       const pct = 10 + Math.min(85, (attempt / maxAttempts) * 85);
       onProgress(pct);
     }
