@@ -21,8 +21,6 @@ const videoModels: { value: AIModel; label: string }[] = [
   { value: 'veo-2', label: 'Veo 2' },
   { value: 'veo-3', label: 'Veo 3' },
   { value: 'veo-3-fast', label: 'Veo 3 Fast' },
-  { value: 'veo-3.1', label: 'Veo 3.1' },
-  { value: 'veo-3.1-fast', label: 'Veo 3.1 Fast' },
 ];
 
 const renderStyles = [

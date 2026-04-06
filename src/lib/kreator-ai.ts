@@ -140,7 +140,7 @@ export async function generatePrompt(params: {
   } else if (aiModelName === 'dall-e-3') {
     const dalleFormat = params.format === '1:1' ? 'image carrée' : params.format === '16:9' ? 'cadre cinématographique large' : 'format vertical mobile';
     formatAdaptation = `Modèle IA: DALL·E 3 — Intégrer "${dalleFormat}" dans la description du prompt FR.`;
-  } else if (['veo-2', 'veo-3', 'veo-3-fast', 'veo-3.1', 'veo-3.1-fast'].includes(aiModelName)) {
+  } else if (['veo-2', 'veo-3', 'veo-3-fast'].includes(aiModelName)) {
     const veoFormat = params.format === '9:16' ? 'vidéo verticale 9:16' : params.format === '16:9' ? 'vidéo horizontale 16:9' : 'vidéo carrée 1:1';
     formatAdaptation = `Modèle IA: ${aiModelName} — Préciser "${veoFormat}" et optimiser le cadrage pour ce ratio.`;
   } else if (aiModelName === 'sora-2') {
