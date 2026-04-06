@@ -134,10 +134,64 @@ serve(async (req) => {
       return jsonResp({ video_url: soraData?.data?.[0]?.url });
     }
 
-    // === Veo video generation (Vertex AI / Gemini API) ===
+    // === Veo video generation (Vertex AI via Service Account OAuth2) ===
     if (action === "generate_video" && isVeoModel) {
-      const VERTEX_API_KEY = Deno.env.get("VERTEX_API_KEY");
-      if (!VERTEX_API_KEY) throw new Error("VERTEX_API_KEY is not configured");
+      const serviceAccountJson = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_JSON");
+      if (!serviceAccountJson) throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON is not configured");
+
+      let sa: any;
+      try {
+        sa = JSON.parse(serviceAccountJson);
+      } catch {
+        throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON");
+      }
+
+      // Build JWT for OAuth2 token
+      const { default: jwt } = await import("https://deno.land/x/djwt@v3.0.2/mod.ts");
+
+      const now = Math.floor(Date.now() / 1000);
+      const jwtPayload = {
+        iss: sa.client_email,
+        scope: "https://www.googleapis.com/auth/cloud-platform",
+        aud: "https://oauth2.googleapis.com/token",
+        iat: now,
+        exp: now + 3600,
+      };
+
+      // Import private key
+      const pemBody = sa.private_key
+        .replace(/-----BEGIN PRIVATE KEY-----/, "")
+        .replace(/-----END PRIVATE KEY-----/, "")
+        .replace(/\n/g, "");
+      const binaryKey = Uint8Array.from(atob(pemBody), (c: string) => c.charCodeAt(0));
+      const cryptoKey = await crypto.subtle.importKey(
+        "pkcs8",
+        binaryKey,
+        { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+        false,
+        ["sign"]
+      );
+
+      const signedJwt = await jwt.create(
+        { alg: "RS256", typ: "JWT" },
+        jwtPayload,
+        cryptoKey
+      );
+
+      // Exchange JWT for access token
+      const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${signedJwt}`,
+      });
+
+      if (!tokenRes.ok) {
+        const errText = await tokenRes.text();
+        console.error("OAuth2 token error:", errText);
+        throw new Error("Impossible d'obtenir un token OAuth2");
+      }
+
+      const { access_token } = await tokenRes.json();
 
       const veoModelMap: Record<string, string> = {
         "veo-2": "veo-2.0-generate-001",
@@ -149,33 +203,68 @@ serve(async (req) => {
 
       const veoModel = veoModelMap[ai_model] || "veo-3.0-generate-001";
       const aspectRatio = size === "9:16" ? "9:16" : "16:9";
-      const ai = new GoogleGenAI({ apiKey: VERTEX_API_KEY });
+      const projectId = sa.project_id;
 
-      let operation: any;
-      try {
-        operation = await ai.models.generateVideos({
-          model: veoModel,
-          prompt: prompt || "",
-          config: { aspectRatio },
-        });
-      } catch (error) {
-        console.error("Veo start error:", error);
-        const message = error instanceof Error ? error.message : "Erreur Veo";
-        return jsonError(message.toLowerCase().includes("quota") ? 429 : 500, message);
+      // Start video generation via Vertex AI REST API
+      const generateUrl = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId}/locations/us-central1/publishers/google/models/${veoModel}:predict`;
+
+      const generateRes = await fetch(generateUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          instances: [{ prompt: prompt || "" }],
+          parameters: { aspectRatio, sampleCount: 1 },
+        }),
+      });
+
+      if (!generateRes.ok) {
+        const errText = await generateRes.text();
+        console.error("Veo generate error:", generateRes.status, errText);
+        let msg = "Erreur Veo";
+        try {
+          const parsed = JSON.parse(errText);
+          msg = parsed?.error?.message || msg;
+        } catch { msg = errText || msg; }
+        return jsonError(generateRes.status === 429 ? 429 : 500, msg);
       }
 
-      for (let attempt = 0; attempt < 24 && !operation?.done; attempt++) {
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        operation = await ai.operations.getVideosOperation({ operation });
+      const generateData = await generateRes.json();
+      
+      // Check if result is immediate or requires polling
+      let videoUrl = generateData?.predictions?.[0]?.video?.uri;
+      
+      if (!videoUrl && generateData?.name) {
+        // Long-running operation - poll for completion
+        const operationName = generateData.name;
+        
+        for (let attempt = 0; attempt < 60; attempt++) {
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          
+          const pollRes = await fetch(`https://us-central1-aiplatform.googleapis.com/v1/${operationName}`, {
+            headers: { Authorization: `Bearer ${access_token}` },
+          });
+          
+          if (!pollRes.ok) {
+            const pollErr = await pollRes.text();
+            console.error("Veo poll error:", pollRes.status, pollErr);
+            continue;
+          }
+          
+          const pollData = await pollRes.json();
+          
+          if (pollData.done) {
+            videoUrl = pollData?.response?.predictions?.[0]?.video?.uri 
+                    || pollData?.response?.generatedVideos?.[0]?.video?.uri;
+            break;
+          }
+        }
       }
 
-      if (!operation?.done) {
-        return jsonError(504, "La génération vidéo prend trop de temps. Réessayez dans un instant.");
-      }
-
-      const videoUrl = operation?.response?.generatedVideos?.[0]?.video?.uri;
       if (!videoUrl) {
-        console.error("Veo response without video URL:", JSON.stringify(operation));
+        console.error("Veo: no video URL in response:", JSON.stringify(generateData));
         return jsonError(500, "Aucune vidéo générée par Veo");
       }
 
