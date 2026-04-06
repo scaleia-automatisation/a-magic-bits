@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Pencil, Loader2 } from 'lucide-react';
+import { Copy, Loader2 } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { toast } from 'sonner';
 import { generatePrompt, callKreatorAI } from '@/lib/kreator-ai';
