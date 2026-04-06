@@ -120,9 +120,10 @@ const GenerationStep = () => {
 
   const handleDownload = () => {
     if (!result_url) return;
+    const ext = type === 'video' ? 'mp4' : 'png';
     const a = document.createElement('a');
     a.href = result_url;
-    a.download = `kreator-${type}.png`;
+    a.download = `kreator-${type}.${ext}`;
     a.click();
   };
 
