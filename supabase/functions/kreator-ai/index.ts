@@ -283,13 +283,58 @@ serve(async (req) => {
       }
 
       const pollData = await pollRes.json();
+      console.log("Veo poll response:", JSON.stringify(pollData).substring(0, 2000));
 
       if (pollData.done) {
+        // Check for error in the operation result
+        if (pollData.error) {
+          console.error("Veo operation error:", JSON.stringify(pollData.error));
+          return jsonError(500, pollData.error.message || "Erreur Veo lors de la génération");
+        }
+
+        // 1. Check for video URL (uri-based responses)
         const videoUrl = pollData?.response?.predictions?.[0]?.video?.uri
-                      || pollData?.response?.generatedVideos?.[0]?.video?.uri;
+                      || pollData?.response?.generatedVideos?.[0]?.video?.uri
+                      || pollData?.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri
+                      || pollData?.response?.videos?.[0]?.uri
+                      || pollData?.response?.generatedSamples?.[0]?.video?.uri;
+        
         if (videoUrl) {
           return jsonResp({ video_url: videoUrl, done: true });
         }
+
+        // 2. Check for base64-encoded video (Veo returns bytesBase64Encoded)
+        const b64Video = pollData?.response?.videos?.[0]?.bytesBase64Encoded
+                      || pollData?.response?.generatedVideos?.[0]?.bytesBase64Encoded
+                      || pollData?.response?.predictions?.[0]?.bytesBase64Encoded
+                      || pollData?.response?.generatedSamples?.[0]?.video?.bytesBase64Encoded;
+
+        if (b64Video) {
+          return jsonResp({ video_url: `data:video/mp4;base64,${b64Video}`, done: true });
+        }
+
+        // 3. Deep search for any uri or base64
+        const findMedia = (obj: any): { type: string; value: string } | null => {
+          if (!obj || typeof obj !== 'object') return null;
+          if (typeof obj.uri === 'string' && obj.uri.startsWith('http')) return { type: 'uri', value: obj.uri };
+          if (typeof obj.gcsUri === 'string') return { type: 'uri', value: obj.gcsUri };
+          if (typeof obj.bytesBase64Encoded === 'string' && obj.bytesBase64Encoded.length > 100) {
+            return { type: 'b64', value: obj.bytesBase64Encoded };
+          }
+          for (const key of Object.keys(obj)) {
+            const found = findMedia(obj[key]);
+            if (found) return found;
+          }
+          return null;
+        };
+
+        const media = findMedia(pollData);
+        if (media) {
+          const url = media.type === 'uri' ? media.value : `data:video/mp4;base64,${media.value}`;
+          return jsonResp({ video_url: url, done: true });
+        }
+
+        console.error("Veo done but no video found. Keys:", JSON.stringify(Object.keys(pollData?.response || {})));
         return jsonError(500, "Opération terminée mais aucune vidéo générée");
       }
 
