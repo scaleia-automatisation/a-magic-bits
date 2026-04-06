@@ -22,10 +22,10 @@ serve(async (req) => {
 
     const isVertexModel = [
       "imagen-4", "imagen-4-ultra", "imagen-4-fast",
-      "veo-2", "veo-3", "veo-3-fast", "veo-3.1", "veo-3.1-fast"
+      "veo-2", "veo-3", "veo-3-fast"
     ].includes(ai_model || "");
 
-    const isVeoModel = ["veo-2", "veo-3", "veo-3-fast", "veo-3.1", "veo-3.1-fast"].includes(ai_model || "");
+    const isVeoModel = ["veo-2", "veo-3", "veo-3-fast"].includes(ai_model || "");
     const isImagenModel = ["imagen-4", "imagen-4-ultra", "imagen-4-fast"].includes(ai_model || "");
 
     // === DALL-E 3 image generation (OpenAI) ===
