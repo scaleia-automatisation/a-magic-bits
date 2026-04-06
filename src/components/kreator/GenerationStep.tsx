@@ -52,8 +52,10 @@ const GenerationStep = () => {
     setGenerating(true);
     setStatus('generating');
     setProgress(0);
+    setElapsedSeconds(0);
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
+    elapsedRef.current = setInterval(() => setElapsedSeconds(s => s + 1), 1000);
 
     const isVideo = type === 'video';
     const progressInterval = !isVideo ? setInterval(() => {
