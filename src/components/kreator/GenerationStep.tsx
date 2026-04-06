@@ -36,6 +36,8 @@ const GenerationStep = () => {
   const [captionEditing, setCaptionEditing] = useState(false);
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const hasPrompt = prompt_en.length > 0;
   const buttonLabel = type === 'image' ? 'Générer le visuel' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
