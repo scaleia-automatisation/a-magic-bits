@@ -146,19 +146,22 @@ serve(async (req) => {
         throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON");
       }
 
-      // Build JWT for OAuth2 token
-      const { create } = await import("https://deno.land/x/djwt@v3.0.2/mod.ts");
+      // Build JWT for OAuth2 token using Web Crypto
+      const b64url = (data: Uint8Array | string) => {
+        const str = typeof data === "string" ? data : String.fromCharCode(...data);
+        return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+      };
 
       const now = Math.floor(Date.now() / 1000);
-      const jwtPayload = {
+      const header = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+      const payload = b64url(JSON.stringify({
         iss: sa.client_email,
         scope: "https://www.googleapis.com/auth/cloud-platform",
         aud: "https://oauth2.googleapis.com/token",
         iat: now,
         exp: now + 3600,
-      };
+      }));
 
-      // Import private key
       const pemBody = sa.private_key
         .replace(/-----BEGIN PRIVATE KEY-----/, "")
         .replace(/-----END PRIVATE KEY-----/, "")
@@ -172,11 +175,9 @@ serve(async (req) => {
         ["sign"]
       );
 
-      const signedJwt = await create(
-        { alg: "RS256", typ: "JWT" },
-        jwtPayload,
-        cryptoKey
-      );
+      const sigInput = new TextEncoder().encode(`${header}.${payload}`);
+      const sigBytes = new Uint8Array(await crypto.subtle.sign("RSASSA-PKCS1-v1_5", cryptoKey, sigInput));
+      const signedJwt = `${header}.${payload}.${b64url(sigBytes)}`;
 
       // Exchange JWT for access token
       const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
