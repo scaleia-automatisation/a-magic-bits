@@ -251,13 +251,50 @@ const GenerationStep = () => {
               )}
             </div>
 
-            {/* Download button directly below image */}
-            <Button
-              onClick={handleDownload}
-              className="w-full py-4 text-sm font-semibold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
-            >
-              <Download className="w-4 h-4 mr-2" /> Télécharger
-            </Button>
+            {/* 4 action buttons in one row */}
+            <div className="grid grid-cols-4 gap-2">
+              <Button
+                onClick={handleDownload}
+                size="sm"
+                className="gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs px-2"
+              >
+                <Download className="w-3.5 h-3.5 mr-1" /> Télécharger
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-foreground/10 text-foreground hover:border-secondary text-xs px-2"
+                onClick={handleSave}
+              >
+                <Save className="w-3.5 h-3.5 mr-1" /> Sauvegarder
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="border-foreground/10 text-foreground hover:border-secondary text-xs px-2">
+                    <Share2 className="w-3.5 h-3.5 mr-1" /> Partager
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-card border-foreground/10">
+                  <DropdownMenuItem onClick={() => handleShare('whatsapp')} className="text-foreground focus:bg-secondary/20 cursor-pointer">
+                    <MessageCircle className="w-4 h-4 mr-2 text-secondary" /> WhatsApp
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleShare('telegram')} className="text-foreground focus:bg-secondary/20 cursor-pointer">
+                    <Send className="w-4 h-4 mr-2 text-primary" /> Telegram
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleShare('email')} className="text-foreground focus:bg-secondary/20 cursor-pointer">
+                    <Mail className="w-4 h-4 mr-2 text-muted-foreground" /> Email
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-foreground/10 text-foreground hover:border-secondary text-xs px-2"
+                onClick={handleRegenerate}
+              >
+                <RefreshCw className="w-3.5 h-3.5 mr-1" /> Régénérer
+              </Button>
+            </div>
 
             {/* Caption section */}
             <div className="bg-card rounded-card p-4 md:p-5 border border-foreground/10">
