@@ -69,7 +69,7 @@ const GenerationStep = () => {
         }),
       ]);
 
-      clearInterval(interval);
+      if (progressInterval) clearInterval(progressInterval);
       setProgress(100);
 
       const { data: deducted } = await supabase.rpc('deduct_credits', {
