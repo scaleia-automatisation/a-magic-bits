@@ -365,43 +365,6 @@ const GenerationStep = () => {
               )}
             </div>
 
-            {/* Actions */}
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                variant="outline"
-                className="border-foreground/10 text-foreground hover:border-secondary"
-                onClick={handleSave}
-              >
-                <Save className="w-4 h-4 mr-2" /> Sauvegarder
-              </Button>
-
-              {/* Share dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="border-foreground/10 text-foreground hover:border-secondary">
-                    <Share2 className="w-4 h-4 mr-2" /> Partager
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-card border-foreground/10">
-                  <DropdownMenuItem onClick={() => handleShare('whatsapp')} className="text-foreground focus:bg-secondary/20 cursor-pointer">
-                    <MessageCircle className="w-4 h-4 mr-2 text-secondary" /> WhatsApp
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleShare('telegram')} className="text-foreground focus:bg-secondary/20 cursor-pointer">
-                    <Send className="w-4 h-4 mr-2 text-primary" /> Telegram
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleShare('email')} className="text-foreground focus:bg-secondary/20 cursor-pointer">
-                    <Mail className="w-4 h-4 mr-2 text-muted-foreground" /> Email
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <Button
-                className="col-span-2 py-5 text-base font-extrabold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
-                onClick={handleRegenerate}
-              >
-                <RefreshCw className="w-4 h-4 mr-2" /> Régénérer
-              </Button>
-            </div>
           </div>
         )}
 

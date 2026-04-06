@@ -158,28 +158,6 @@ const PromptStep = () => {
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-foreground">
-                🇬🇧 Prompt English {isSyncingEn && <Loader2 className="w-3 h-3 animate-spin inline ml-1" />}
-              </label>
-              <span className="text-xs text-muted-foreground">{prompt_en.length} car.</span>
-            </div>
-            <Textarea
-              value={prompt_en}
-              onChange={(e) => setPromptEn(e.target.value)}
-              className="bg-card border-foreground/10 text-foreground text-sm min-h-[80px] resize-none"
-              readOnly={!editingEn}
-            />
-            <div className="flex gap-2 mt-2">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => handleCopy(prompt_en)}>
-                <Copy className="w-3 h-3 mr-1" /> Copier
-              </Button>
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => setEditingEn(!editingEn)}>
-                <Pencil className="w-3 h-3 mr-1" /> {editingEn ? 'Verrouiller' : 'Modifier'}
-              </Button>
-            </div>
-          </div>
 
           <div className="flex justify-center mt-6">
             <Button
