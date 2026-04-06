@@ -148,7 +148,8 @@ const PromptStep = () => {
             <Textarea
               value={prompt_fr}
               onChange={(e) => handleFrChange(e.target.value)}
-              className="bg-card border-foreground/10 text-foreground text-sm min-h-[80px] resize-none"
+              className="bg-card border-foreground/10 text-foreground text-sm resize-none"
+              style={{ minHeight: `${Math.max(120, Math.ceil(prompt_fr.length / 60) * 24)}px` }}
             />
             <div className="flex gap-2 mt-2">
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => handleCopy(prompt_fr)}>
