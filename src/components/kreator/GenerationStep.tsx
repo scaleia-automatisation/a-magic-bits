@@ -206,6 +206,14 @@ const GenerationStep = () => {
               />
             </div>
             <span className="text-xs text-muted-foreground mt-2">{Math.round(Math.min(progress, 100))}%</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-4 text-muted-foreground hover:text-destructive"
+              onClick={() => abortControllerRef.current?.abort()}
+            >
+              <XCircle className="w-4 h-4 mr-1" /> Annuler
+            </Button>
           </div>
         )}
 
