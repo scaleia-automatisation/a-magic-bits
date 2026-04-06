@@ -50,12 +50,12 @@ const GenerationStep = () => {
     setStatus('generating');
     setProgress(0);
 
+    const isVideo = type === 'video';
     const progressInterval = !isVideo ? setInterval(() => {
       setProgress((p) => (p >= 95 ? p : p + Math.random() * 8));
     }, 500) : null;
 
     try {
-      const isVideo = type === 'video';
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
           ? generateVideo(prompt_en, ai_model, format, (pct) => setProgress(pct))
