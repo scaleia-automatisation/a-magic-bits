@@ -201,16 +201,26 @@ const GenerationStep = () => {
                 <span className="text-lg">✨</span>
               </div>
             </div>
-            <div className="text-sm font-medium text-foreground mb-2">
+            <div className="text-sm font-medium text-foreground mb-1">
               {progress < 95 ? 'Génération en cours…' : 'Finalisation en cours…'}
             </div>
+            {type === 'video' && (
+              <p className="text-xs text-muted-foreground mb-3 text-center max-w-xs">
+                La génération vidéo prend en moyenne 2 à 5 minutes. Merci de patienter 🎬
+              </p>
+            )}
             <div className="w-64 h-2 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full gradient-bg transition-all duration-300 rounded-full"
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
-            <span className="text-xs text-muted-foreground mt-2">{Math.round(Math.min(progress, 100))}%</span>
+            <div className="flex items-center gap-3 mt-2">
+              <span className="text-xs text-muted-foreground">{Math.round(Math.min(progress, 100))}%</span>
+              <span className="text-xs text-muted-foreground">
+                {Math.floor(elapsedSeconds / 60)}:{(elapsedSeconds % 60).toString().padStart(2, '0')}
+              </span>
+            </div>
             <Button
               variant="ghost"
               size="sm"
