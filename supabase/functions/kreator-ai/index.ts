@@ -205,7 +205,7 @@ serve(async (req) => {
       const projectId = sa.project_id;
 
       // Start video generation via Vertex AI REST API
-      const generateUrl = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId}/locations/us-central1/publishers/google/models/${veoModel}:predict`;
+      const generateUrl = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId}/locations/us-central1/publishers/google/models/${veoModel}:predictLongRunning`;
 
       const generateRes = await fetch(generateUrl, {
         method: "POST",
