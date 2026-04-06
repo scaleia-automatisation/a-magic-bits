@@ -103,7 +103,7 @@ const GenerationStep = () => {
       setStatus('done');
       await refreshProfile();
     } catch (err) {
-      clearInterval(interval);
+      if (progressInterval) clearInterval(progressInterval);
       console.error(err);
       toast.error('Erreur lors de la génération. Aucun crédit déduit.');
       setStatus('error');
