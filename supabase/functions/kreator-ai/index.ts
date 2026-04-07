@@ -20,6 +20,8 @@ serve(async (req) => {
   try {
     const { action, messages, system_prompt, model, prompt, size, quality, ai_model, image_base64s, operation_name } = await req.json();
 
+    const isNanoBananaModel = ["nano-banana-2", "nano-banana-pro"].includes(ai_model || "");
+
     const isVertexModel = [
       "imagen-4", "imagen-4-ultra", "imagen-4-fast",
       "veo-2", "veo-3", "veo-3-fast"

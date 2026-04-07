@@ -10,6 +10,8 @@ const contentTypes: { type: ContentType; label: string; icon: typeof Image }[] =
 ];
 
 const imageModels: { value: AIModel; label: string }[] = [
+  { value: 'nano-banana-2', label: 'Nano Banana 2 ⚡' },
+  { value: 'nano-banana-pro', label: 'Nano Banana Pro 🎨' },
   { value: 'dall-e-3', label: 'DALL-E 3' },
   { value: 'imagen-4', label: 'Imagen 4' },
   { value: 'imagen-4-ultra', label: 'Imagen 4 Ultra' },
