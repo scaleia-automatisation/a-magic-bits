@@ -156,7 +156,11 @@ const MyGenerations = () => {
             >
               <X className="w-5 h-5" />
             </Button>
-            <img src={previewUrl} alt="Aperçu" className="w-full h-auto rounded-card" />
+            {previewType === 'video' ? (
+              <video src={previewUrl} controls autoPlay loop playsInline className="w-full rounded-card" style={{ maxHeight: '80vh' }} />
+            ) : (
+              <img src={previewUrl} alt="Aperçu" className="w-full h-auto rounded-card" />
+            )}
           </div>
         </div>
       )}
