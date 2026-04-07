@@ -287,26 +287,63 @@ Génère un prompt unifié et cohérent intégrant TOUS ces éléments.`;
   }
 }
 
+export interface PlatformCaptions {
+  facebook: { hook: string; description: string; cta: string; hashtags: string };
+  instagram: { hook: string; description: string; cta: string; hashtags: string };
+  tiktok: { hook: string; description: string; cta: string; hashtags: string };
+  linkedin: { hook: string; description: string; cta: string; hashtags: string };
+}
+
 export async function generateCaption(params: {
   objective: string;
   idea: string;
   contentType: string;
   sector: string;
   activity: string;
-}) {
-  const systemPrompt = `Tu es un expert en copywriting marketing et réseaux sociaux de renommée internationale.
-Génère un caption complet pour un post sur les réseaux sociaux.
+}): Promise<PlatformCaptions> {
+  const systemPrompt = `Tu es un expert mondial en copywriting marketing, psychologie de conversion et algorithmes des réseaux sociaux en 2026.
 
-RÈGLES STRICTES :
-- Hook : phrase d'accroche percutante, MAX 10 mots, en lien direct avec l'objectif
-- Description : complémente le hook, MAX 15 mots, cohérent avec l'objectif et l'idée
-- Appel à l'action : incitation claire, 2 à 5 mots MAX avec un émoji à la fin
-- Hashtags : SEO optimisé, inclure le secteur, l'activité, le produit, 5 à 10 mots MAX
+Génère 4 versions de caption optimisées pour chaque plateforme : Facebook, Instagram, TikTok et LinkedIn.
 
-Tout doit être en cohérence avec l'objectif du contenu et l'idée choisie.
+CHAQUE caption doit être adaptée aux BONNES PRATIQUES 2026 de la plateforme :
+
+📘 FACEBOOK (2026) :
+- Hook émotionnel ou question ouverte pour déclencher les commentaires (algo favorise les conversations)
+- Description storytelling courte (2-3 phrases max), ton conversationnel et authentique
+- CTA qui incite au clic ou au partage (l'algo booste le contenu partagé en privé)
+- Hashtags : 3-5 max, larges et thématiques (Facebook pénalise le spam de hashtags)
+- Emoji modérés (1-2 max)
+
+📸 INSTAGRAM (2026) :
+- Hook visuel et accrocheur, 1ère ligne = tout (le reste est coupé sous "... plus")
+- Description qui alterne valeur + émotion, utiliser des sauts de ligne pour aérer
+- CTA orienté saves/shares (l'algo 2026 priorise les saves et partages en DM)
+- Hashtags : 5-8 hashtags mixtes (niche + volume moyen), PAS dans le caption mais à la fin
+- Emoji expressifs et stratégiques
+
+🎵 TIKTOK (2026) :
+- Hook ultra court et percutant (3-5 mots MAX), style natif TikTok, fait pour arrêter le scroll
+- Description minimale, ton Gen-Z / authentique, phrases courtes et punchy
+- CTA sous forme de défi ou question (l'algo favorise les duets et commentaires)
+- Hashtags : 3-5 trending + niche, intégrés naturellement
+- Emoji style TikTok (🔥💀✨🤯)
+
+💼 LINKEDIN (2026) :
+- Hook professionnel mais humain, 1ère ligne doit donner envie de "voir plus"
+- Description apport de valeur, insight ou leçon tirée, ton expert mais accessible
+- CTA subtil vers l'engagement professionnel (commentaire, partage d'expérience)
+- Hashtags : 3-5 professionnels et sectoriels
+- Pas d'emoji excessifs, ton crédible
+
+RÈGLES COMMUNES :
+- Hook : MAX 10 mots, déclenche une émotion forte et cohérente avec le contenu
+- Description : MAX 20 mots, apporte de la valeur et complète le hook
+- CTA : 2 à 5 mots + 1 emoji
+- Hashtags : SEO optimisé, inclure secteur + activité + produit
+- Le contenu doit déclencher une émotion COHÉRENTE avec le média généré et l'objectif
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
-{"hook":"...","description":"...","cta":"...","hashtags":"..."}`;
+{"facebook":{"hook":"...","description":"...","cta":"...","hashtags":"..."},"instagram":{"hook":"...","description":"...","cta":"...","hashtags":"..."},"tiktok":{"hook":"...","description":"...","cta":"...","hashtags":"..."},"linkedin":{"hook":"...","description":"...","cta":"...","hashtags":"..."}}`;
 
   const userPrompt = `Objectif: ${params.objective || 'Engagement et visibilité'}
 Idée: ${params.idea || 'Contenu marketing professionnel'}
