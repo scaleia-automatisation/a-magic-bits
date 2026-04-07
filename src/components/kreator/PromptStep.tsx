@@ -77,26 +77,6 @@ const PromptStep = () => {
     }
   };
 
-  const syncEnglishPrompt = useCallback(async (frenchText: string) => {
-    if (!frenchText.trim()) return;
-    setIsSyncingEn(true);
-    try {
-      const data = await callKreatorAI({
-        action: 'translate_prompt',
-        messages: [{ role: 'user', content: frenchText }],
-        system_prompt: `Tu es un traducteur expert. Traduis fidèlement ce prompt français en anglais, optimisé pour un modèle de génération d'image/vidéo IA. Conserve tous les détails techniques, le style, l'ambiance et les instructions. RETOURNE UNIQUEMENT la traduction anglaise, rien d'autre.`,
-      });
-      const content = data?.choices?.[0]?.message?.content;
-      if (content) {
-        setPromptEn(content.trim());
-      }
-    } catch (err) {
-      console.error('Erreur sync EN:', err);
-    } finally {
-      setIsSyncingEn(false);
-    }
-  }, [setPromptEn]);
-
   const handleFrChange = (newText: string) => {
     setPromptFr(newText);
     if (status === 'done' || status === 'error') {
