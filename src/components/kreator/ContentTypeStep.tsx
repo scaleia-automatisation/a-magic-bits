@@ -1,4 +1,4 @@
-import { useKreatorStore, type ContentType, type AIModel } from '@/store/useKreatorStore';
+import { useKreatorStore, type ContentType, type AIModel, type VideoResolution } from '@/store/useKreatorStore';
 import { Image, Layers, Video } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StepContainer from './StepContainer';
