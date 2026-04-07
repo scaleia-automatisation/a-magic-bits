@@ -20,6 +20,8 @@ serve(async (req) => {
   try {
     const { action, messages, system_prompt, model, prompt, size, quality, ai_model, image_base64s, operation_name } = await req.json();
 
+    const isNanoBananaModel = ["nano-banana-2", "nano-banana-pro"].includes(ai_model || "");
+
     const isVertexModel = [
       "imagen-4", "imagen-4-ultra", "imagen-4-fast",
       "veo-2", "veo-3", "veo-3-fast"
@@ -28,8 +30,55 @@ serve(async (req) => {
     const isVeoModel = ["veo-2", "veo-3", "veo-3-fast"].includes(ai_model || "");
     const isImagenModel = ["imagen-4", "imagen-4-ultra", "imagen-4-fast"].includes(ai_model || "");
 
+    // === Nano Banana 2 / Pro image generation (Lovable AI Gateway) ===
+    if (action === "generate_image" && isNanoBananaModel) {
+      const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+      if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+      const nanoBananaModelMap: Record<string, string> = {
+        "nano-banana-2": "google/gemini-3.1-flash-image-preview",
+        "nano-banana-pro": "google/gemini-3-pro-image-preview",
+      };
+
+      const gatewayModel = nanoBananaModelMap[ai_model] || "google/gemini-3.1-flash-image-preview";
+      
+      const aspectLabel = size === "9:16" ? "vertical 9:16 portrait" : size === "16:9" ? "horizontal 16:9 landscape" : "square 1:1";
+      const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}`;
+
+      const nbRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: gatewayModel,
+          messages: [{ role: "user", content: enhancedPrompt }],
+          modalities: ["image", "text"],
+        }),
+      });
+
+      if (!nbRes.ok) {
+        const errText = await nbRes.text();
+        console.error("Nano Banana error:", nbRes.status, errText);
+        if (nbRes.status === 429) return jsonError(429, "Limite de requêtes atteinte. Réessayez dans quelques instants.");
+        if (nbRes.status === 402) return jsonError(402, "Crédits Lovable AI épuisés. Ajoutez des crédits dans Settings > Workspace > Usage.");
+        return jsonError(500, "Erreur lors de la génération d'image");
+      }
+
+      const nbData = await nbRes.json();
+      const imageUrl = nbData?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+      if (!imageUrl) {
+        console.error("Nano Banana: no image in response", JSON.stringify(nbData).substring(0, 500));
+        return jsonError(500, "Pas d'image générée");
+      }
+
+      return jsonResp({ image_url: imageUrl });
+    }
+
     // === DALL-E 3 image generation (OpenAI) ===
-    if (action === "generate_image" && !isImagenModel) {
+    if (action === "generate_image" && !isImagenModel && !isNanoBananaModel) {
       const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
       if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
 

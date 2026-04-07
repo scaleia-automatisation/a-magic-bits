@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 export type ContentType = 'image' | 'carousel' | 'video';
 export type Format = '9:16' | '16:9' | '1:1';
-export type AIModel = 'dall-e-3' | 'imagen-4' | 'imagen-4-ultra' | 'imagen-4-fast' | 'sora-2' | 'veo-2' | 'veo-3' | 'veo-3-fast';
+export type AIModel = 'dall-e-3' | 'imagen-4' | 'imagen-4-ultra' | 'imagen-4-fast' | 'nano-banana-2' | 'nano-banana-pro' | 'sora-2' | 'veo-2' | 'veo-3' | 'veo-3-fast';
 export type VideoResolution = '720p' | '1080p';
 export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
@@ -82,7 +82,7 @@ const initialState = {
   user_mode: 'beginner' as UserMode,
   type: 'image' as ContentType,
   slides_count: 2,
-  ai_model: 'dall-e-3' as AIModel,
+  ai_model: 'nano-banana-2' as AIModel,
   objective: '',
   render_style: '',
   company_activity: '',
@@ -118,7 +118,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   ...initialState,
   setUserMode: (mode) => set({ user_mode: mode }),
   setType: (type) => {
-    const defaultModel = type === 'video' ? 'veo-3' as AIModel : 'dall-e-3' as AIModel;
+    const defaultModel = type === 'video' ? 'veo-3' as AIModel : 'nano-banana-2' as AIModel;
     const format = type === 'video' ? '9:16' as Format : '9:16' as Format;
     set({ type, ai_model: defaultModel, format });
   },
