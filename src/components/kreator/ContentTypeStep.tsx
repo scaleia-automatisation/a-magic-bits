@@ -148,7 +148,7 @@ const ContentTypeStep = () => {
               </SelectItem>
             ))}
             <SelectItem value="custom" className="text-foreground focus:bg-secondary/20">
-              Objectif personnalisé
+              🎯 Personnaliser
             </SelectItem>
           </SelectContent>
         </Select>
