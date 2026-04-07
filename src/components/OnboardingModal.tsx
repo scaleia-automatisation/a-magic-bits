@@ -55,7 +55,7 @@ const ACTIVITY_SECTOR_MAP: Record<string, string> = {
   assurance: 'Finance & Assurance',
   comptable: 'Finance & Assurance',
   boutique: 'Commerce & Distribution',
-  e-commerce: 'Commerce & Distribution',
+  'e-commerce': 'Commerce & Distribution',
   magasin: 'Commerce & Distribution',
   vente: 'Commerce & Distribution',
   transport: 'Transport & Logistique',
