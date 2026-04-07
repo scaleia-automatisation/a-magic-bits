@@ -126,7 +126,7 @@ const GenerationStep = () => {
         type,
         ai_model,
         format,
-        prompt_en_final: prompt_en,
+        prompt_en_final: prompt_fr,
         prompt_fr_final: prompt_fr,
         result_url: contentUrl,
         credits_used: creditsNeeded,
