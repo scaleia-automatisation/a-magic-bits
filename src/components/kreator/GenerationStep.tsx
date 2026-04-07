@@ -66,7 +66,7 @@ const GenerationStep = () => {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const hasPrompt = prompt_en.length > 0;
+  const hasPrompt = prompt_fr.length > 0;
   const buttonLabel = type === 'image' ? 'Générer le visuel' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
 
@@ -94,8 +94,8 @@ const GenerationStep = () => {
     try {
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
-          ? generateVideo(prompt_en, ai_model, format, (pct) => setProgress(pct), abortController.signal)
-          : generateImage(prompt_en, ai_model, format),
+          ? generateVideo(prompt_fr, ai_model, format, (pct) => setProgress(pct), abortController.signal)
+          : generateImage(prompt_fr, ai_model, format),
         generateCaption({
           objective,
           idea: idea_chosen || input_text,
@@ -126,7 +126,7 @@ const GenerationStep = () => {
         type,
         ai_model,
         format,
-        prompt_en_final: prompt_en,
+        prompt_en_final: prompt_fr,
         prompt_fr_final: prompt_fr,
         result_url: contentUrl,
         credits_used: creditsNeeded,

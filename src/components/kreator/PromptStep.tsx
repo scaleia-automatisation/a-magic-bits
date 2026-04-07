@@ -1,17 +1,17 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Copy, Loader2 } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { toast } from 'sonner';
-import { generatePrompt, callKreatorAI } from '@/lib/kreator-ai';
+import { generatePrompt } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
 
 const PromptStep = () => {
   const { user } = useAuth();
   const {
-    prompt_fr, setPromptFr, prompt_en, setPromptEn,
+    prompt_fr, setPromptFr,
     type, format, objective, company_activity, company_sector,
     input_text, idea_chosen, input_image_description, input_photos,
     options, slides_count, status, setStatus, setResultUrl, ai_model,
@@ -30,8 +30,6 @@ const PromptStep = () => {
   };
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isSyncingEn, setIsSyncingEn] = useState(false);
-  const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleGenerate = async () => {
     if (!user) {
@@ -63,7 +61,6 @@ const PromptStep = () => {
       });
 
       setPromptFr(result.prompt_fr || '');
-      setPromptEn(result.prompt_en || '');
       if (status === 'done' || status === 'error') {
         setStatus('idle');
         setResultUrl('');
@@ -72,31 +69,11 @@ const PromptStep = () => {
       console.error(err);
       toast.error('Erreur lors de la génération du prompt');
       setPromptFr('Photographie commerciale premium montrant un produit en situation lifestyle, éclairage studio professionnel, composition centrée avec espace négatif pour typographie.');
-      setPromptEn('Premium commercial photography showcasing a product in lifestyle setting, professional studio lighting, centered composition with negative space for typography.');
+      
     } finally {
       setIsGenerating(false);
     }
   };
-
-  const syncEnglishPrompt = useCallback(async (frenchText: string) => {
-    if (!frenchText.trim()) return;
-    setIsSyncingEn(true);
-    try {
-      const data = await callKreatorAI({
-        action: 'translate_prompt',
-        messages: [{ role: 'user', content: frenchText }],
-        system_prompt: `Tu es un traducteur expert. Traduis fidèlement ce prompt français en anglais, optimisé pour un modèle de génération d'image/vidéo IA. Conserve tous les détails techniques, le style, l'ambiance et les instructions. RETOURNE UNIQUEMENT la traduction anglaise, rien d'autre.`,
-      });
-      const content = data?.choices?.[0]?.message?.content;
-      if (content) {
-        setPromptEn(content.trim());
-      }
-    } catch (err) {
-      console.error('Erreur sync EN:', err);
-    } finally {
-      setIsSyncingEn(false);
-    }
-  }, [setPromptEn]);
 
   const handleFrChange = (newText: string) => {
     setPromptFr(newText);
@@ -104,10 +81,6 @@ const PromptStep = () => {
       setStatus('idle');
       setResultUrl('');
     }
-    if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
-    syncTimeoutRef.current = setTimeout(() => {
-      syncEnglishPrompt(newText);
-    }, 1500);
   };
 
   const handleCopy = (text: string) => {
