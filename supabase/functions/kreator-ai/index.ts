@@ -36,11 +36,11 @@ serve(async (req) => {
       if (!VERTEX_API_KEY) throw new Error("VERTEX_API_KEY is not configured");
 
       const nanoBananaModelMap: Record<string, string> = {
-        "nano-banana-2": "gemini-2.0-flash-exp",
-        "nano-banana-pro": "gemini-2.0-pro-exp",
+        "nano-banana-2": "gemini-3.1-flash-image-preview",
+        "nano-banana-pro": "gemini-3-pro-image-preview",
       };
 
-      const geminiModel = nanoBananaModelMap[ai_model] || "gemini-2.0-flash-exp";
+      const geminiModel = nanoBananaModelMap[ai_model] || "gemini-3.1-flash-image-preview";
       
       const aspectLabel = size === "9:16" ? "vertical 9:16 portrait" : size === "16:9" ? "horizontal 16:9 landscape" : "square 1:1";
       const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}`;
