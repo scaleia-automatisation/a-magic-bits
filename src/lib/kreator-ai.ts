@@ -388,13 +388,17 @@ ${params.activity ? `Activité: ${params.activity}` : ''}`;
   }
 }
 
-export async function generateImage(promptEn: string, aiModel: AIModel = 'dall-e-3') {
+export async function generateImage(promptEn: string, aiModel: AIModel = 'dall-e-3', format: string = '1:1') {
+  // Map format to DALL-E size
+  const dalleSize = format === '9:16' ? '1024x1792' : format === '16:9' ? '1792x1024' : '1024x1024';
+
   const { data, error } = await supabase.functions.invoke('kreator-ai', {
     body: {
       action: 'generate_image',
       prompt: promptEn,
       ai_model: aiModel,
-      size: '1024x1024',
+      size: format, // Pass the ratio directly; edge function handles per-model mapping
+      dalle_size: dalleSize,
       quality: 'hd',
     },
   });
