@@ -93,13 +93,17 @@ const MyGenerations = () => {
               <div key={gen.id} className="card-surface border border-foreground/10 rounded-card overflow-hidden group">
                 {gen.result_url ? (
                   <div className="relative aspect-square bg-muted">
-                    <img src={gen.result_url} alt="" className="w-full h-full object-cover" />
+                    {gen.type === 'video' ? (
+                      <video src={gen.result_url} className="w-full h-full object-cover" muted playsInline />
+                    ) : (
+                      <img src={gen.result_url} alt="" className="w-full h-full object-cover" />
+                    )}
                     <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                       <Button
                         variant="ghost"
                         size="sm"
                         className="bg-card/80 text-foreground hover:bg-card"
-                        onClick={() => setPreviewUrl(gen.result_url)}
+                        onClick={() => { setPreviewUrl(gen.result_url); setPreviewType(gen.type); }}
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
