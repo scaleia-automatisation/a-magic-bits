@@ -61,6 +61,7 @@ const objectives = [
   '💡 Convaincre — Créer le désir',
   '🔥 Inciter — Pousser à l\'action',
   '💎 Fidéliser — Faire revenir',
+  '✏️ Personnaliser',
 ];
 
 const ContentTypeStep = () => {
