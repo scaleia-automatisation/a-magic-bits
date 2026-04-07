@@ -90,7 +90,7 @@ serve(async (req) => {
           model: "dall-e-3",
           prompt: prompt || "",
           n: 1,
-          size: size || "1024x1024",
+          size: dalle_size || size || "1024x1024",
           quality: quality || "hd",
           response_format: "url",
         }),
