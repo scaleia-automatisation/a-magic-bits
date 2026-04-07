@@ -30,8 +30,6 @@ const PromptStep = () => {
   };
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isSyncingEn, setIsSyncingEn] = useState(false);
-  const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleGenerate = async () => {
     if (!user) {
