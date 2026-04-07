@@ -70,7 +70,9 @@ const ContentTypeStep = () => {
     type, setType, slides_count, setSlidesCount,
     ai_model, setAiModel, objective, setObjective,
     render_style, setRenderStyle,
-    video_render_style, setVideoRenderStyle
+    video_render_style, setVideoRenderStyle,
+    format, setFormat,
+    video_resolution, setVideoResolution
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
