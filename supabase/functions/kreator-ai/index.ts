@@ -78,7 +78,7 @@ serve(async (req) => {
     }
 
     // === DALL-E 3 image generation (OpenAI) ===
-    if (action === "generate_image" && !isImagenModel) {
+    if (action === "generate_image" && !isImagenModel && !isNanoBananaModel) {
       const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
       if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
 
