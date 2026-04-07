@@ -69,7 +69,7 @@ const PromptStep = () => {
       console.error(err);
       toast.error('Erreur lors de la génération du prompt');
       setPromptFr('Photographie commerciale premium montrant un produit en situation lifestyle, éclairage studio professionnel, composition centrée avec espace négatif pour typographie.');
-      setPromptEn('Premium commercial photography showcasing a product in lifestyle setting, professional studio lighting, centered composition with negative space for typography.');
+      
     } finally {
       setIsGenerating(false);
     }
