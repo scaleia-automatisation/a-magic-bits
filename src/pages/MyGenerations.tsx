@@ -22,6 +22,7 @@ const MyGenerations = () => {
   const navigate = useNavigate();
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewType, setPreviewType] = useState<string>('image');
   const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
