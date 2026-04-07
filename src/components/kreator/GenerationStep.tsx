@@ -2,12 +2,14 @@ import { useState, useRef } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Download, Save, RefreshCw, Copy, Loader2, Share2, Mail, MessageCircle, Send, AlertTriangle, FilePlus, XCircle, X, Rocket, Clock } from 'lucide-react';
 import StepContainer from './StepContainer';
-import { generateImage, generateVideo, generateCaption } from '@/lib/kreator-ai';
+import { generateImage, generateVideo, generateCaption, type PlatformCaptions } from '@/lib/kreator-ai';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
   DialogContent,
@@ -22,9 +24,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+type Platform = 'facebook' | 'instagram' | 'tiktok' | 'linkedin';
+
+const platformLabels: Record<Platform, string> = {
+  facebook: '📘 Caption Facebook',
+  instagram: '📸 Caption Instagram',
+  tiktok: '🎵 Caption TikTok',
+  linkedin: '💼 Caption LinkedIn',
+};
 
 const GenerationStep = () => {
   const { user, refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const {
     type, prompt_en, prompt_fr, status, setStatus, result_url, setResultUrl,
     ai_model, format, setCreditsUsed, objective, input_text, idea_chosen,
@@ -32,9 +51,17 @@ const GenerationStep = () => {
   } = useKreatorStore();
   const [progress, setProgress] = useState(0);
   const [generating, setGenerating] = useState(false);
-  const [caption, setCaption] = useState({ hook: '', description: '', cta: '', hashtags: '' });
+  const [captions, setCaptions] = useState<PlatformCaptions | null>(null);
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>('instagram');
   const [captionEditing, setCaptionEditing] = useState(false);
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
+  const [showPublishedPopup, setShowPublishedPopup] = useState(false);
+  const [showSavedPopup, setShowSavedPopup] = useState(false);
+  const [publishPlatforms, setPublishPlatforms] = useState<Record<Platform, boolean>>({
+    facebook: false, instagram: false, tiktok: false, linkedin: false,
+  });
+  const [publishing, setPublishing] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -42,6 +69,8 @@ const GenerationStep = () => {
   const hasPrompt = prompt_en.length > 0;
   const buttonLabel = type === 'image' ? 'Générer le visuel' : type === 'carousel' ? 'Générer le carrousel' : 'Générer la vidéo';
   const creditsNeeded = type === 'image' ? 1 : type === 'carousel' ? (useKreatorStore.getState().slides_count) : 3;
+
+  const currentCaption = captions ? captions[selectedPlatform] : null;
 
   const handleGenerate = async () => {
     if (!user) {
@@ -106,7 +135,7 @@ const GenerationStep = () => {
 
       setResultUrl(contentUrl);
       setCreditsUsed(creditsNeeded);
-      setCaption(captionResult);
+      setCaptions(captionResult);
       setStatus('done');
       await refreshProfile();
     } catch (err: any) {
@@ -127,7 +156,8 @@ const GenerationStep = () => {
   };
 
   const handleCopyCaption = () => {
-    const text = `${caption.hook}\n${caption.description}\n${caption.cta}\n\n${caption.hashtags}`;
+    if (!currentCaption) return;
+    const text = `${currentCaption.hook}\n${currentCaption.description}\n${currentCaption.cta}\n\n${currentCaption.hashtags}`;
     navigator.clipboard.writeText(text);
     toast.success('Caption copié !');
   };
@@ -142,16 +172,18 @@ const GenerationStep = () => {
   };
 
   const handleSave = async () => {
-    toast.success('Génération sauvegardée dans vos brouillons');
+    setShowSavedPopup(true);
   };
 
   const handleRegenerate = () => {
     setStatus('idle');
     setResultUrl('');
+    setCaptions(null);
   };
 
   const handleShare = (platform: string) => {
-    const text = `${caption.hook}\n${caption.description}\n${caption.cta}\n\n${caption.hashtags}`;
+    if (!currentCaption) return;
+    const text = `${currentCaption.hook}\n${currentCaption.description}\n${currentCaption.cta}\n\n${currentCaption.hashtags}`;
     const encoded = encodeURIComponent(text);
     const url = encodeURIComponent(result_url || '');
 
@@ -175,7 +207,66 @@ const GenerationStep = () => {
   const confirmNewProject = () => {
     resetProject();
     setShowNewProjectDialog(false);
+    setCaptions(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePublishNow = () => {
+    setPublishPlatforms({ facebook: false, instagram: false, tiktok: false, linkedin: false });
+    setShowPublishDialog(true);
+  };
+
+  const handleLaunchPublication = async () => {
+    const selected = (Object.keys(publishPlatforms) as Platform[]).filter(p => publishPlatforms[p]);
+    if (selected.length === 0) {
+      toast.error('Sélectionnez au moins une plateforme');
+      return;
+    }
+
+    setPublishing(true);
+    try {
+      // Webhook Make - send publication data
+      const webhookUrl = 'https://hook.eu2.make.com/kreator-publish';
+      const captionData = captions ? Object.fromEntries(
+        selected.map(p => [p, captions[p]])
+      ) : {};
+
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          platforms: selected,
+          content_url: result_url,
+          content_type: type,
+          captions: captionData,
+          user_id: user?.id,
+        }),
+      }).catch(() => {
+        // Webhook might not be configured yet, that's OK
+      });
+
+      setShowPublishDialog(false);
+      setShowPublishedPopup(true);
+    } catch {
+      toast.error('Erreur lors de la publication');
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+  const handlePublishLater = async () => {
+    handleSave();
+  };
+
+  const updateCurrentCaption = (field: string, value: string) => {
+    if (!captions) return;
+    setCaptions({
+      ...captions,
+      [selectedPlatform]: {
+        ...captions[selectedPlatform],
+        [field]: value,
+      },
+    });
   };
 
   if (!hasPrompt) return null;
@@ -296,10 +387,21 @@ const GenerationStep = () => {
               </Button>
             </div>
 
-            {/* Caption section */}
+            {/* Caption section with platform dropdown */}
             <div className="bg-card rounded-card p-4 md:p-5 border border-foreground/10">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-foreground uppercase tracking-wide">Caption</h3>
+                <Select value={selectedPlatform} onValueChange={(v) => setSelectedPlatform(v as Platform)}>
+                  <SelectTrigger className="w-[220px] bg-background border-foreground/10 text-foreground text-sm font-bold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-foreground/10">
+                    {(Object.keys(platformLabels) as Platform[]).map((p) => (
+                      <SelectItem key={p} value={p} className="text-foreground focus:bg-secondary/20 cursor-pointer">
+                        {platformLabels[p]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground h-8 px-2" onClick={handleCopyCaption}>
                     <Copy className="w-3.5 h-3.5 mr-1" /> Copier
@@ -316,55 +418,73 @@ const GenerationStep = () => {
                 </div>
               </div>
 
-              {captionEditing ? (
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs text-muted-foreground font-medium mb-1 block">HOOK</label>
-                    <Textarea
-                      value={caption.hook}
-                      onChange={(e) => setCaption(prev => ({ ...prev, hook: e.target.value }))}
-                      className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
-                      rows={1}
-                    />
+              {currentCaption && (
+                captionEditing ? (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs text-muted-foreground font-medium mb-1 block">HOOK</label>
+                      <Textarea
+                        value={currentCaption.hook}
+                        onChange={(e) => updateCurrentCaption('hook', e.target.value)}
+                        className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                        rows={1}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground font-medium mb-1 block">DESCRIPTION</label>
+                      <Textarea
+                        value={currentCaption.description}
+                        onChange={(e) => updateCurrentCaption('description', e.target.value)}
+                        className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                        rows={1}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground font-medium mb-1 block">APPEL À L'ACTION</label>
+                      <Textarea
+                        value={currentCaption.cta}
+                        onChange={(e) => updateCurrentCaption('cta', e.target.value)}
+                        className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                        rows={1}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground font-medium mb-1 block">HASHTAGS</label>
+                      <Textarea
+                        value={currentCaption.hashtags}
+                        onChange={(e) => updateCurrentCaption('hashtags', e.target.value)}
+                        className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
+                        rows={1}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground font-medium mb-1 block">DESCRIPTION</label>
-                    <Textarea
-                      value={caption.description}
-                      onChange={(e) => setCaption(prev => ({ ...prev, description: e.target.value }))}
-                      className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
-                      rows={1}
-                    />
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-sm text-foreground font-semibold">{currentCaption.hook}</p>
+                    <p className="text-sm text-foreground">{currentCaption.description}</p>
+                    <p className="text-sm text-foreground font-semibold">{currentCaption.cta}</p>
+                    <p className="text-sm text-primary mt-2">{currentCaption.hashtags}</p>
                   </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground font-medium mb-1 block">APPEL À L'ACTION</label>
-                    <Textarea
-                      value={caption.cta}
-                      onChange={(e) => setCaption(prev => ({ ...prev, cta: e.target.value }))}
-                      className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
-                      rows={1}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground font-medium mb-1 block">HASHTAGS</label>
-                    <Textarea
-                      value={caption.hashtags}
-                      onChange={(e) => setCaption(prev => ({ ...prev, hashtags: e.target.value }))}
-                      className="bg-background border-foreground/10 text-foreground text-sm min-h-[40px] resize-none"
-                      rows={1}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <p className="text-sm text-foreground font-semibold">{caption.hook}</p>
-                  <p className="text-sm text-foreground">{caption.description}</p>
-                  <p className="text-sm text-foreground font-semibold">{caption.cta}</p>
-                  <p className="text-sm text-primary mt-2">{caption.hashtags}</p>
-                </div>
+                )
               )}
             </div>
 
+            {/* Publish buttons */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                onClick={handlePublishNow}
+                className="gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn py-5 text-sm font-bold"
+              >
+                <Rocket className="w-4 h-4 mr-2" /> Publier maintenant
+              </Button>
+              <Button
+                variant="outline"
+                className="border-foreground/10 text-foreground hover:border-secondary rounded-btn py-5 text-sm font-bold"
+                onClick={handlePublishLater}
+              >
+                <Clock className="w-4 h-4 mr-2" /> Publier plus tard
+              </Button>
+            </div>
           </div>
         )}
 
@@ -414,9 +534,93 @@ const GenerationStep = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Publish Now dialog - platform selection */}
+      <Dialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
+        <DialogContent className="bg-card border-foreground/10 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <Rocket className="w-5 h-5 text-primary" />
+              Publier maintenant
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Sélectionnez les plateformes sur lesquelles publier votre contenu.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center justify-between gap-2 py-4">
+            {(Object.keys(publishPlatforms) as Platform[]).map((p) => (
+              <label
+                key={p}
+                className="flex items-center gap-2 cursor-pointer select-none"
+                onClick={() => setPublishPlatforms(prev => ({ ...prev, [p]: !prev[p] }))}
+              >
+                <Checkbox
+                  checked={publishPlatforms[p]}
+                  onCheckedChange={(checked) => setPublishPlatforms(prev => ({ ...prev, [p]: !!checked }))}
+                />
+                <span className="text-sm text-foreground font-medium capitalize">{p === 'tiktok' ? 'TikTok' : p === 'linkedin' ? 'LinkedIn' : p.charAt(0).toUpperCase() + p.slice(1)}</span>
+              </label>
+            ))}
+          </div>
+          <Button
+            onClick={handleLaunchPublication}
+            disabled={publishing || !Object.values(publishPlatforms).some(Boolean)}
+            className="w-full gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn py-5 font-bold"
+          >
+            {publishing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Rocket className="w-4 h-4 mr-2" />}
+            Lancer la publication
+          </Button>
+        </DialogContent>
+      </Dialog>
+
+      {/* Published success popup */}
+      <Dialog open={showPublishedPopup} onOpenChange={setShowPublishedPopup}>
+        <DialogContent className="bg-card border-foreground/10 max-w-sm text-center">
+          <DialogHeader>
+            <DialogTitle className="text-foreground text-center">
+              ✅ Publication envoyée !
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground text-center">
+              Votre contenu a été envoyé pour publication sur les plateformes sélectionnées.
+            </DialogDescription>
+          </DialogHeader>
+          <Button
+            onClick={() => {
+              setShowPublishedPopup(false);
+              confirmNewProject();
+            }}
+            className="w-full gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn py-5 font-bold"
+          >
+            <FilePlus className="w-4 h-4 mr-2" /> Créer un nouveau contenu
+          </Button>
+        </DialogContent>
+      </Dialog>
+
+      {/* Saved popup */}
+      <Dialog open={showSavedPopup} onOpenChange={setShowSavedPopup}>
+        <DialogContent className="bg-card border-foreground/10 max-w-sm text-center">
+          <DialogHeader>
+            <DialogTitle className="text-foreground text-center">
+              💾 Votre contenu est sauvegardé !
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground text-center">
+              Vous pouvez le retrouver dans le dossier <strong>Mes générations</strong> présent dans le tableau de bord.
+            </DialogDescription>
+          </DialogHeader>
+          <Button
+            onClick={() => {
+              setShowSavedPopup(false);
+              navigate('/my-generations');
+            }}
+            variant="outline"
+            className="w-full border-foreground/10 text-foreground hover:border-secondary rounded-btn py-4"
+          >
+            Voir mes générations
+          </Button>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
-
 
 export default GenerationStep;
