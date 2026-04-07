@@ -88,6 +88,7 @@ const initialState = {
   company_activity: '',
   company_sector: '',
   video_render_style: '',
+  video_resolution: '1080p' as VideoResolution,
   format: '9:16' as Format,
   input_image_url: '',
   input_image_description: '',
