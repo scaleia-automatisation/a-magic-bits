@@ -55,16 +55,11 @@ const videoRenderStyles = [
 ];
 
 const objectives = [
-  'Présenter le produit ou service',
-  'Développer la notoriété de la marque',
-  'Attirer des prospects qualifiés',
-  'Mettre en avant les bénéfices et l\'utilité',
-  'Éduquer et informer le marché',
-  'Créer de l\'engagement',
-  'Construire la confiance et la crédibilité',
-  'Promouvoir une offre',
-  'Convertir en clients (inciter à l\'action)',
-  'Fidéliser et générer des recommandations',
+  '🎯 Capter — Attirer l\'attention',
+  '🧲 Retenir — Maintenir l\'intérêt',
+  '💡 Convaincre — Créer le désir',
+  '🔥 Inciter — Pousser à l\'action',
+  '💎 Fidéliser — Faire revenir',
 ];
 
 const ContentTypeStep = () => {
