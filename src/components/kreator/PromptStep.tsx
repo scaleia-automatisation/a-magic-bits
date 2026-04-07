@@ -63,7 +63,6 @@ const PromptStep = () => {
       });
 
       setPromptFr(result.prompt_fr || '');
-      setPromptEn(result.prompt_en || '');
       if (status === 'done' || status === 'error') {
         setStatus('idle');
         setResultUrl('');
