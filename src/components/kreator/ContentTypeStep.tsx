@@ -1,6 +1,7 @@
 import { useKreatorStore, type ContentType, type AIModel, type VideoResolution } from '@/store/useKreatorStore';
 import { Image, Layers, Video } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import StepContainer from './StepContainer';
 
 const contentTypes: { type: ContentType; label: string; icon: typeof Image }[] = [
@@ -60,6 +61,7 @@ const objectives = [
   '💡 Convaincre — Créer le désir',
   '🔥 Inciter — Pousser à l\'action',
   '💎 Fidéliser — Faire revenir',
+  '✏️ Personnaliser',
 ];
 
 const ContentTypeStep = () => {
@@ -137,7 +139,13 @@ const ContentTypeStep = () => {
 
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">Objectif du contenu</label>
-        <Select value={objective} onValueChange={setObjective}>
+        <Select value={objective.startsWith('custom:') ? '✏️ Personnaliser' : objective} onValueChange={(v) => {
+          if (v === '✏️ Personnaliser') {
+            setObjective('custom:');
+          } else {
+            setObjective(v);
+          }
+        }}>
           <SelectTrigger className="bg-card border-foreground/10 text-foreground">
             <SelectValue placeholder="Choisir un objectif..." />
           </SelectTrigger>
@@ -147,11 +155,16 @@ const ContentTypeStep = () => {
                 {o}
               </SelectItem>
             ))}
-            <SelectItem value="custom" className="text-foreground focus:bg-secondary/20">
-              🎯 Personnaliser
-            </SelectItem>
           </SelectContent>
         </Select>
+        {objective.startsWith('custom:') && (
+          <Input
+            value={objective.replace('custom:', '')}
+            onChange={(e) => setObjective(`custom:${e.target.value}`)}
+            placeholder="Décrivez votre objectif personnalisé..."
+            className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
+          />
+        )}
       </div>
 
       {type !== 'video' && (
