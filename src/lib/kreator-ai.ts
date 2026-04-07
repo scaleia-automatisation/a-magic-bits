@@ -301,53 +301,73 @@ export async function generateCaption(params: {
   sector: string;
   activity: string;
 }): Promise<PlatformCaptions> {
+  const isVideo = params.contentType === 'video';
+  const isCarousel = params.contentType === 'carousel';
+  const contentLabel = isVideo ? 'vidéo' : isCarousel ? 'carrousel' : 'image';
+
   const systemPrompt = `Tu es un expert mondial en copywriting marketing, psychologie de conversion et algorithmes des réseaux sociaux en 2026.
 
 Génère 4 versions de caption optimisées pour chaque plateforme : Facebook, Instagram, TikTok et LinkedIn.
+Le type de contenu est : ${contentLabel}.
 
-CHAQUE caption doit être adaptée aux BONNES PRATIQUES 2026 de la plateforme :
+CONSIGNES STRICTES PAR PLATEFORME ET PAR TYPE DE CONTENU :
 
-📘 FACEBOOK (2026) :
-- Hook émotionnel ou question ouverte pour déclencher les commentaires (algo favorise les conversations)
-- Description storytelling courte (2-3 phrases max), ton conversationnel et authentique
-- CTA qui incite au clic ou au partage (l'algo booste le contenu partagé en privé)
-- Hashtags : 3-5 max, larges et thématiques (Facebook pénalise le spam de hashtags)
-- Emoji modérés (1-2 max)
+📘 FACEBOOK :
+${isVideo ? `🎥 Vidéo :
+✅ Texte : 30 – 50 mots
+Structure : Hook → Contexte rapide → CTA` : `🖼️ ${isCarousel ? 'Carrousel' : 'Image'} :
+✅ Texte : 30 – 50 mots
+Structure optimale :
+🔥 Hook (1ère ligne) → 💡 Message court → ❓ CTA (question)`}
+Hook (puissant) : "Personne ne parle de ça…", "Erreur que 90% font…", "Tu fais ça aussi ?"
+Description : Directe, simple, orientée problème, 1 idée principale
+Hashtags (SEO) : 3 à 5 max, liés au domaine / activité
+CTA ciblé en lien avec le post (2–6 mots) : "Tu es d'accord ?", "Tu fais ça ?", "Ton avis ?"
 
-📸 INSTAGRAM (2026) :
-- Hook visuel et accrocheur, 1ère ligne = tout (le reste est coupé sous "... plus")
-- Description qui alterne valeur + émotion, utiliser des sauts de ligne pour aérer
-- CTA orienté saves/shares (l'algo 2026 priorise les saves et partages en DM)
-- Hashtags : 5-8 hashtags mixtes (niche + volume moyen), PAS dans le caption mais à la fin
-- Emoji expressifs et stratégiques
+📸 INSTAGRAM :
+${isVideo ? `🎥 Reels :
+✅ Texte : 30 – 50 mots
+Structure : Hook court → description → CTA + hashtags` : `🖼️ ${isCarousel ? 'Carrousel' : 'Image'} :
+✅ Texte : 30 – 50 mots
+Structure : 🔥 Hook fort → Story / valeur → CTA → Hashtags`}
+Hook (impact) : "J'aurais aimé savoir ça avant…", "Si tu fais ça, arrête…", "Voici pourquoi tu galères…"
+Description : Storytelling + conseils, lisible (sauts de ligne)
+Hashtags (SEO) : 5 à 10, niche + activité + problème
+CTA (2–6 mots) : "Tu en penses quoi ?", "Tu veux la suite ?", "Tu testes quand ?"
 
-🎵 TIKTOK (2026) :
-- Hook ultra court et percutant (3-5 mots MAX), style natif TikTok, fait pour arrêter le scroll
-- Description minimale, ton Gen-Z / authentique, phrases courtes et punchy
-- CTA sous forme de défi ou question (l'algo favorise les duets et commentaires)
-- Hashtags : 3-5 trending + niche, intégrés naturellement
-- Emoji style TikTok (🔥💀✨🤯)
+🎵 TIKTOK :
+🎥 ${isVideo ? 'Vidéo' : contentLabel} :
+✅ Texte : 50 – 150 caractères
+Structure : Hook direct → CTA rapide
+Hook (ultra punchy) : "Arrête de faire ça", "Tu perds de l'argent ici", "Personne ne t'explique ça"
+Description : Ultra courte, impact immédiat
+Hashtags (SEO + viral) : 3 à 6 : niche (#business) + viral (#fyp) + spécifique (#marketingdigital)
+CTA (2–6 mots) : "Tu savais ça ?", "Tu valides ?", "Tu veux plus ?"
 
-💼 LINKEDIN (2026) :
-- Hook professionnel mais humain, 1ère ligne doit donner envie de "voir plus"
-- Description apport de valeur, insight ou leçon tirée, ton expert mais accessible
-- CTA subtil vers l'engagement professionnel (commentaire, partage d'expérience)
-- Hashtags : 3-5 professionnels et sectoriels
-- Pas d'emoji excessifs, ton crédible
+💼 LINKEDIN :
+${isVideo ? `🎥 Vidéo :
+✅ Texte : 50 – 70 mots
+Structure : Hook → Explication claire → Conclusion → CTA` : `🖼️ ${isCarousel ? 'Carrousel' : 'Image'} :
+✅ Texte : 50 – 70 mots
+Structure : 🔥 Hook fort (ligne 1) → description forte → CTA`}
+Hook (pro + impact) : "J'ai perdu X à cause de ça…", "Voici ce que j'ai compris…", "90% des gens font cette erreur…"
+Description : Structurée, lisible (retours à la ligne), orientée valeur business
+Hashtags (SEO pro) : 7 à 10 mots : #startup #business #saas #marketing
+CTA (2–6 mots) : "Tu es d'accord ?", "Ton expérience ?", "Tu fais pareil ?"
 
 RÈGLES COMMUNES :
-- Hook : MAX 10 mots, déclenche une émotion forte et cohérente avec le contenu
-- Description : MAX 20 mots, apporte de la valeur et complète le hook
-- CTA : 2 à 5 mots + 1 emoji
-- Hashtags : SEO optimisé, inclure secteur + activité + produit
-- Le contenu doit déclencher une émotion COHÉRENTE avec le média généré et l'objectif
+- Hook : déclenche une émotion FORTE et COHÉRENTE avec le contenu et l'objectif
+- Chaque plateforme a sa propre longueur et son propre style — RESPECTER STRICTEMENT les limites de mots/caractères ci-dessus
+- Le contenu doit déclencher une émotion cohérente avec le média généré
+- CTA : toujours en lien direct avec le post
+- Hashtags : SEO optimisé, inclure secteur + activité
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"facebook":{"hook":"...","description":"...","cta":"...","hashtags":"..."},"instagram":{"hook":"...","description":"...","cta":"...","hashtags":"..."},"tiktok":{"hook":"...","description":"...","cta":"...","hashtags":"..."},"linkedin":{"hook":"...","description":"...","cta":"...","hashtags":"..."}}`;
 
   const userPrompt = `Objectif: ${params.objective || 'Engagement et visibilité'}
 Idée: ${params.idea || 'Contenu marketing professionnel'}
-Type de contenu: ${params.contentType}
+Type de contenu: ${contentLabel}
 ${params.sector ? `Secteur: ${params.sector}` : ''}
 ${params.activity ? `Activité: ${params.activity}` : ''}`;
 

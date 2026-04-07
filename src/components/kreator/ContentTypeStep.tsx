@@ -1,4 +1,4 @@
-import { useKreatorStore, type ContentType, type AIModel } from '@/store/useKreatorStore';
+import { useKreatorStore, type ContentType, type AIModel, type VideoResolution } from '@/store/useKreatorStore';
 import { Image, Layers, Video } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StepContainer from './StepContainer';
@@ -70,7 +70,9 @@ const ContentTypeStep = () => {
     type, setType, slides_count, setSlidesCount,
     ai_model, setAiModel, objective, setObjective,
     render_style, setRenderStyle,
-    video_render_style, setVideoRenderStyle
+    video_render_style, setVideoRenderStyle,
+    format, setFormat,
+    video_resolution, setVideoResolution
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
@@ -174,21 +176,50 @@ const ContentTypeStep = () => {
       )}
 
       {type === 'video' && (
-        <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu vidéo</label>
-          <Select value={video_render_style} onValueChange={setVideoRenderStyle}>
-            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-              <SelectValue placeholder="Choisir un type de rendu vidéo..." />
-            </SelectTrigger>
-            <SelectContent className="bg-card border-foreground/10">
-              {videoRenderStyles.map((r) => (
-                <SelectItem key={r} value={r} className="text-foreground focus:bg-secondary/20">
-                  {r}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <>
+          <div>
+            <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu vidéo</label>
+            <Select value={video_render_style} onValueChange={setVideoRenderStyle}>
+              <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                <SelectValue placeholder="Choisir un type de rendu vidéo..." />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-foreground/10">
+                {videoRenderStyles.map((r) => (
+                  <SelectItem key={r} value={r} className="text-foreground focus:bg-secondary/20">
+                    {r}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">Format vidéo</label>
+              <Select value={format} onValueChange={(v) => setFormat(v as '9:16' | '16:9' | '1:1')}>
+                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-foreground/10">
+                  <SelectItem value="9:16" className="text-foreground focus:bg-secondary/20">9:16 (Vertical)</SelectItem>
+                  <SelectItem value="16:9" className="text-foreground focus:bg-secondary/20">16:9 (Horizontal)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">Résolution</label>
+              <Select value={video_resolution} onValueChange={(v) => setVideoResolution(v as VideoResolution)}>
+                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-foreground/10">
+                  <SelectItem value="720p" className="text-foreground focus:bg-secondary/20">720p</SelectItem>
+                  <SelectItem value="1080p" className="text-foreground focus:bg-secondary/20">1080p</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </>
       )}
     </StepContainer>
   );

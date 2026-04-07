@@ -3,6 +3,7 @@ import { create } from 'zustand';
 export type ContentType = 'image' | 'carousel' | 'video';
 export type Format = '9:16' | '16:9' | '1:1';
 export type AIModel = 'dall-e-3' | 'imagen-4' | 'imagen-4-ultra' | 'imagen-4-fast' | 'sora-2' | 'veo-2' | 'veo-3' | 'veo-3-fast';
+export type VideoResolution = '720p' | '1080p';
 export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
 
@@ -32,6 +33,8 @@ interface KreatorState {
   setRenderStyle: (val: string) => void;
   video_render_style: string;
   setVideoRenderStyle: (val: string) => void;
+  video_resolution: VideoResolution;
+  setVideoResolution: (val: VideoResolution) => void;
   company_activity: string;
   setCompanyActivity: (val: string) => void;
   company_sector: string;
@@ -85,6 +88,7 @@ const initialState = {
   company_activity: '',
   company_sector: '',
   video_render_style: '',
+  video_resolution: '1080p' as VideoResolution,
   format: '9:16' as Format,
   input_image_url: '',
   input_image_description: '',
@@ -123,6 +127,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setObjective: (obj) => set({ objective: obj }),
   setRenderStyle: (val) => set({ render_style: val }),
   setVideoRenderStyle: (val) => set({ video_render_style: val }),
+  setVideoResolution: (val) => set({ video_resolution: val }),
   setCompanyActivity: (val) => set({ company_activity: val }),
   setCompanySector: (val) => set({ company_sector: val }),
   setFormat: (format) => set({ format }),
