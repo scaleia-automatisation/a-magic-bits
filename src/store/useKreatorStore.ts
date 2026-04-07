@@ -33,6 +33,8 @@ interface KreatorState {
   setRenderStyle: (val: string) => void;
   video_render_style: string;
   setVideoRenderStyle: (val: string) => void;
+  video_resolution: VideoResolution;
+  setVideoResolution: (val: VideoResolution) => void;
   company_activity: string;
   setCompanyActivity: (val: string) => void;
   company_sector: string;
