@@ -30,51 +30,49 @@ serve(async (req) => {
     const isVeoModel = ["veo-2", "veo-3", "veo-3-fast"].includes(ai_model || "");
     const isImagenModel = ["imagen-4", "imagen-4-ultra", "imagen-4-fast"].includes(ai_model || "");
 
-    // === Nano Banana 2 / Pro image generation (Lovable AI Gateway) ===
+    // === Nano Banana 2 / Pro image generation (Vertex AI / Gemini API) ===
     if (action === "generate_image" && isNanoBananaModel) {
-      const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-      if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+      const VERTEX_API_KEY = Deno.env.get("VERTEX_API_KEY");
+      if (!VERTEX_API_KEY) throw new Error("VERTEX_API_KEY is not configured");
 
       const nanoBananaModelMap: Record<string, string> = {
-        "nano-banana-2": "google/gemini-3.1-flash-image-preview",
-        "nano-banana-pro": "google/gemini-3-pro-image-preview",
+        "nano-banana-2": "gemini-2.0-flash-exp",
+        "nano-banana-pro": "gemini-2.0-pro-exp",
       };
 
-      const gatewayModel = nanoBananaModelMap[ai_model] || "google/gemini-3.1-flash-image-preview";
+      const geminiModel = nanoBananaModelMap[ai_model] || "gemini-2.0-flash-exp";
       
       const aspectLabel = size === "9:16" ? "vertical 9:16 portrait" : size === "16:9" ? "horizontal 16:9 landscape" : "square 1:1";
       const enhancedPrompt = `Generate an image with aspect ratio ${aspectLabel}. ${prompt || ""}`;
 
-      const nbRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const nbRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${VERTEX_API_KEY}`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: gatewayModel,
-          messages: [{ role: "user", content: enhancedPrompt }],
-          modalities: ["image", "text"],
+          contents: [{ parts: [{ text: enhancedPrompt }] }],
+          generationConfig: { responseModalities: ["IMAGE", "TEXT"] },
         }),
       });
 
       if (!nbRes.ok) {
         const errText = await nbRes.text();
         console.error("Nano Banana error:", nbRes.status, errText);
-        if (nbRes.status === 429) return jsonError(429, "Limite de requêtes atteinte. Réessayez dans quelques instants.");
-        if (nbRes.status === 402) return jsonError(402, "Crédits Lovable AI épuisés. Ajoutez des crédits dans Settings > Workspace > Usage.");
+        if (nbRes.status === 429) return jsonError(429, "Quota Vertex AI dépassé. Réessayez plus tard.");
         return jsonError(500, "Erreur lors de la génération d'image");
       }
 
       const nbData = await nbRes.json();
-      const imageUrl = nbData?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-
-      if (!imageUrl) {
-        console.error("Nano Banana: no image in response", JSON.stringify(nbData).substring(0, 500));
-        return jsonError(500, "Pas d'image générée");
+      
+      // Search for inline image data in the response
+      const parts = nbData?.candidates?.[0]?.content?.parts || [];
+      for (const part of parts) {
+        if (part.inlineData?.mimeType?.startsWith("image/")) {
+          return jsonResp({ image_url: `data:${part.inlineData.mimeType};base64,${part.inlineData.data}` });
+        }
       }
 
-      return jsonResp({ image_url: imageUrl });
+      console.error("Nano Banana: no image in response", JSON.stringify(nbData).substring(0, 500));
+      return jsonError(500, "Pas d'image générée");
     }
 
     // === DALL-E 3 image generation (OpenAI) ===
