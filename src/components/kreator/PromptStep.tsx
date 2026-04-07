@@ -83,10 +83,6 @@ const PromptStep = () => {
       setStatus('idle');
       setResultUrl('');
     }
-    if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
-    syncTimeoutRef.current = setTimeout(() => {
-      syncEnglishPrompt(newText);
-    }, 1500);
   };
 
   const handleCopy = (text: string) => {
