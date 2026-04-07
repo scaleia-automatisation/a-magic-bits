@@ -127,6 +127,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setObjective: (obj) => set({ objective: obj }),
   setRenderStyle: (val) => set({ render_style: val }),
   setVideoRenderStyle: (val) => set({ video_render_style: val }),
+  setVideoResolution: (val) => set({ video_resolution: val }),
   setCompanyActivity: (val) => set({ company_activity: val }),
   setCompanySector: (val) => set({ company_sector: val }),
   setFormat: (format) => set({ format }),
