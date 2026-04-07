@@ -1,6 +1,7 @@
 import { useKreatorStore, type ContentType, type AIModel, type VideoResolution } from '@/store/useKreatorStore';
 import { Image, Layers, Video } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import StepContainer from './StepContainer';
 
 const contentTypes: { type: ContentType; label: string; icon: typeof Image }[] = [
