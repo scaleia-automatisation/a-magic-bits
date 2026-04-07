@@ -18,7 +18,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { action, messages, system_prompt, model, prompt, size, quality, ai_model, image_base64s, operation_name } = await req.json();
+    const { action, messages, system_prompt, model, prompt, size, dalle_size, quality, ai_model, image_base64s, operation_name } = await req.json();
 
     const isNanoBananaModel = ["nano-banana-2", "nano-banana-pro"].includes(ai_model || "");
 
@@ -90,7 +90,7 @@ serve(async (req) => {
           model: "dall-e-3",
           prompt: prompt || "",
           n: 1,
-          size: size || "1024x1024",
+          size: dalle_size || size || "1024x1024",
           quality: quality || "hd",
           response_format: "url",
         }),
