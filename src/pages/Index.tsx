@@ -24,9 +24,7 @@ const Index = () => {
       {/* Header */}
       <header className="border-b border-foreground/5 relative">
         <div className="max-w-4xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
-          <span className="text-lg md:text-xl font-black gradient-text cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
-            Kréator
-          </span>
+          <img src={boosterLogo} alt="BoosterApp" className="h-8 md:h-10 cursor-pointer" onClick={() => navigate('/')} />
           <div className="flex items-center gap-2 md:gap-4">
             <Button
               variant="ghost"
