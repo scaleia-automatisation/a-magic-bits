@@ -69,7 +69,7 @@ const Pricing = () => {
             Choisissez votre plan
           </h1>
           <p className="text-muted-foreground text-lg">
-            Débloquez tout le potentiel de Kréator
+            Débloquez tout le potentiel de BoosterApp
           </p>
         </div>
 

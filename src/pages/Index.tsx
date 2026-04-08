@@ -101,7 +101,7 @@ const Index = () => {
 
       <footer className="border-t border-foreground/5 py-6 mt-20">
         <div className="max-w-4xl mx-auto px-4 text-center text-xs text-muted-foreground">
-          © 2026 Kréator — Génération de contenu marketing par IA
+          © 2026 BoosterApp — Génération de contenu marketing par IA
         </div>
       </footer>
     </div>

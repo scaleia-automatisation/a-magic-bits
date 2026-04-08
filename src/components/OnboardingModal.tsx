@@ -131,7 +131,7 @@ const OnboardingModal = () => {
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent className="sm:max-w-md bg-background border-foreground/10" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle className="text-xl font-black gradient-text text-center">Bienvenue sur Kréator 🎨</DialogTitle>
+          <DialogTitle className="text-xl font-black gradient-text text-center">Bienvenue sur BoosterApp 🚀</DialogTitle>
           <DialogDescription className="text-center text-muted-foreground">
             Pour personnaliser vos contenus, dites-nous en plus sur votre activité
           </DialogDescription>
