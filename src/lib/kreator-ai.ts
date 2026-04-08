@@ -321,9 +321,9 @@ ${isVideo ? `🎥 Vidéo :
 Structure : Hook → Contexte rapide → CTA` : `🖼️ ${isCarousel ? 'Carrousel' : 'Image'} :
 ✅ Texte : 30 – 50 mots
 Structure optimale :
-🔥 Hook (1ère ligne) → 💡 Message court → ❓ CTA (question)`}
+🔥 Hook (1ère ligne) → 💡 Message court`}
 Hook (puissant) : "Personne ne parle de ça…", "Erreur que 90% font…", "Tu fais ça aussi ?"
-Description : Directe, simple, orientée problème, 1 idée principale
+Description : Directe, simple, orientée problème, 1 idée principale. NE JAMAIS inclure le CTA dans la description.
 Hashtags (SEO) : 3 à 5 max, liés au domaine / activité
 CTA ciblé en lien avec le post (2–6 mots) : "Tu es d'accord ?", "Tu fais ça ?", "Ton avis ?"
 
@@ -332,18 +332,18 @@ ${isVideo ? `🎥 Reels :
 ✅ Texte : 30 – 50 mots
 Structure : Hook court → description → CTA + hashtags` : `🖼️ ${isCarousel ? 'Carrousel' : 'Image'} :
 ✅ Texte : 30 – 50 mots
-Structure : 🔥 Hook fort → Story / valeur → CTA → Hashtags`}
+Structure : 🔥 Hook fort → Story / valeur → Hashtags`}
 Hook (impact) : "J'aurais aimé savoir ça avant…", "Si tu fais ça, arrête…", "Voici pourquoi tu galères…"
-Description : Storytelling + conseils, lisible (sauts de ligne)
+Description : Storytelling + conseils, lisible (sauts de ligne). NE JAMAIS inclure le CTA dans la description.
 Hashtags (SEO) : 5 à 10, niche + activité + problème
 CTA (2–6 mots) : "Tu en penses quoi ?", "Tu veux la suite ?", "Tu testes quand ?"
 
 🎵 TIKTOK :
 🎥 ${isVideo ? 'Vidéo' : contentLabel} :
 ✅ Texte : 50 – 150 caractères
-Structure : Hook direct → CTA rapide
+Structure : Hook direct → Description courte
 Hook (ultra punchy) : "Arrête de faire ça", "Tu perds de l'argent ici", "Personne ne t'explique ça"
-Description : Ultra courte, impact immédiat
+Description : Ultra courte, impact immédiat. NE JAMAIS inclure le CTA dans la description.
 Hashtags (SEO + viral) : 3 à 6 : niche (#business) + viral (#fyp) + spécifique (#marketingdigital)
 CTA (2–6 mots) : "Tu savais ça ?", "Tu valides ?", "Tu veux plus ?"
 
@@ -352,17 +352,18 @@ ${isVideo ? `🎥 Vidéo :
 ✅ Texte : 50 – 70 mots
 Structure : Hook → Explication claire → Conclusion → CTA` : `🖼️ ${isCarousel ? 'Carrousel' : 'Image'} :
 ✅ Texte : 50 – 70 mots
-Structure : 🔥 Hook fort (ligne 1) → description forte → CTA`}
+Structure : 🔥 Hook fort (ligne 1) → description forte`}
 Hook (pro + impact) : "J'ai perdu X à cause de ça…", "Voici ce que j'ai compris…", "90% des gens font cette erreur…"
-Description : Structurée, lisible (retours à la ligne), orientée valeur business
+Description : Structurée, lisible (retours à la ligne), orientée valeur business. NE JAMAIS inclure le CTA dans la description.
 Hashtags (SEO pro) : 7 à 10 mots : #startup #business #saas #marketing
 CTA (2–6 mots) : "Tu es d'accord ?", "Ton expérience ?", "Tu fais pareil ?"
 
 RÈGLES COMMUNES :
+- RÈGLE ABSOLUE : Le CTA ne doit JAMAIS apparaître dans la description. Le CTA est un champ séparé.
 - Hook : déclenche une émotion FORTE et COHÉRENTE avec le contenu et l'objectif
 - Chaque plateforme a sa propre longueur et son propre style — RESPECTER STRICTEMENT les limites de mots/caractères ci-dessus
 - Le contenu doit déclencher une émotion cohérente avec le média généré
-- CTA : toujours en lien direct avec le post
+- CTA : toujours en lien direct avec le post, TOUJOURS dans le champ "cta", JAMAIS dans "description"
 - Hashtags : SEO optimisé, inclure secteur + activité
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown:

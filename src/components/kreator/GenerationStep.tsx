@@ -547,20 +547,36 @@ const GenerationStep = () => {
               Sélectionnez les plateformes sur lesquelles publier votre contenu.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center justify-between gap-2 py-4">
-            {(Object.keys(publishPlatforms) as Platform[]).map((p) => (
-              <label
-                key={p}
-                className="flex items-center gap-2 cursor-pointer select-none"
-                onClick={() => setPublishPlatforms(prev => ({ ...prev, [p]: !prev[p] }))}
-              >
-                <Checkbox
-                  checked={publishPlatforms[p]}
-                  onCheckedChange={(checked) => setPublishPlatforms(prev => ({ ...prev, [p]: !!checked }))}
-                />
-                <span className="text-sm text-foreground font-medium capitalize">{p === 'tiktok' ? 'TikTok' : p === 'linkedin' ? 'LinkedIn' : p.charAt(0).toUpperCase() + p.slice(1)}</span>
-              </label>
-            ))}
+          <div className="grid grid-cols-4 gap-3 py-4">
+            {(Object.keys(publishPlatforms) as Platform[]).map((p) => {
+              const selected = publishPlatforms[p];
+              const logos: Record<Platform, string> = {
+                facebook: '📘',
+                instagram: '📸',
+                tiktok: '🎵',
+                linkedin: '💼',
+              };
+              const labels: Record<Platform, string> = {
+                facebook: 'Facebook',
+                instagram: 'Instagram',
+                tiktok: 'TikTok',
+                linkedin: 'LinkedIn',
+              };
+              return (
+                <div
+                  key={p}
+                  onClick={() => setPublishPlatforms(prev => ({ ...prev, [p]: !prev[p] }))}
+                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                    selected
+                      ? 'border-primary bg-primary/10 shadow-md'
+                      : 'border-foreground/10 hover:border-primary/40'
+                  }`}
+                >
+                  <span className="text-3xl">{logos[p]}</span>
+                  <span className="text-xs font-semibold text-foreground">{labels[p]}</span>
+                </div>
+              );
+            })}
           </div>
           <Button
             onClick={handleLaunchPublication}
