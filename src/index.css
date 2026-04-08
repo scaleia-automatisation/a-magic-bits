@@ -143,8 +143,12 @@
   }
 
   .step-border {
-    border: 3px solid hsl(0 0% 0%);
+    border: 2px solid hsl(var(--booster-accent) / 0.4);
     border-radius: 12px;
+  }
+
+  .step-border:hover {
+    border-color: hsl(var(--booster-accent) / 0.7);
   }
 
   .card-surface {
