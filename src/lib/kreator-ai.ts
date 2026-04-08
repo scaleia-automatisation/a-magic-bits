@@ -332,9 +332,9 @@ ${isVideo ? `🎥 Reels :
 ✅ Texte : 30 – 50 mots
 Structure : Hook court → description → CTA + hashtags` : `🖼️ ${isCarousel ? 'Carrousel' : 'Image'} :
 ✅ Texte : 30 – 50 mots
-Structure : 🔥 Hook fort → Story / valeur → CTA → Hashtags`}
+Structure : 🔥 Hook fort → Story / valeur → Hashtags`}
 Hook (impact) : "J'aurais aimé savoir ça avant…", "Si tu fais ça, arrête…", "Voici pourquoi tu galères…"
-Description : Storytelling + conseils, lisible (sauts de ligne)
+Description : Storytelling + conseils, lisible (sauts de ligne). NE JAMAIS inclure le CTA dans la description.
 Hashtags (SEO) : 5 à 10, niche + activité + problème
 CTA (2–6 mots) : "Tu en penses quoi ?", "Tu veux la suite ?", "Tu testes quand ?"
 
