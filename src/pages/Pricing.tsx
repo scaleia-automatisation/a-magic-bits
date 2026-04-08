@@ -59,12 +59,7 @@ const Pricing = () => {
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <span
-            className="text-xl font-black gradient-text cursor-pointer"
-            onClick={() => navigate('/')}
-          >
-            Kréator
-          </span>
+          <img src={boosterLogo} alt="BoosterApp" className="h-8 md:h-10 cursor-pointer" onClick={() => navigate('/')} />
         </div>
       </header>
 
