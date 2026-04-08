@@ -1,3 +1,4 @@
+import boosterLogo from '@/assets/boosterapp-logo.png';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -73,9 +74,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b border-foreground/5">
         <div className="max-w-6xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
-          <span className="text-lg md:text-xl font-black gradient-text cursor-pointer" onClick={() => navigate('/')}>
-            Kréator
-          </span>
+          <img src={boosterLogo} alt="BoosterApp" className="h-8 md:h-10 cursor-pointer" onClick={() => navigate('/')} />
           <div className="flex items-center gap-2 md:gap-4">
             <div className="flex items-center gap-1.5 md:gap-2 bg-card px-3 py-1.5 md:px-4 md:py-2 rounded-pill border border-foreground/10">
               <Coins className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />

@@ -24,7 +24,7 @@ const AuthPage = () => {
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-black gradient-text mb-2">Kréator</h1>
+          <h1 className="text-3xl font-black gradient-text mb-2">BoosterApp</h1>
           <p className="text-muted-foreground">
             Générez du contenu marketing qui convertit
           </p>
