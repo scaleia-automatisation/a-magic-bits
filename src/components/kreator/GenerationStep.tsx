@@ -1,4 +1,8 @@
 import { useState, useRef } from 'react';
+import facebookLogo from '@/assets/facebook-logo.png';
+import instagramLogo from '@/assets/instagram-logo.png';
+import tiktokLogo from '@/assets/tiktok-logo.png';
+import linkedinLogo from '@/assets/linkedin-logo.png';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -551,10 +555,10 @@ const GenerationStep = () => {
             {(Object.keys(publishPlatforms) as Platform[]).map((p) => {
               const selected = publishPlatforms[p];
               const logos: Record<Platform, string> = {
-                facebook: '📘',
-                instagram: '📸',
-                tiktok: '🎵',
-                linkedin: '💼',
+                facebook: facebookLogo,
+                instagram: instagramLogo,
+                tiktok: tiktokLogo,
+                linkedin: linkedinLogo,
               };
               const labels: Record<Platform, string> = {
                 facebook: 'Facebook',
@@ -572,7 +576,7 @@ const GenerationStep = () => {
                       : 'border-foreground/10 hover:border-primary/40'
                   }`}
                 >
-                  <span className="text-3xl">{logos[p]}</span>
+                  <img src={logos[p]} alt={labels[p]} className="w-10 h-10 rounded-lg object-contain" />
                   <span className="text-xs font-semibold text-foreground">{labels[p]}</span>
                 </div>
               );
