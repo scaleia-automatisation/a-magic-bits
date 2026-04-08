@@ -1,4 +1,8 @@
 import { useState, useRef } from 'react';
+import facebookLogo from '@/assets/facebook-logo.png';
+import instagramLogo from '@/assets/instagram-logo.png';
+import tiktokLogo from '@/assets/tiktok-logo.png';
+import linkedinLogo from '@/assets/linkedin-logo.png';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
