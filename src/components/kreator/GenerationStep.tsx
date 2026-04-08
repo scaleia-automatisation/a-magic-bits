@@ -195,7 +195,7 @@ const GenerationStep = () => {
         window.open(`https://t.me/share/url?url=${url}&text=${encoded}`, '_blank');
         break;
       case 'email':
-        window.open(`mailto:?subject=Mon%20contenu%20Kréator&body=${encoded}%0A%0A${url}`, '_blank');
+        window.open(`mailto:?subject=Mon%20contenu%20BoosterApp&body=${encoded}%0A%0A${url}`, '_blank');
         break;
     }
   };
