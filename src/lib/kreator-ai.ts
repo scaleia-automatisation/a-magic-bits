@@ -359,10 +359,11 @@ Hashtags (SEO pro) : 7 à 10 mots : #startup #business #saas #marketing
 CTA (2–6 mots) : "Tu es d'accord ?", "Ton expérience ?", "Tu fais pareil ?"
 
 RÈGLES COMMUNES :
+- RÈGLE ABSOLUE : Le CTA ne doit JAMAIS apparaître dans la description. Le CTA est un champ séparé.
 - Hook : déclenche une émotion FORTE et COHÉRENTE avec le contenu et l'objectif
 - Chaque plateforme a sa propre longueur et son propre style — RESPECTER STRICTEMENT les limites de mots/caractères ci-dessus
 - Le contenu doit déclencher une émotion cohérente avec le média généré
-- CTA : toujours en lien direct avec le post
+- CTA : toujours en lien direct avec le post, TOUJOURS dans le champ "cta", JAMAIS dans "description"
 - Hashtags : SEO optimisé, inclure secteur + activité
 
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
