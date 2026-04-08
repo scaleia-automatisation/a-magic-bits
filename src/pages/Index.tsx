@@ -24,7 +24,7 @@ const Index = () => {
       {/* Header */}
       <header className="border-b border-foreground/5 relative">
         <div className="max-w-4xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
-          <img src={boosterLogo} alt="BoosterApp" <img src={boosterLogo} alt="BoosterApp" className="h-12 md:h-[62px] cursor-pointer" onClick={() => navigate('/')} /> onClick={() => navigate('/')} />
+          <img src={boosterLogo} alt="BoosterApp" className="h-12 md:h-[62px] cursor-pointer" onClick={() => navigate('/')} />
           <div className="flex items-center gap-2 md:gap-4">
             <Button
               variant="ghost"
