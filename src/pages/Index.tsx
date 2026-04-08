@@ -1,3 +1,4 @@
+import boosterLogo from '@/assets/boosterapp-logo.png';
 import ModeToggle from '@/components/kreator/ModeToggle';
 import MobileMenu from '@/components/MobileMenu';
 import ActivitySectorFields from '@/components/kreator/ActivitySectorFields';
