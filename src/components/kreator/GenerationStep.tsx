@@ -217,7 +217,7 @@ const GenerationStep = () => {
 
   const handlePublishNow = () => {
     setPublishPlatforms({ facebook: false, instagram: false, tiktok: false, linkedin: false });
-    setShowPublishDialog(true);
+    setShowPublishDialog(prev => !prev);
   };
 
   const handleLaunchPublication = async () => {
