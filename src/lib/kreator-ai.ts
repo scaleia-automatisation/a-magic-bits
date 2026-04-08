@@ -341,9 +341,9 @@ CTA (2–6 mots) : "Tu en penses quoi ?", "Tu veux la suite ?", "Tu testes quand
 🎵 TIKTOK :
 🎥 ${isVideo ? 'Vidéo' : contentLabel} :
 ✅ Texte : 50 – 150 caractères
-Structure : Hook direct → CTA rapide
+Structure : Hook direct → Description courte
 Hook (ultra punchy) : "Arrête de faire ça", "Tu perds de l'argent ici", "Personne ne t'explique ça"
-Description : Ultra courte, impact immédiat
+Description : Ultra courte, impact immédiat. NE JAMAIS inclure le CTA dans la description.
 Hashtags (SEO + viral) : 3 à 6 : niche (#business) + viral (#fyp) + spécifique (#marketingdigital)
 CTA (2–6 mots) : "Tu savais ça ?", "Tu valides ?", "Tu veux plus ?"
 
