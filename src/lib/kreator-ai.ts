@@ -321,9 +321,9 @@ ${isVideo ? `🎥 Vidéo :
 Structure : Hook → Contexte rapide → CTA` : `🖼️ ${isCarousel ? 'Carrousel' : 'Image'} :
 ✅ Texte : 30 – 50 mots
 Structure optimale :
-🔥 Hook (1ère ligne) → 💡 Message court → ❓ CTA (question)`}
+🔥 Hook (1ère ligne) → 💡 Message court`}
 Hook (puissant) : "Personne ne parle de ça…", "Erreur que 90% font…", "Tu fais ça aussi ?"
-Description : Directe, simple, orientée problème, 1 idée principale
+Description : Directe, simple, orientée problème, 1 idée principale. NE JAMAIS inclure le CTA dans la description.
 Hashtags (SEO) : 3 à 5 max, liés au domaine / activité
 CTA ciblé en lien avec le post (2–6 mots) : "Tu es d'accord ?", "Tu fais ça ?", "Ton avis ?"
 
