@@ -118,7 +118,7 @@ const OnboardingModal = () => {
       if (error) throw error;
       await refreshProfile();
       setOpen(false);
-      toast.success('Bienvenue sur Kréator ! 🎉');
+      toast.success('Bienvenue sur BoosterApp ! 🎉');
     } catch (err) {
       console.error(err);
       toast.error('Erreur lors de la sauvegarde');
