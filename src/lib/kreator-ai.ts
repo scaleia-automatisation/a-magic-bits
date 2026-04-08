@@ -352,9 +352,9 @@ ${isVideo ? `🎥 Vidéo :
 ✅ Texte : 50 – 70 mots
 Structure : Hook → Explication claire → Conclusion → CTA` : `🖼️ ${isCarousel ? 'Carrousel' : 'Image'} :
 ✅ Texte : 50 – 70 mots
-Structure : 🔥 Hook fort (ligne 1) → description forte → CTA`}
+Structure : 🔥 Hook fort (ligne 1) → description forte`}
 Hook (pro + impact) : "J'ai perdu X à cause de ça…", "Voici ce que j'ai compris…", "90% des gens font cette erreur…"
-Description : Structurée, lisible (retours à la ligne), orientée valeur business
+Description : Structurée, lisible (retours à la ligne), orientée valeur business. NE JAMAIS inclure le CTA dans la description.
 Hashtags (SEO pro) : 7 à 10 mots : #startup #business #saas #marketing
 CTA (2–6 mots) : "Tu es d'accord ?", "Ton expérience ?", "Tu fais pareil ?"
 
