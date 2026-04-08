@@ -588,59 +588,6 @@ const GenerationStep = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Publish Now dialog - platform selection */}
-      <Dialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
-        <DialogContent className="bg-card border-foreground/10 max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-foreground flex items-center gap-2">
-              <Rocket className="w-5 h-5 text-primary" />
-              Publier maintenant
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground">
-              Sélectionnez les plateformes sur lesquelles publier votre contenu.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid grid-cols-4 gap-3 py-4">
-            {(Object.keys(publishPlatforms) as Platform[]).map((p) => {
-              const selected = publishPlatforms[p];
-              const logos: Record<Platform, string> = {
-                facebook: facebookLogo,
-                instagram: instagramLogo,
-                tiktok: tiktokLogo,
-                linkedin: linkedinLogo,
-              };
-              const labels: Record<Platform, string> = {
-                facebook: 'Facebook',
-                instagram: 'Instagram',
-                tiktok: 'TikTok',
-                linkedin: 'LinkedIn',
-              };
-              return (
-                <div
-                  key={p}
-                  onClick={() => setPublishPlatforms(prev => ({ ...prev, [p]: !prev[p] }))}
-                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                    selected
-                      ? 'border-primary bg-primary/10 shadow-md'
-                      : 'border-foreground/10 hover:border-primary/40'
-                  }`}
-                >
-                  <img src={logos[p]} alt={labels[p]} className="w-10 h-10 rounded-lg object-contain" />
-                  <span className="text-xs font-semibold text-foreground">{labels[p]}</span>
-                </div>
-              );
-            })}
-          </div>
-          <Button
-            onClick={handleLaunchPublication}
-            disabled={publishing || !Object.values(publishPlatforms).some(Boolean)}
-            className="w-full gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn py-5 font-bold"
-          >
-            {publishing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Rocket className="w-4 h-4 mr-2" />}
-            Lancer la publication
-          </Button>
-        </DialogContent>
-      </Dialog>
 
       {/* Published success popup */}
       <Dialog open={showPublishedPopup} onOpenChange={setShowPublishedPopup}>
