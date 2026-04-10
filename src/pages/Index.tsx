@@ -90,6 +90,7 @@ const Index = () => {
         </div>
 
         <div className="space-y-6">
+          <StartingPointBlock />
           <ActivitySectorFields />
           <ContentTypeStep />
           <FormatStep />
