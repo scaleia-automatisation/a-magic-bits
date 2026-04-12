@@ -101,9 +101,15 @@ const Index = () => {
         </div>
       </main>
 
-      <footer className="border-t border-foreground/5 py-6 mt-20">
-        <div className="max-w-4xl mx-auto px-4 text-center text-xs text-muted-foreground">
-          © 2026 BoosterApp — Génération de contenu marketing par IA
+      <footer className="border-t border-foreground/5 py-8 mt-20">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-4">
+            <button onClick={() => navigate('/privacy')} className="text-xs text-muted-foreground hover:text-primary transition-colors">Politique de confidentialité</button>
+            <button onClick={() => navigate('/terms')} className="text-xs text-muted-foreground hover:text-primary transition-colors">Conditions générales d'utilisation</button>
+            <button onClick={() => navigate('/data-deletion')} className="text-xs text-muted-foreground hover:text-primary transition-colors">Suppression des données</button>
+            <button onClick={() => navigate('/data-deletion-reminder')} className="text-xs text-muted-foreground hover:text-primary transition-colors">Rappel de suppression</button>
+          </div>
+          <p className="text-center text-xs text-muted-foreground">© 2026 BoosterApp — Génération de contenu marketing par IA</p>
         </div>
       </footer>
     </div>
