@@ -18,7 +18,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { action, messages, system_prompt, model, prompt, size, dalle_size, quality, ai_model, image_base64s, operation_name, task_id } = await req.json();
+    const { action, messages, system_prompt, model, prompt, size, dalle_size, quality, ai_model, image_base64s, operation_name, task_id, input_image_url } = await req.json();
 
     const isNanoBananaModel = ["nano-banana-2", "nano-banana-pro"].includes(ai_model || "");
 
@@ -499,6 +499,118 @@ serve(async (req) => {
 
         console.error("kie.ai done but no video found:", pollText.slice(0, 500));
         return jsonError(500, "Génération terminée mais URL vidéo introuvable");
+      }
+
+      return jsonResp({ done: false });
+    }
+
+    // === kie.ai: START image generation (qwen/image-edit, ideogram/*) ===
+    if (action === "kie_start_image") {
+      const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
+      if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
+
+      const kieImageModelMap: Record<string, string> = {
+        "qwen/image-edit": "qwen/image-edit",
+        "ideogram/character": "ideogram/character",
+        "ideogram/image": "ideogram/image",
+      };
+
+      const kieModel = kieImageModelMap[ai_model || ""] || ai_model;
+      const aspectRatio = size === "9:16" ? "9:16" : size === "1:1" ? "1:1" : "16:9";
+
+      // Build input — qwen/image-edit and ideogram/character require an input image
+      const input: Record<string, any> = {
+        prompt: prompt || "",
+        aspect_ratio: aspectRatio,
+      };
+      const needsImage = ai_model === "qwen/image-edit" || ai_model === "ideogram/character";
+      if (input_image_url) {
+        input.image_url = input_image_url;
+        input.image = input_image_url;
+      } else if (needsImage) {
+        return jsonError(400, `Le modèle ${ai_model} nécessite une image de référence en entrée.`);
+      }
+
+      const startRes = await fetch("https://api.kie.ai/api/v1/jobs/createTask", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${KIE_AI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ model: kieModel, input }),
+      });
+
+      const startText = await startRes.text();
+      if (!startRes.ok) {
+        console.error("kie.ai image start error:", startRes.status, startText);
+        return jsonError(startRes.status === 429 ? 429 : 500, `Erreur kie.ai: ${startText.slice(0, 300)}`);
+      }
+
+      let startJson: any;
+      try { startJson = JSON.parse(startText); } catch { return jsonError(500, "Réponse kie.ai invalide"); }
+
+      const taskId = startJson?.data?.taskId || startJson?.taskId || startJson?.data?.id || startJson?.id;
+      if (!taskId) {
+        console.error("kie.ai image no taskId:", startText);
+        return jsonError(500, "kie.ai n'a pas retourné de taskId");
+      }
+
+      return jsonResp({ task_id: taskId, done: false });
+    }
+
+    // === kie.ai: POLL image generation ===
+    if (action === "kie_poll_image") {
+      const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
+      if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
+      if (!task_id) return jsonError(400, "Missing task_id");
+
+      const pollRes = await fetch(`https://api.kie.ai/api/v1/jobs/recordInfo?taskId=${encodeURIComponent(task_id)}`, {
+        headers: { Authorization: `Bearer ${KIE_AI_API_KEY}` },
+      });
+
+      const pollText = await pollRes.text();
+      if (!pollRes.ok) {
+        console.error("kie.ai image poll error:", pollRes.status, pollText);
+        return jsonError(500, `Erreur polling kie.ai: ${pollText.slice(0, 200)}`);
+      }
+
+      let pollJson: any;
+      try { pollJson = JSON.parse(pollText); } catch { return jsonError(500, "Réponse polling kie.ai invalide"); }
+
+      const data = pollJson?.data || pollJson;
+      const state = (data?.state || data?.status || "").toString().toLowerCase();
+
+      if (["fail", "failed", "error"].includes(state)) {
+        const msg = data?.failMsg || data?.message || "Échec de la génération kie.ai";
+        return jsonError(500, msg);
+      }
+
+      if (["success", "succeed", "succeeded", "completed", "complete"].includes(state)) {
+        const findImageUrl = (obj: any): string | null => {
+          if (!obj || typeof obj !== "object") return null;
+          for (const k of Object.keys(obj)) {
+            const v = (obj as any)[k];
+            if (typeof v === "string" && /^https?:\/\/.+\.(png|jpe?g|webp)/i.test(v)) return v;
+            if (typeof v === "string" && /^https?:\/\//i.test(v) && /image|img|url/i.test(k) && !/video/i.test(v)) return v;
+            const nested = findImageUrl(v);
+            if (nested) return nested;
+          }
+          return null;
+        };
+
+        const direct = data?.resultJson?.imageUrl
+                    || data?.resultJson?.image_url
+                    || data?.resultUrl
+                    || data?.imageUrl
+                    || data?.image_url
+                    || data?.output?.image_url
+                    || (Array.isArray(data?.output) ? data.output[0]?.url : null);
+
+        const imageUrl = direct || findImageUrl(data);
+        if (imageUrl) return jsonResp({ image_url: imageUrl, done: true });
+
+        console.error("kie.ai image done but no url:", pollText.slice(0, 500));
+        return jsonError(500, "Génération terminée mais URL image introuvable");
       }
 
       return jsonResp({ done: false });
