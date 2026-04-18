@@ -32,6 +32,24 @@ const markets = [
   'Océanien',
 ];
 
+const renderStyles = [
+  'Mise en situation réelle (utilisation dans la vie quotidienne)',
+  'Fond blanc / neutre (propre, e-commerce)',
+  'Style haut de gamme / luxe (éclairage travaillé, rendu premium)',
+  'Ambiance naturelle (lumière douce, aspect authentique)',
+  'Style storytelling (qui raconte une histoire)',
+  'Moment de vie (spontané, humain, naturel)',
+  'Avant / après (montre une transformation)',
+  'Style épuré / minimaliste (peu d\'éléments)',
+  'Style créatif (original, différent)',
+  'Réaliste avec effet "waouh" (surprenant mais crédible)',
+  'Rendu produit amélioré (plus net, plus propre)',
+  'Gros plan détail (zoom sur texture / qualité)',
+  'Visuel avec texte (explicatif, marketing)',
+  'Style utilisateur (pris sur le vif, authentique)',
+  'Style réseaux sociaux (moderne, tendance)',
+];
+
 const StartingPointBlock = () => {
   const { user } = useAuth();
   const {
@@ -41,11 +59,12 @@ const StartingPointBlock = () => {
     product_service, setProductService,
     market, setMarket,
     objective, setObjective,
+    render_style, setRenderStyle,
     options,
   } = useKreatorStore();
 
-  // Refs for file inputs
-  const photoRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+  // Refs for file inputs (only 1 reference image now)
+  const photoRefs = [useRef<HTMLInputElement>(null)];
   const perfRef = useRef<HTMLInputElement>(null);
 
   // Local state for perf image
