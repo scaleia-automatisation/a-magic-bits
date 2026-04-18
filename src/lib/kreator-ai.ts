@@ -288,6 +288,7 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown:
   const userPrompt = `=== CONTEXTE ENTREPRISE ===
 ${params.companyActivity ? `Activité principale: ${params.companyActivity}` : 'Activité: non renseignée'}
 ${params.companySector ? `Secteur d'activité: ${params.companySector}` : 'Secteur: non renseigné'}
+${params.productService ? `Produit ou service mis en avant (RÉFÉRENCE EXACTE pour la cohérence visuelle): ${params.productService}` : ''}
 
 === CONTENU ===
 Type de contenu: ${params.contentType}
@@ -295,10 +296,11 @@ Format: ${params.format}
 ${params.objective ? `Objectif du contenu (PRIORITAIRE): ${params.objective}` : 'Objectif: non renseigné'}
 ${activeRenderStyle ? `Type de rendu${params.contentType === 'video' ? ' vidéo' : ''}: ${activeRenderStyle}` : 'Type de rendu: automatique'}
 
-=== IDÉE ===
+=== IDÉE (SOURCE DE VÉRITÉ — NE RIEN INVENTER AU-DELÀ) ===
 ${params.inputText ? `Idée décrite: "${params.inputText}"` : ''}
 ${params.ideaChosen ? `Idée choisie: "${params.ideaChosen}"` : ''}
 ${!params.inputText && !params.ideaChosen ? 'Aucune idée spécifique — proposer un concept cohérent avec le contexte' : ''}
+RAPPEL CRITIQUE : tous les chiffres, prix, quantités, noms et mentions visibles dans le visuel DOIVENT correspondre EXACTEMENT à cette idée et au produit/service ci-dessus. Aucune invention de marque, d'enseigne, de prix ou de promesse non mentionnée.
 
 === IMAGES DE RÉFÉRENCE ===
 ${params.imageDescription ? `Analyse (${params.referenceImageCount || 1} image(s)): ${params.imageDescription}` : 'Aucune image de référence'}
@@ -307,10 +309,10 @@ ${params.referenceImageCount && params.referenceImageCount > 1 ? `IMPORTANT: ${p
 === RÉGLAGES AVANCÉS ===
 ${params.ton ? `Ton: ${params.ton}` : 'Ton: automatique'}
 ${params.visualStyle ? `Style visuel: ${params.visualStyle}` : 'Style: automatique'}
-${params.showText ? `Texte overlay: "${params.textContent}" — Intégrer professionnellement dans le visuel` : 'Pas de texte overlay — NE PAS générer de texte dans l\'image'}
+${params.showText ? `Texte overlay (À REPRODUIRE EXACTEMENT, AUCUNE MODIFICATION): "${params.textContent}"` : 'Pas de texte overlay — NE PAS générer de texte, pancarte, étiquette, logo ou enseigne dans l\'image'}
 ${params.paletteEnabled ? `Palette de couleurs active: ${params.paletteHex.join(', ')} — utiliser entre 30% et 50% dans le visuel` : 'Palette automatique'}
 
-Génère un prompt unifié et cohérent intégrant TOUS ces éléments.`;
+Génère un prompt unifié, cohérent et fidèle à l'offre. Sobriété et précision priment sur la décoration.`;
 
   const data = await callKreatorAI({
     action: 'generate_prompt',
