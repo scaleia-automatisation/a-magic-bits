@@ -51,7 +51,7 @@ const GenerationStep = () => {
   const {
     type, prompt_en, prompt_fr, status, setStatus, result_url, setResultUrl,
     ai_model, format, setCreditsUsed, objective, input_text, idea_chosen,
-    company_sector, company_activity, resetProject
+    company_sector, company_activity, input_photos, resetProject
   } = useKreatorStore();
   const [progress, setProgress] = useState(0);
   const [generating, setGenerating] = useState(false);
@@ -99,7 +99,7 @@ const GenerationStep = () => {
       const [contentUrl, captionResult] = await Promise.all([
         isVideo
           ? generateVideo(prompt_fr, ai_model, format, (pct) => setProgress(pct), abortController.signal)
-          : generateImage(prompt_fr, ai_model, format),
+          : generateImage(prompt_fr, ai_model, format, input_photos?.[0]?.url),
         generateCaption({
           objective,
           idea: idea_chosen || input_text,
