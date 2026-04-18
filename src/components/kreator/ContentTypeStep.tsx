@@ -20,10 +20,17 @@ const imageModels: { value: AIModel; label: string }[] = [
 ];
 
 const videoModels: { value: AIModel; label: string }[] = [
-  { value: 'sora-2', label: 'Sora 2' },
-  { value: 'veo-2', label: 'Veo 2' },
   { value: 'veo-3', label: 'Veo 3' },
-  { value: 'veo-3-fast', label: 'Veo 3 Fast' },
+  { value: 'veo-3.1', label: 'Veo 3.1' },
+  { value: 'kling-2.1', label: 'Kling 2.1' },
+  { value: 'kling-2.5', label: 'Kling 2.5' },
+  { value: 'kling-2.6', label: 'Kling 2.6' },
+  { value: 'kling-3.0', label: 'Kling 3.0 Video' },
+  { value: 'grok-imagine', label: 'Grok Imagine' },
+  { value: 'bytedance/seedance-2-fast', label: 'Seedance 2 Fast' },
+  { value: 'bytedance/seedance-2', label: 'Seedance 2' },
+  { value: 'hailuo/2-3-image-to-video-standard', label: 'Hailuo 2.3 I2V Standard' },
+  { value: 'hailuo/2-3-image-to-video-standard-pro', label: 'Hailuo 2.3 I2V Standard Pro' },
 ];
 
 const renderStyles = [
