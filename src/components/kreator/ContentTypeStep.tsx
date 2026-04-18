@@ -147,36 +147,6 @@ const ContentTypeStep = () => {
         </Select>
       </div>
 
-      <div className="mb-6">
-        <label className="text-sm font-medium text-muted-foreground mb-2 block">Objectif du contenu</label>
-        <Select value={objective.startsWith('custom:') ? '✏️ Personnaliser' : objective} onValueChange={(v) => {
-          if (v === '✏️ Personnaliser') {
-            setObjective('custom:');
-          } else {
-            setObjective(v);
-          }
-        }}>
-          <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-            <SelectValue placeholder="Choisir un objectif..." />
-          </SelectTrigger>
-          <SelectContent className="bg-card border-foreground/10">
-            {objectives.map((o) => (
-              <SelectItem key={o} value={o} className="text-foreground focus:bg-secondary/20">
-                {o}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {objective.startsWith('custom:') && (
-          <Input
-            value={objective.replace('custom:', '')}
-            onChange={(e) => setObjective(`custom:${e.target.value}`)}
-            placeholder="Décrivez votre objectif personnalisé..."
-            className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-          />
-        )}
-      </div>
-
       {type !== 'video' && (
         <div>
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu</label>
