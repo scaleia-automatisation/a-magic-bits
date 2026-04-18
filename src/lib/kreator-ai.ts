@@ -384,7 +384,8 @@ Hashtags (SEO pro) : 7 à 10 mots : #startup #business #saas #marketing
 CTA (2–6 mots) : "Tu es d'accord ?", "Ton expérience ?", "Tu fais pareil ?"
 
 RÈGLES COMMUNES :
-- RÈGLE ABSOLUE : Le CTA ne doit JAMAIS apparaître dans la description. Le CTA est un champ séparé.
+- RÈGLE ABSOLUE — HOOK 0-2 SECONDES : sur CHAQUE plateforme et pour CHAQUE type de contenu (image, carrousel, vidéo), le hook DOIT être ULTRA PERSUASIF, PUISSANT et capable de STOPPER LE SCROLL dans les 2 PREMIÈRES SECONDES. Aucune exception, jamais. Le hook doit déclencher curiosité, émotion forte, choc, surprise ou tension immédiate, et être directement aligné sur l'objectif du contenu. Pas de hook descriptif, mou ou générique — toujours du scroll-stop.
+- Le CTA ne doit JAMAIS apparaître dans la description. Le CTA est un champ séparé.
 - Hook : déclenche une émotion FORTE et COHÉRENTE avec le contenu et l'objectif
 - Chaque plateforme a sa propre longueur et son propre style — RESPECTER STRICTEMENT les limites de mots/caractères ci-dessus
 - Le contenu doit déclencher une émotion cohérente avec le média généré
