@@ -90,6 +90,7 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown:
   const contextText = `=== CONTEXTE ENTREPRISE ===
 ${params.activity ? `Activité principale: ${params.activity}` : 'Activité: non renseignée'}
 ${params.sector ? `Secteur d'activité: ${params.sector}` : 'Secteur: non renseigné'}
+${params.productService ? `Produit ou service à mettre en avant: ${params.productService}` : ''}
 
 === CONTENU ===
 Type de contenu: ${params.contentType}
