@@ -394,6 +394,20 @@ const StartingPointBlock = () => {
               />
             </div>
             <div>
+              <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Marché / Localisation</label>
+              <Select value={market} onValueChange={(v) => setMarket(v === '__none__' ? '' : v)}>
+                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                  <SelectValue placeholder="Choisir un marché cible..." />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-foreground/10">
+                  <SelectItem value="__none__" className="text-foreground focus:bg-secondary/20">Aucun (automatique)</SelectItem>
+                  {markets.map((m) => (
+                    <SelectItem key={m} value={m} className="text-foreground focus:bg-secondary/20">{m}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
               <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Objectif du contenu</label>
               <Select
                 value={objective.startsWith('custom:') ? '✏️ Personnaliser' : objective}
