@@ -5,7 +5,7 @@ import StartingPointBlock from '@/components/kreator/StartingPointBlock';
 import ActivitySectorFields from '@/components/kreator/ActivitySectorFields';
 import ContentTypeStep from '@/components/kreator/ContentTypeStep';
 import FormatStep from '@/components/kreator/FormatStep';
-import IdeaStep from '@/components/kreator/IdeaStep';
+
 import CustomizationStep from '@/components/kreator/CustomizationStep';
 import PromptStep from '@/components/kreator/PromptStep';
 import GenerationStep from '@/components/kreator/GenerationStep';
@@ -94,7 +94,7 @@ const Index = () => {
           <ActivitySectorFields />
           <ContentTypeStep />
           <FormatStep />
-          <IdeaStep />
+          
           <CustomizationStep />
           <PromptStep />
           <GenerationStep />
