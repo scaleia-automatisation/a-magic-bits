@@ -14,7 +14,7 @@ const ModeToggle = () => {
             : 'text-muted-foreground hover:text-foreground'
         }`}
       >
-        Simple
+        Débutant
       </button>
       <button
         onClick={() => setUserMode('expert')}
