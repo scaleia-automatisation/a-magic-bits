@@ -105,7 +105,7 @@ const StartingPointBlock = () => {
     }
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, objective);
+      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service);
       setIdeas(result.ideas);
       setShowIdeas(true);
     } catch (err) {
@@ -125,7 +125,7 @@ const StartingPointBlock = () => {
   const handleGenerateMore = async () => {
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, objective);
+      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service);
       setIdeas(result.ideas);
     } catch {
       toast.error('Erreur lors de la génération');
@@ -167,6 +167,7 @@ const StartingPointBlock = () => {
         format,
         activity: company_activity,
         sector: company_sector,
+        productService: product_service,
         ton: options.ton,
         visualStyle: options.visual_style,
       });
