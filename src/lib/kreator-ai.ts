@@ -254,9 +254,19 @@ CONSIGNES OBLIGATOIRES pour le prompt généré :
 - Si du texte overlay est demandé : typographie parfaitement lisible, stylisée et professionnelle
 - Éviter absolument les éléments flous, déformés, artificiels ou « plastiques »
 - Respecter les codes couleurs et le style de la marque si fournis
-- Pour les carrousels : cohérence visuelle parfaite entre slides (même palette, même style, même ambiance, même éclairage)
+- Pour les carrousels : cohérence visuelle parfaite entre slides (même palette, même style, même ambiance, même éclairage). La PREMIÈRE slide DOIT être un hook visuel scroll-stop.
 - Préciser l'éclairage, l'angle de caméra, la profondeur de champ, le bokeh et l'ambiance
 - Le prompt doit être directement utilisable par un modèle de génération d'image IA
+
+RÈGLE ABSOLUE — HOOK VISUEL 0-2 SECONDES (NON NÉGOCIABLE, TOUS TYPES DE CONTENU) :
+Le visuel généré DOIT fonctionner comme un SCROLL-STOPPER capable de capter l'attention dans les 2 PREMIÈRES SECONDES. Quel que soit le type (image, carrousel, vidéo) :
+- Composition à fort impact visuel immédiat (contraste élevé, sujet dominant, regard direct, expression émotionnelle marquée, geste ou action en cours)
+- Élément intrigant, inattendu, émotionnel ou provocateur dès le premier coup d'œil
+- Aucune image plate, descriptive ou neutre — TOUJOURS chercher la tension visuelle, l'émotion ou la curiosité
+- Pour les vidéos : la frame d'ouverture (0-2s) DOIT être le hook le plus puissant de toute la séquence
+- Pour les carrousels : la slide 1 DOIT contenir le hook visuel le plus fort
+- Aligner le hook visuel avec l'objectif marketing (vente, notoriété, engagement…)
+Cette règle est PRIORITAIRE et ne doit JAMAIS être ignorée.
 ${videoDirectives}
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
