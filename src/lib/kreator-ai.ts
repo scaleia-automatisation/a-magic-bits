@@ -267,7 +267,20 @@ Le visuel généré DOIT fonctionner comme un SCROLL-STOPPER capable de capter l
 - Pour les vidéos : la frame d'ouverture (0-2s) DOIT être le hook le plus puissant de toute la séquence
 - Pour les carrousels : la slide 1 DOIT contenir le hook visuel le plus fort
 - Aligner le hook visuel avec l'objectif marketing (vente, notoriété, engagement…)
+- Le hook doit TOUJOURS être COHÉRENT avec le produit/service mis en avant : pas de promesse visuelle qui contredit l'offre réelle.
 Cette règle est PRIORITAIRE et ne doit JAMAIS être ignorée.
+
+RÈGLE ABSOLUE — COHÉRENCE PRODUIT / OFFRE / VISUEL (NON NÉGOCIABLE) :
+Le visuel généré DOIT être STRICTEMENT cohérent avec l'idée, la description et l'offre réelle du produit/service. Aucune invention contradictoire n'est tolérée.
+- INTERDIT d'inventer un nom de marque, d'enseigne, de boulangerie, de restaurant, de boutique, de société, de logo ou de slogan qui n'a PAS été explicitement fourni par l'utilisateur. Aucune pancarte, étiquette, devanture ou packaging avec un nom inventé.
+- INTERDIT d'afficher un PRIX, une QUANTITÉ, un POURCENTAGE, une PROMOTION ou une UNITÉ qui contredit l'offre décrite. Si l'idée dit "6 croissants à 5€", le visuel doit montrer EXACTEMENT 6 croissants ET le prix "5€" (et jamais "3€" ou "1 croissant"). Les chiffres affichés DOIVENT correspondre au texte exact de l'offre.
+- INTERDIT d'ajouter des éléments décoratifs (objets, accessoires, décors, personnages, contextes) qui n'ont aucun rapport avec le produit/service ou qui détournent l'attention de l'offre.
+- INTERDIT d'inventer des certifications, labels, mentions ("bio", "fait maison", "levain naturel", "artisanal", "100%", etc.) si elles ne sont pas explicitement présentes dans la description ou le produit/service.
+- Si un détail n'est PAS précisé par l'utilisateur, rester NEUTRE et SOBRE plutôt que d'inventer. Pas de pancarte, pas de logo, pas de texte parasite — sauf overlay explicitement demandé.
+- Le sujet principal du visuel = le produit/service exact. Tous les éléments secondaires doivent renforcer ce sujet, jamais le contredire.
+- Subtilité et intelligence : suggérer plutôt qu'envahir. Un visuel pro ne sur-charge pas, il met en valeur l'offre avec justesse.
+- Si du texte overlay est demandé : reproduire EXACTEMENT le texte fourni par l'utilisateur, sans rien ajouter, sans rien modifier (ni chiffres, ni mots, ni unités).
+Toute incohérence entre l'offre décrite et le visuel généré est une ERREUR CRITIQUE à éviter absolument.
 ${videoDirectives}
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
