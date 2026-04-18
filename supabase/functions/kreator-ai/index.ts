@@ -394,6 +394,7 @@ serve(async (req) => {
 
       // Map our internal ai_model -> kie.ai model identifier
       const kieModelMap: Record<string, string> = {
+        "veo-3": "veo3",
         "veo-3.1": "veo3.1",
         "kling-2.1": "kling/2.1",
         "kling-2.5": "kling/2.5",
