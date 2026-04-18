@@ -289,6 +289,10 @@ Le visuel généré DOIT être STRICTEMENT cohérent avec l'idée, la descriptio
 - Subtilité et intelligence : suggérer plutôt qu'envahir. Un visuel pro ne sur-charge pas, il met en valeur l'offre avec justesse.
 - Si du texte overlay est demandé : reproduire EXACTEMENT le texte fourni par l'utilisateur, sans rien ajouter, sans rien modifier (ni chiffres, ni mots, ni unités).
 Toute incohérence entre l'offre décrite et le visuel généré est une ERREUR CRITIQUE à éviter absolument.
+
+RÈGLE ABSOLUE — MARCHÉ / LOCALISATION / CASTING (NON NÉGOCIABLE) :
+${params.market ? `Le marché cible est "${params.market}". Les personnages générés (ethnies, traits, tenues, coiffures), l'environnement (architecture, mobilier urbain, signalétique, végétation, climat), les accessoires et les codes culturels DOIVENT être cohérents avec ce marché. Pas de mélange incohérent (ex : ne pas mettre un décor scandinave pour un marché Africain).` : `Aucun marché précisé : par défaut, choisir des personnages et un environnement CULTURELLEMENT NEUTRES, plausibles et universels. NE PAS imposer une ethnie, une nationalité ou un décor culturellement marqué de façon arbitraire. Privilégier des cadres sobres, neutres, sans signalétique étrangère ni références ethniques fortes, pour rester cohérent quel que soit le marché du business.`}
+Cette règle est PRIORITAIRE sur les choix esthétiques et ne doit JAMAIS être ignorée.
 ${videoDirectives}
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
@@ -297,6 +301,7 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown:
 ${params.companyActivity ? `Activité principale: ${params.companyActivity}` : 'Activité: non renseignée'}
 ${params.companySector ? `Secteur d'activité: ${params.companySector}` : 'Secteur: non renseigné'}
 ${params.productService ? `Produit ou service mis en avant (RÉFÉRENCE EXACTE pour la cohérence visuelle): ${params.productService}` : ''}
+${params.market ? `Marché / Localisation cible: ${params.market} (adapter casting, environnement et codes culturels en conséquence)` : 'Marché / Localisation: non précisé (rester culturellement neutre, casting et décor universels)'}
 
 === CONTENU ===
 Type de contenu: ${params.contentType}
