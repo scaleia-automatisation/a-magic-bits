@@ -213,7 +213,7 @@ const StartingPointBlock = () => {
     }
   };
 
-  const slots = Array.from({ length: 3 }, (_, i) => input_photos[i] || { url: '', description: '' });
+  const slots = [input_photos[0] || { url: '', description: '' }];
 
   return (
     <div className="step-border bg-background p-4 sm:p-6 md:p-8">
@@ -235,61 +235,59 @@ const StartingPointBlock = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Column 1: Upload up to 3 reference images */}
+        {/* Column 1: Upload 1 reference image */}
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-2">
             <ImagePlus className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-foreground">Images de référence</span>
+            <span className="text-sm font-medium text-foreground">Image de référence</span>
           </div>
-          <p className="text-xs text-muted-foreground mb-3">Importez jusqu'à 3 images pour inspirer la génération</p>
-          <div className="grid grid-cols-3 gap-2">
-            {slots.map((slot, index) => (
-              <div key={index}>
-                {slot.url ? (
-                  <div className="relative group aspect-square rounded-lg overflow-hidden border border-foreground/10 bg-card">
-                    <img src={slot.url} alt={`Ref ${index + 1}`} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-foreground bg-card/80 hover:bg-destructive hover:text-destructive-foreground"
-                        onClick={() => handleRemovePhoto(index)}
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-foreground bg-card/80 hover:bg-primary hover:text-primary-foreground"
-                        onClick={() => photoRefs[index]?.current?.click()}
-                      >
-                        <Replace className="w-3 h-3" />
-                      </Button>
-                    </div>
+          <p className="text-xs text-muted-foreground mb-3">Importez 1 image pour inspirer la génération</p>
+          {slots.map((slot, index) => (
+            <div key={index}>
+              {slot.url ? (
+                <div className="relative group aspect-square rounded-lg overflow-hidden border border-foreground/10 bg-card">
+                  <img src={slot.url} alt={`Ref ${index + 1}`} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-foreground bg-card/80 hover:bg-destructive hover:text-destructive-foreground"
+                      onClick={() => handleRemovePhoto(index)}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-foreground bg-card/80 hover:bg-primary hover:text-primary-foreground"
+                      onClick={() => photoRefs[index]?.current?.click()}
+                    >
+                      <Replace className="w-3.5 h-3.5" />
+                    </Button>
                   </div>
-                ) : (
-                  <button
-                    onClick={() => photoRefs[index]?.current?.click()}
-                    className="aspect-square w-full rounded-lg border-2 border-dashed border-foreground/10 bg-card hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-primary"
-                  >
-                    <Upload className="w-4 h-4" />
-                    <span className="text-[9px] font-medium">{index + 1}</span>
-                  </button>
-                )}
-                <input
-                  ref={photoRefs[index]}
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.webp"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handlePhotoFile(file, index);
-                    e.target.value = '';
-                  }}
-                />
-              </div>
-            ))}
-          </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => photoRefs[index]?.current?.click()}
+                  className="aspect-square w-full rounded-lg border-2 border-dashed border-foreground/10 bg-card hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary"
+                >
+                  <Upload className="w-6 h-6" />
+                  <span className="text-xs font-medium">Importer une image</span>
+                </button>
+              )}
+              <input
+                ref={photoRefs[index]}
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handlePhotoFile(file, index);
+                  e.target.value = '';
+                }}
+              />
+            </div>
+          ))}
           {input_photos.some(p => p.url) && (
             <Button
               onClick={handleGenerateIdeaFromImages}
@@ -302,7 +300,7 @@ const StartingPointBlock = () => {
               ) : (
                 <ImageIcon className="w-4 h-4 mr-1.5" />
               )}
-              Idée à partir des images
+              Idée à partir de l'image
             </Button>
           )}
         </div>
