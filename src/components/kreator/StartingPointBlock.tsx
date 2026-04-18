@@ -3,7 +3,7 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { Upload, X, Replace, ImagePlus, FileText, TrendingUp, Lightbulb, Loader2, RefreshCw, CheckCircle, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -55,10 +55,10 @@ const StartingPointBlock = () => {
   const {
     input_photos, setInputPhotos, input_text, setInputText, setInputImageUrl,
     type, format, idea_chosen, setIdeaChosen,
-    company_activity, setCompanyActivity, company_sector, setCompanySector,
-    product_service, setProductService,
-    market, setMarket,
-    objective, setObjective,
+    company_activity, company_sector,
+    product_service,
+    market,
+    objective,
     render_style, setRenderStyle,
     options,
   } = useKreatorStore();
@@ -73,7 +73,7 @@ const StartingPointBlock = () => {
   // Idea generation state
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
-  const [showIdeaFields, setShowIdeaFields] = useState(false);
+  
   const [loadingIdeas, setLoadingIdeas] = useState(false);
   const [loadingImageIdea, setLoadingImageIdea] = useState(false);
 
