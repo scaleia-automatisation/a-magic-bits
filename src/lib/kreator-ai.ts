@@ -423,23 +423,47 @@ export async function generateVideo(
   onProgress?: (pct: number) => void,
   abortSignal?: AbortSignal
 ) {
-  const isVeoModel = ['veo-2', 'veo-3', 'veo-3-fast'].includes(aiModel);
+  const isVeoModel = ['veo-3'].includes(aiModel);
+  const isKieModel = [
+    'veo-3.1', 'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
+    'grok-imagine', 'bytedance/seedance-2-fast', 'bytedance/seedance-2',
+    'hailuo/2-3-image-to-video-standard', 'hailuo/2-3-image-to-video-standard-pro',
+  ].includes(aiModel);
+
+  // === kie.ai models — start + polling ===
+  if (isKieModel) {
+    const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
+      body: { action: 'kie_start_video', prompt: promptEn, ai_model: aiModel, size: format },
+    });
+    if (startError) throw startError;
+    if (startData?.error) throw new Error(startData.error);
+    if (startData?.done && startData?.video_url) return startData.video_url;
+
+    const taskId = startData?.task_id;
+    if (!taskId) throw new Error('No task_id returned from kie.ai');
+
+    const maxAttempts = 90;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+      await new Promise((r) => setTimeout(r, 5000));
+      if (abortSignal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
+      if (onProgress) onProgress(10 + Math.min(85, (attempt / maxAttempts) * 85));
+
+      const { data: pollData, error: pollError } = await supabase.functions.invoke('kreator-ai', {
+        body: { action: 'kie_poll_video', task_id: taskId, ai_model: aiModel },
+      });
+      if (pollError) { console.warn('kie.ai poll error', pollError); continue; }
+      if (pollData?.error) throw new Error(pollData.error);
+      if (pollData?.done && pollData?.video_url) {
+        if (onProgress) onProgress(100);
+        return pollData.video_url;
+      }
+    }
+    throw new Error('La génération vidéo kie.ai a pris trop de temps. Réessayez.');
+  }
 
   if (!isVeoModel) {
-    // Sora 2 — synchronous call
-    const { data, error } = await supabase.functions.invoke('kreator-ai', {
-      body: {
-        action: 'generate_video',
-        prompt: promptEn,
-        ai_model: aiModel,
-        size: format,
-      },
-    });
-    if (error) throw error;
-    if (data?.error) throw new Error(data.error);
-    const videoUrl = data?.video_url;
-    if (!videoUrl) throw new Error('No video generated');
-    return videoUrl;
+    throw new Error(`Modèle vidéo non supporté: ${aiModel}`);
   }
 
   // Veo models — start + client-side polling

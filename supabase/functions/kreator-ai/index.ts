@@ -18,7 +18,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { action, messages, system_prompt, model, prompt, size, dalle_size, quality, ai_model, image_base64s, operation_name } = await req.json();
+    const { action, messages, system_prompt, model, prompt, size, dalle_size, quality, ai_model, image_base64s, operation_name, task_id } = await req.json();
 
     const isNanoBananaModel = ["nano-banana-2", "nano-banana-pro"].includes(ai_model || "");
 
@@ -383,6 +383,121 @@ serve(async (req) => {
 
         console.error("Veo done but no video found. Keys:", JSON.stringify(Object.keys(pollData?.response || {})));
         return jsonError(500, "Opération terminée mais aucune vidéo générée");
+      }
+
+    }
+
+    // === kie.ai: START video generation ===
+    if (action === "kie_start_video") {
+      const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
+      if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
+
+      // Map our internal ai_model -> kie.ai model identifier
+      const kieModelMap: Record<string, string> = {
+        "veo-3.1": "veo3.1",
+        "kling-2.1": "kling/2.1",
+        "kling-2.5": "kling/2.5",
+        "kling-2.6": "kling/2.6",
+        "kling-3.0": "kling/3.0",
+        "grok-imagine": "grok/imagine",
+        "bytedance/seedance-2-fast": "bytedance/seedance-2-fast",
+        "bytedance/seedance-2": "bytedance/seedance-2",
+        "hailuo/2-3-image-to-video-standard": "hailuo/2-3-image-to-video-standard",
+        "hailuo/2-3-image-to-video-standard-pro": "hailuo/2-3-image-to-video-standard-pro",
+      };
+
+      const kieModel = kieModelMap[ai_model || ""] || ai_model;
+      const aspectRatio = size === "9:16" ? "9:16" : size === "1:1" ? "1:1" : "16:9";
+
+      const startRes = await fetch("https://api.kie.ai/api/v1/jobs/createTask", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${KIE_AI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: kieModel,
+          input: {
+            prompt: prompt || "",
+            aspect_ratio: aspectRatio,
+          },
+        }),
+      });
+
+      const startText = await startRes.text();
+      if (!startRes.ok) {
+        console.error("kie.ai start error:", startRes.status, startText);
+        return jsonError(startRes.status === 429 ? 429 : 500, `Erreur kie.ai: ${startText.slice(0, 300)}`);
+      }
+
+      let startJson: any;
+      try { startJson = JSON.parse(startText); } catch { return jsonError(500, "Réponse kie.ai invalide"); }
+
+      const taskId = startJson?.data?.taskId || startJson?.taskId || startJson?.data?.id || startJson?.id;
+      if (!taskId) {
+        console.error("kie.ai no taskId:", startText);
+        return jsonError(500, "kie.ai n'a pas retourné de taskId");
+      }
+
+      return jsonResp({ task_id: taskId, done: false });
+    }
+
+    // === kie.ai: POLL video generation ===
+    if (action === "kie_poll_video") {
+      const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
+      if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
+      if (!task_id) return jsonError(400, "Missing task_id");
+
+      const pollRes = await fetch(`https://api.kie.ai/api/v1/jobs/recordInfo?taskId=${encodeURIComponent(task_id)}`, {
+        headers: { Authorization: `Bearer ${KIE_AI_API_KEY}` },
+      });
+
+      const pollText = await pollRes.text();
+      if (!pollRes.ok) {
+        console.error("kie.ai poll error:", pollRes.status, pollText);
+        return jsonError(500, `Erreur polling kie.ai: ${pollText.slice(0, 200)}`);
+      }
+
+      let pollJson: any;
+      try { pollJson = JSON.parse(pollText); } catch { return jsonError(500, "Réponse polling kie.ai invalide"); }
+
+      const data = pollJson?.data || pollJson;
+      const state = (data?.state || data?.status || "").toString().toLowerCase();
+
+      // Failure states
+      if (["fail", "failed", "error"].includes(state)) {
+        const msg = data?.failMsg || data?.message || "Échec de la génération kie.ai";
+        return jsonError(500, msg);
+      }
+
+      // Success states
+      if (["success", "succeed", "succeeded", "completed", "complete"].includes(state)) {
+        // Search common fields then deep-search
+        const direct = data?.resultJson?.videoUrl
+                    || data?.resultJson?.video_url
+                    || data?.resultUrl
+                    || data?.videoUrl
+                    || data?.video_url
+                    || data?.output?.video_url
+                    || data?.output?.[0]?.url;
+
+        const findUrl = (obj: any): string | null => {
+          if (!obj || typeof obj !== "object") return null;
+          for (const k of Object.keys(obj)) {
+            const v = (obj as any)[k];
+            if (typeof v === "string" && /^https?:\/\/.+\.(mp4|mov|webm)/i.test(v)) return v;
+            if (typeof v === "string" && /^https?:\/\//i.test(v) && /video|mp4/i.test(k)) return v;
+            const nested = findUrl(v);
+            if (nested) return nested;
+          }
+          return null;
+        };
+
+        const videoUrl = direct || findUrl(data);
+        if (videoUrl) return jsonResp({ video_url: videoUrl, done: true });
+
+        console.error("kie.ai done but no video found:", pollText.slice(0, 500));
+        return jsonError(500, "Génération terminée mais URL vidéo introuvable");
       }
 
       return jsonResp({ done: false });
