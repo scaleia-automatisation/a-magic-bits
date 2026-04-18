@@ -418,7 +418,7 @@ export async function generateImage(promptEn: string, aiModel: AIModel = 'dall-e
 
 export async function generateVideo(
   promptEn: string,
-  aiModel: AIModel = 'sora-2',
+  aiModel: AIModel = 'veo-3',
   format: string = '9:16',
   onProgress?: (pct: number) => void,
   abortSignal?: AbortSignal
