@@ -49,6 +49,7 @@ const PromptStep = () => {
         ideaChosen: idea_chosen,
         companyActivity: company_activity,
         companySector: company_sector,
+        productService: product_service,
         showText: options.show_text,
         textContent: options.text_content,
         paletteEnabled: options.palette_enabled,
