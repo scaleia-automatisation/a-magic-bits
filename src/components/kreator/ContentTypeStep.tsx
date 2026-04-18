@@ -17,6 +17,9 @@ const imageModels: { value: AIModel; label: string }[] = [
   { value: 'imagen-4', label: 'Imagen 4' },
   { value: 'imagen-4-ultra', label: 'Imagen 4 Ultra' },
   { value: 'imagen-4-fast', label: 'Imagen 4 Fast' },
+  { value: 'qwen/image-edit', label: 'Qwen Image Edit ✏️' },
+  { value: 'ideogram/character', label: 'Ideogram Character 👤' },
+  { value: 'ideogram/image', label: 'Ideogram Image 🖼️' },
 ];
 
 const videoModels: { value: AIModel; label: string }[] = [
