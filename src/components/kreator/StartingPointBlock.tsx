@@ -4,6 +4,7 @@ import { Upload, X, Replace, ImagePlus, FileText, TrendingUp, Lightbulb, Loader2
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { generateIdeas, generateIdeaFromImages } from '@/lib/kreator-ai';
@@ -11,12 +12,23 @@ import { generateIdeas, generateIdeaFromImages } from '@/lib/kreator-ai';
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
 
+const objectives = [
+  '🎯 Capter — Attirer l\'attention',
+  '🧲 Retenir — Maintenir l\'intérêt',
+  '💡 Convaincre — Créer le désir',
+  '🔥 Inciter — Pousser à l\'action',
+  '💎 Fidéliser — Faire revenir',
+  '✏️ Personnaliser',
+];
+
 const StartingPointBlock = () => {
   const { user } = useAuth();
   const {
     input_photos, setInputPhotos, input_text, setInputText, setInputImageUrl,
     type, format, idea_chosen, setIdeaChosen,
-    company_activity, setCompanyActivity, company_sector, setCompanySector, objective,
+    company_activity, setCompanyActivity, company_sector, setCompanySector,
+    product_service, setProductService,
+    objective, setObjective,
     options,
   } = useKreatorStore();
 
