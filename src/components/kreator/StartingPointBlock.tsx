@@ -89,18 +89,16 @@ const StartingPointBlock = () => {
     const reader = new FileReader();
     reader.onload = () => {
       const base64 = reader.result as string;
-      const newPhotos = [...input_photos];
-      while (newPhotos.length < 3) newPhotos.push({ url: '', description: '' });
-      newPhotos[index] = { url: base64, description: newPhotos[index]?.description || '' };
+      const newPhotos = [{ url: base64, description: '' }];
       setInputPhotos(newPhotos);
+      setInputImageUrl(base64);
     };
     reader.readAsDataURL(file);
   };
 
   const handleRemovePhoto = (index: number) => {
-    const newPhotos = [...input_photos];
-    newPhotos[index] = { url: '', description: '' };
-    setInputPhotos(newPhotos);
+    setInputPhotos([]);
+    setInputImageUrl('');
   };
 
   const handlePerfFile = (file: File) => {
