@@ -17,9 +17,35 @@ const SECTORS = [
   'Transport & Logistique',
 ];
 
+const MARKETS = [
+  'Asiatique',
+  'Européen',
+  'Américain',
+  'Africain',
+  'Moyen-oriental',
+  'Latino/Hispanique',
+  'Amérindien',
+  'Océanien',
+];
+
+const OBJECTIVES = [
+  '🎯 Capter — Attirer l\'attention',
+  '🧲 Retenir — Maintenir l\'intérêt',
+  '💡 Convaincre — Créer le désir',
+  '🔥 Inciter — Pousser à l\'action',
+  '💎 Fidéliser — Faire revenir',
+  '✏️ Personnaliser',
+];
+
 const ActivitySectorFields = () => {
   const { profile } = useAuth();
-  const { company_activity, setCompanyActivity, company_sector, setCompanySector } = useKreatorStore();
+  const {
+    company_activity, setCompanyActivity,
+    company_sector, setCompanySector,
+    product_service, setProductService,
+    market, setMarket,
+    objective, setObjective,
+  } = useKreatorStore();
   const [sectorMode, setSectorMode] = useState<'preset' | 'custom'>('preset');
 
   useEffect(() => {
@@ -94,6 +120,58 @@ const ActivitySectorFields = () => {
                 ↩
               </button>
             </div>
+          )}
+        </div>
+        <div>
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Quel est votre produit ou service ?</label>
+          <Input
+            value={product_service}
+            onChange={(e) => setProductService(e.target.value)}
+            placeholder="Ex: Programme fitness 30 jours, Pain au levain bio..."
+            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Marché / Localisation</label>
+          <Select value={market} onValueChange={(v) => setMarket(v === '__none__' ? '' : v)}>
+            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+              <SelectValue placeholder="Choisir un marché cible..." />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-foreground/10">
+              <SelectItem value="__none__" className="text-foreground focus:bg-secondary/20">Aucun (automatique)</SelectItem>
+              {MARKETS.map((m) => (
+                <SelectItem key={m} value={m} className="text-foreground focus:bg-secondary/20">{m}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Objectif du contenu</label>
+          <Select
+            value={objective.startsWith('custom:') ? '✏️ Personnaliser' : objective}
+            onValueChange={(v) => {
+              if (v === '✏️ Personnaliser') setObjective('custom:');
+              else setObjective(v);
+            }}
+          >
+            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+              <SelectValue placeholder="Choisir un objectif..." />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-foreground/10">
+              {OBJECTIVES.map((o) => (
+                <SelectItem key={o} value={o} className="text-foreground focus:bg-secondary/20">
+                  {o}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {objective.startsWith('custom:') && (
+            <Input
+              value={objective.replace('custom:', '')}
+              onChange={(e) => setObjective(`custom:${e.target.value}`)}
+              placeholder="Décrivez votre objectif personnalisé..."
+              className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
+            />
           )}
         </div>
       </div>

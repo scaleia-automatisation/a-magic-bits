@@ -3,7 +3,7 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { Upload, X, Replace, ImagePlus, FileText, TrendingUp, Lightbulb, Loader2, RefreshCw, CheckCircle, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -11,26 +11,6 @@ import { generateIdeas, generateIdeaFromImages } from '@/lib/kreator-ai';
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
-
-const objectives = [
-  '🎯 Capter — Attirer l\'attention',
-  '🧲 Retenir — Maintenir l\'intérêt',
-  '💡 Convaincre — Créer le désir',
-  '🔥 Inciter — Pousser à l\'action',
-  '💎 Fidéliser — Faire revenir',
-  '✏️ Personnaliser',
-];
-
-const markets = [
-  'Asiatique',
-  'Européen',
-  'Américain',
-  'Africain',
-  'Moyen-oriental',
-  'Latino/Hispanique',
-  'Amérindien',
-  'Océanien',
-];
 
 const renderStyles = [
   'Mise en situation réelle (utilisation dans la vie quotidienne)',
@@ -55,10 +35,10 @@ const StartingPointBlock = () => {
   const {
     input_photos, setInputPhotos, input_text, setInputText, setInputImageUrl,
     type, format, idea_chosen, setIdeaChosen,
-    company_activity, setCompanyActivity, company_sector, setCompanySector,
-    product_service, setProductService,
-    market, setMarket,
-    objective, setObjective,
+    company_activity, company_sector,
+    product_service,
+    market,
+    objective,
     render_style, setRenderStyle,
     options,
   } = useKreatorStore();
@@ -73,7 +53,7 @@ const StartingPointBlock = () => {
   // Idea generation state
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
-  const [showIdeaFields, setShowIdeaFields] = useState(false);
+  
   const [loadingIdeas, setLoadingIdeas] = useState(false);
   const [loadingImageIdea, setLoadingImageIdea] = useState(false);
 
@@ -124,12 +104,8 @@ const StartingPointBlock = () => {
       toast.error('Connectez-vous pour générer des idées');
       return;
     }
-    if (!showIdeaFields) {
-      setShowIdeaFields(true);
-      return;
-    }
     if (!company_activity) {
-      toast.error('Renseignez au moins votre activité principale');
+      toast.error('Renseignez au moins votre activité principale dans "Votre activité"');
       return;
     }
     setLoadingIdeas(true);
@@ -393,91 +369,6 @@ const StartingPointBlock = () => {
               ))}
             </SelectContent>
           </Select>
-        </div>
-      )}
-
-      {showIdeaFields && !showIdeas && !loadingIdeas && (
-        <div className="mt-6 pt-6 border-t border-foreground/10 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Activité principale *</label>
-              <Input
-                value={company_activity}
-                onChange={(e) => setCompanyActivity(e.target.value)}
-                placeholder="Ex: Coach fitness, Boulangerie..."
-                className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Secteur d'activité</label>
-              <Input
-                value={company_sector}
-                onChange={(e) => setCompanySector(e.target.value)}
-                placeholder="Ex: Santé, Alimentation..."
-                className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Quel est votre produit ou service ?</label>
-              <Input
-                value={product_service}
-                onChange={(e) => setProductService(e.target.value)}
-                placeholder="Ex: Programme fitness 30 jours, Pain au levain bio..."
-                className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Marché / Localisation</label>
-              <Select value={market} onValueChange={(v) => setMarket(v === '__none__' ? '' : v)}>
-                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                  <SelectValue placeholder="Choisir un marché cible..." />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-foreground/10">
-                  <SelectItem value="__none__" className="text-foreground focus:bg-secondary/20">Aucun (automatique)</SelectItem>
-                  {markets.map((m) => (
-                    <SelectItem key={m} value={m} className="text-foreground focus:bg-secondary/20">{m}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Objectif du contenu</label>
-              <Select
-                value={objective.startsWith('custom:') ? '✏️ Personnaliser' : objective}
-                onValueChange={(v) => {
-                  if (v === '✏️ Personnaliser') setObjective('custom:');
-                  else setObjective(v);
-                }}
-              >
-                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                  <SelectValue placeholder="Choisir un objectif..." />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-foreground/10">
-                  {objectives.map((o) => (
-                    <SelectItem key={o} value={o} className="text-foreground focus:bg-secondary/20">
-                      {o}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {objective.startsWith('custom:') && (
-                <Input
-                  value={objective.replace('custom:', '')}
-                  onChange={(e) => setObjective(`custom:${e.target.value}`)}
-                  placeholder="Décrivez votre objectif personnalisé..."
-                  className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-                />
-              )}
-            </div>
-          </div>
-          <Button
-            onClick={handleNoIdea}
-            disabled={!company_activity}
-            className="w-full py-5 text-base font-bold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
-          >
-            <Lightbulb className="w-5 h-5 mr-2" />
-            Générer 3 idées
-          </Button>
         </div>
       )}
 
