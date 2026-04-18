@@ -2,7 +2,11 @@ import { create } from 'zustand';
 
 export type ContentType = 'image' | 'carousel' | 'video';
 export type Format = '9:16' | '16:9' | '1:1';
-export type AIModel = 'dall-e-3' | 'imagen-4' | 'imagen-4-ultra' | 'imagen-4-fast' | 'nano-banana-2' | 'nano-banana-pro' | 'sora-2' | 'veo-2' | 'veo-3' | 'veo-3-fast';
+export type AIModel =
+  | 'dall-e-3' | 'imagen-4' | 'imagen-4-ultra' | 'imagen-4-fast' | 'nano-banana-2' | 'nano-banana-pro'
+  | 'veo-3' | 'veo-3.1' | 'kling-2.1' | 'kling-2.5' | 'kling-2.6' | 'kling-3.0'
+  | 'grok-imagine' | 'bytedance/seedance-2-fast' | 'bytedance/seedance-2'
+  | 'hailuo/2-3-image-to-video-standard' | 'hailuo/2-3-image-to-video-standard-pro';
 export type VideoResolution = '720p' | '1080p';
 export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
