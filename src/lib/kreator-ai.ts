@@ -423,9 +423,8 @@ export async function generateVideo(
   onProgress?: (pct: number) => void,
   abortSignal?: AbortSignal
 ) {
-  const isVeoModel = ['veo-3'].includes(aiModel);
   const isKieModel = [
-    'veo-3.1', 'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
+    'veo-3', 'veo-3.1', 'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
     'grok-imagine', 'bytedance/seedance-2-fast', 'bytedance/seedance-2',
     'hailuo/2-3-image-to-video-standard', 'hailuo/2-3-image-to-video-standard-pro',
   ].includes(aiModel);
@@ -462,72 +461,5 @@ export async function generateVideo(
     throw new Error('La génération vidéo kie.ai a pris trop de temps. Réessayez.');
   }
 
-  if (!isVeoModel) {
-    throw new Error(`Modèle vidéo non supporté: ${aiModel}`);
-  }
-
-  // Veo models — start + client-side polling
-  const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
-    body: {
-      action: 'start_video',
-      prompt: promptEn,
-      ai_model: aiModel,
-      size: format,
-    },
-  });
-
-  if (startError) throw startError;
-  if (startData?.error) throw new Error(startData.error);
-
-  // Immediate result
-  if (startData?.done && startData?.video_url) {
-    return startData.video_url;
-  }
-
-  const operationName = startData?.operation_name;
-  if (!operationName) throw new Error('No operation returned from Veo');
-
-  // Poll every 5 seconds, up to 5 minutes
-  const maxAttempts = 60;
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    // Check cancellation
-    if (abortSignal?.aborted) {
-      throw new DOMException('Generation cancelled', 'AbortError');
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-
-    if (abortSignal?.aborted) {
-      throw new DOMException('Generation cancelled', 'AbortError');
-    }
-
-    if (onProgress) {
-      const pct = 10 + Math.min(85, (attempt / maxAttempts) * 85);
-      onProgress(pct);
-    }
-
-    const { data: pollData, error: pollError } = await supabase.functions.invoke('kreator-ai', {
-      body: {
-        action: 'poll_video',
-        operation_name: operationName,
-      },
-    });
-
-    if (pollError) {
-      console.warn('Poll error, retrying...', pollError);
-      continue;
-    }
-
-    if (pollData?.error) {
-      console.warn('Poll API error, retrying...', pollData.error);
-      continue;
-    }
-
-    if (pollData?.done && pollData?.video_url) {
-      if (onProgress) onProgress(100);
-      return pollData.video_url;
-    }
-  }
-
-  throw new Error('La génération vidéo a pris trop de temps. Réessayez.');
+  throw new Error(`Modèle vidéo non supporté: ${aiModel}`);
 }
