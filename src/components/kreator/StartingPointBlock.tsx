@@ -124,12 +124,8 @@ const StartingPointBlock = () => {
       toast.error('Connectez-vous pour générer des idées');
       return;
     }
-    if (!showIdeaFields) {
-      setShowIdeaFields(true);
-      return;
-    }
     if (!company_activity) {
-      toast.error('Renseignez au moins votre activité principale');
+      toast.error('Renseignez au moins votre activité principale dans "Votre activité"');
       return;
     }
     setLoadingIdeas(true);
