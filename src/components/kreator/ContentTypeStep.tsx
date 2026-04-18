@@ -1,5 +1,5 @@
-import { useKreatorStore, type ContentType, type AIModel, type VideoResolution } from '@/store/useKreatorStore';
-import { Image, Layers, Video } from 'lucide-react';
+import { useKreatorStore, type ContentType, type AIModel, type VideoResolution, type Format } from '@/store/useKreatorStore';
+import { Image, Layers, Video, Info } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StepContainer from './StepContainer';
 
@@ -35,49 +35,44 @@ const videoModels: { value: AIModel; label: string }[] = [
   { value: 'hailuo/2-3-image-to-video-standard-pro', label: 'Hailuo 2.3 I2V Standard Pro' },
 ];
 
-const renderStyles = [
-  'Mise en situation réelle (utilisation dans la vie quotidienne)',
-  'Fond blanc / neutre (propre, e-commerce)',
-  'Style haut de gamme / luxe (éclairage travaillé, rendu premium)',
-  'Ambiance naturelle (lumière douce, aspect authentique)',
-  'Style storytelling (qui raconte une histoire)',
-  'Moment de vie (spontané, humain, naturel)',
-  'Avant / après (montre une transformation)',
-  'Style épuré / minimaliste (peu d\'éléments)',
-  'Style créatif (original, différent)',
-  'Réaliste avec effet "waouh" (surprenant mais crédible)',
-  'Rendu produit amélioré (plus net, plus propre)',
-  'Gros plan détail (zoom sur texture / qualité)',
-  'Visuel avec texte (explicatif, marketing)',
-  'Style utilisateur (pris sur le vif, authentique)',
-  'Style réseaux sociaux (moderne, tendance)',
-];
+// Per-model required inputs + simple guidance
+const videoModelGuidance: Record<string, { inputs: string[]; hint: string }> = {
+  'veo-3': { inputs: ['text'], hint: 'Décrivez simplement la scène en français — Veo 3 génère la vidéo à partir de votre texte.' },
+  'veo-3.1': { inputs: ['text', 'image'], hint: 'Vous pouvez ajouter une image de référence (optionnel) et décrire la scène souhaitée.' },
+  'kling-2.1': { inputs: ['image', 'text'], hint: 'Importez une image dans "Point de départ" — Kling l\'animera selon votre description.' },
+  'kling-2.5': { inputs: ['image', 'text'], hint: 'Importez une image dans "Point de départ" — Kling l\'animera selon votre description.' },
+  'kling-2.6': { inputs: ['image', 'text'], hint: 'Importez une image dans "Point de départ" — Kling l\'animera selon votre description.' },
+  'kling-3.0': { inputs: ['text', 'image'], hint: 'Décrivez la scène. Une image de référence est optionnelle pour guider le style.' },
+  'grok-imagine': { inputs: ['text'], hint: 'Décrivez la vidéo en quelques phrases claires — Grok s\'occupe du reste.' },
+  'bytedance/seedance-2-fast': { inputs: ['text'], hint: 'Modèle rapide texte→vidéo : décrivez l\'action et l\'ambiance souhaitées.' },
+  'bytedance/seedance-2': { inputs: ['text', 'image'], hint: 'Décrivez votre scène. Vous pouvez ajouter une image de référence pour le style.' },
+  'hailuo/2-3-image-to-video-standard': { inputs: ['image', 'text'], hint: 'Importez une image obligatoire dans "Point de départ" + une courte description du mouvement.' },
+  'hailuo/2-3-image-to-video-standard-pro': { inputs: ['image', 'text'], hint: 'Importez une image obligatoire dans "Point de départ" + une courte description du mouvement (qualité Pro).' },
+};
 
-const videoRenderStyles = [
-  'Lifestyle (usage réel)',
-  'Premium / luxe (cinématographique)',
-  'Storytelling émotionnel',
-  'UGC (authentique, mobile)',
-  'Publicité directe (conversion)',
-  'Minimaliste (clean, impact rapide)',
-  'Avant / après (transformation)',
-  'Démo produit (mise en valeur)',
+const formats: { value: Format; label: string; sublabel: string }[] = [
+  { value: '9:16', label: '9:16', sublabel: 'Portrait' },
+  { value: '16:9', label: '16:9', sublabel: 'Paysage' },
+  { value: '1:1', label: '1:1', sublabel: 'Carré' },
 ];
 
 const ContentTypeStep = () => {
   const {
     type, setType, slides_count, setSlidesCount,
     ai_model, setAiModel,
-    render_style, setRenderStyle,
-    video_render_style, setVideoRenderStyle,
     format, setFormat,
-    video_resolution, setVideoResolution
+    video_resolution, setVideoResolution,
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
+  const videoGuide = type === 'video' ? videoModelGuidance[ai_model] : null;
+  const availableFormats = type === 'video'
+    ? formats.filter((f) => f.value !== '1:1')
+    : formats;
 
   return (
     <StepContainer stepNumber={1} title="Type de contenu">
+      {/* Content type selector */}
       <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
         {contentTypes.map(({ type: t, label, icon: Icon }) => (
           <button
@@ -100,6 +95,7 @@ const ContentTypeStep = () => {
         ))}
       </div>
 
+      {/* Carousel: slides count */}
       {type === 'carousel' && (
         <div className="mb-6">
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Nombre de slides</label>
@@ -121,6 +117,7 @@ const ContentTypeStep = () => {
         </div>
       )}
 
+      {/* AI Model */}
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">Modèle IA</label>
         <Select value={ai_model} onValueChange={(v) => setAiModel(v as AIModel)}>
@@ -137,70 +134,65 @@ const ContentTypeStep = () => {
         </Select>
       </div>
 
-      {type !== 'video' && (
-        <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu</label>
-          <Select value={render_style} onValueChange={setRenderStyle}>
-            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-              <SelectValue placeholder="Choisir un type de rendu..." />
-            </SelectTrigger>
-            <SelectContent className="bg-card border-foreground/10">
-              {renderStyles.map((r) => (
-                <SelectItem key={r} value={r} className="text-foreground focus:bg-secondary/20">
-                  {r}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
+      {/* Video model guidance + resolution */}
+      {type === 'video' && videoGuide && (
+        <div className="mb-6 space-y-4">
+          <div className="flex gap-3 p-3 rounded-card bg-primary/5 border border-primary/20">
+            <Info className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap gap-1.5">
+                {videoGuide.inputs.map((i) => (
+                  <span key={i} className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-pill bg-primary/15 text-primary">
+                    {i === 'image' ? '🖼️ Image requise' : '✍️ Texte'}
+                  </span>
+                ))}
+              </div>
+              <p className="text-xs text-foreground/80 leading-relaxed">{videoGuide.hint}</p>
+            </div>
+          </div>
 
-      {type === 'video' && (
-        <>
           <div>
-            <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu vidéo</label>
-            <Select value={video_render_style} onValueChange={setVideoRenderStyle}>
+            <label className="text-sm font-medium text-muted-foreground mb-2 block">Résolution</label>
+            <Select value={video_resolution} onValueChange={(v) => setVideoResolution(v as VideoResolution)}>
               <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                <SelectValue placeholder="Choisir un type de rendu vidéo..." />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-card border-foreground/10">
-                {videoRenderStyles.map((r) => (
-                  <SelectItem key={r} value={r} className="text-foreground focus:bg-secondary/20">
-                    {r}
-                  </SelectItem>
-                ))}
+                <SelectItem value="720p" className="text-foreground focus:bg-secondary/20">720p</SelectItem>
+                <SelectItem value="1080p" className="text-foreground focus:bg-secondary/20">1080p</SelectItem>
               </SelectContent>
             </Select>
           </div>
-
-          <div className="grid grid-cols-2 gap-3 mt-4">
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-2 block">Format vidéo</label>
-              <Select value={format} onValueChange={(v) => setFormat(v as '9:16' | '16:9' | '1:1')}>
-                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-foreground/10">
-                  <SelectItem value="9:16" className="text-foreground focus:bg-secondary/20">9:16 (Vertical)</SelectItem>
-                  <SelectItem value="16:9" className="text-foreground focus:bg-secondary/20">16:9 (Horizontal)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-2 block">Résolution</label>
-              <Select value={video_resolution} onValueChange={(v) => setVideoResolution(v as VideoResolution)}>
-                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-foreground/10">
-                  <SelectItem value="720p" className="text-foreground focus:bg-secondary/20">720p</SelectItem>
-                  <SelectItem value="1080p" className="text-foreground focus:bg-secondary/20">1080p</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </>
+        </div>
       )}
+
+      {/* Format selector — bottom of the same block */}
+      <div>
+        <label className="text-sm font-medium text-muted-foreground mb-2 block">Format</label>
+        <div className={`grid gap-2 sm:gap-3 ${availableFormats.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          {availableFormats.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setFormat(f.value)}
+              className={`flex flex-col items-center gap-2 p-3 sm:p-4 rounded-card border-[3px] transition-all duration-200 ${
+                format === f.value
+                  ? 'border-primary bg-card'
+                  : 'border-foreground/10 bg-card hover:border-secondary hover:bg-secondary/5'
+              }`}
+            >
+              <div className={`w-10 ${f.value === '9:16' ? 'h-16' : f.value === '16:9' ? 'h-6' : 'h-10'} rounded border-2 ${
+                format === f.value ? 'border-primary bg-primary/10' : 'border-muted-foreground/30 bg-muted/30'
+              }`} />
+              <div className="text-center">
+                <div className={`font-bold text-sm ${format === f.value ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  {f.label}
+                </div>
+                <div className="text-xs text-muted-foreground">{f.sublabel}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
     </StepContainer>
   );
 };
