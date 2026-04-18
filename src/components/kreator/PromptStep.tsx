@@ -12,7 +12,7 @@ const PromptStep = () => {
   const { user } = useAuth();
   const {
     prompt_fr, setPromptFr,
-    type, format, objective, company_activity, company_sector,
+    type, format, objective, company_activity, company_sector, product_service,
     input_text, idea_chosen, input_image_description, input_photos,
     options, slides_count, status, setStatus, setResultUrl, ai_model,
     render_style, video_render_style
