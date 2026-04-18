@@ -12,26 +12,6 @@ import { generateIdeas, generateIdeaFromImages } from '@/lib/kreator-ai';
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
 
-const objectives = [
-  '🎯 Capter — Attirer l\'attention',
-  '🧲 Retenir — Maintenir l\'intérêt',
-  '💡 Convaincre — Créer le désir',
-  '🔥 Inciter — Pousser à l\'action',
-  '💎 Fidéliser — Faire revenir',
-  '✏️ Personnaliser',
-];
-
-const markets = [
-  'Asiatique',
-  'Européen',
-  'Américain',
-  'Africain',
-  'Moyen-oriental',
-  'Latino/Hispanique',
-  'Amérindien',
-  'Océanien',
-];
-
 const renderStyles = [
   'Mise en situation réelle (utilisation dans la vie quotidienne)',
   'Fond blanc / neutre (propre, e-commerce)',
