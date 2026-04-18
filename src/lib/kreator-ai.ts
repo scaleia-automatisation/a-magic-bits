@@ -423,9 +423,8 @@ export async function generateVideo(
   onProgress?: (pct: number) => void,
   abortSignal?: AbortSignal
 ) {
-  const isVeoModel = ['veo-3'].includes(aiModel);
   const isKieModel = [
-    'veo-3.1', 'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
+    'veo-3', 'veo-3.1', 'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
     'grok-imagine', 'bytedance/seedance-2-fast', 'bytedance/seedance-2',
     'hailuo/2-3-image-to-video-standard', 'hailuo/2-3-image-to-video-standard-pro',
   ].includes(aiModel);
@@ -462,9 +461,8 @@ export async function generateVideo(
     throw new Error('La génération vidéo kie.ai a pris trop de temps. Réessayez.');
   }
 
-  if (!isVeoModel) {
-    throw new Error(`Modèle vidéo non supporté: ${aiModel}`);
-  }
+  throw new Error(`Modèle vidéo non supporté: ${aiModel}`);
+}
 
   // Veo models — start + client-side polling
   const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
