@@ -22,17 +22,24 @@ export async function generateIdeas(
   activity: string,
   sector: string,
   contentType: string,
-  objective: string
+  objective: string,
+  productService?: string
 ) {
-  const systemPrompt = `Tu es un expert en marketing digital. Génère exactement 3 idées de contenu.
+  const systemPrompt = `Tu es un expert en marketing digital viral. Génère exactement 3 idées de contenu PERSUASIVES, IMPACTANTES, ENGAGEANTES qui suscitent immédiatement l'intérêt et le partage.
+Chaque idée doit avoir un angle viral fort (curiosité, émotion, controverse douce, transformation, preuve sociale, urgence).
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
-{"ideas":[{"id":1,"title":"max 20 chars","angle":"Éducatif|Storytelling|Engagement|Preuve sociale|Urgence","description":"max 50 chars"},{"id":2,...},{"id":3,...}]}`;
+{"ideas":[{"id":1,"title":"max 25 chars avec emoji","angle":"Éducatif|Storytelling|Engagement|Preuve sociale|Urgence|Curiosité","description":"max 70 chars — pourquoi ça va cartonner"},{"id":2,...},{"id":3,...}]}`;
 
-  const userPrompt = `Activité: ${activity}
+  const userPrompt = `=== CONTEXTE ENTREPRISE ===
+${activity ? `Activité principale: ${activity}` : ''}
 ${sector ? `Secteur: ${sector}` : ''}
-Type: ${contentType}
-${objective ? `Objectif: ${objective}` : ''}
-Génère 3 idées originales et engageantes.`;
+${productService ? `Produit ou service à mettre en avant: ${productService}` : ''}
+
+=== CONTENU ===
+Type de contenu: ${contentType}
+${objective ? `Objectif du contenu (PRIORITAIRE): ${objective}` : ''}
+
+Génère 3 idées virales, persuasives, impactantes et engageantes qui suscitent l'intérêt immédiat. Fusionne TOUS ces éléments dans chaque idée.`;
 
   const data = await callKreatorAI({
     action: 'generate_ideas',
@@ -59,6 +66,7 @@ export async function generateIdeaFromImages(params: {
   format: string;
   activity: string;
   sector: string;
+  productService?: string;
   ton?: string;
   visualStyle?: string;
 }) {
@@ -82,6 +90,7 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown:
   const contextText = `=== CONTEXTE ENTREPRISE ===
 ${params.activity ? `Activité principale: ${params.activity}` : 'Activité: non renseignée'}
 ${params.sector ? `Secteur d'activité: ${params.sector}` : 'Secteur: non renseigné'}
+${params.productService ? `Produit ou service à mettre en avant: ${params.productService}` : ''}
 
 === CONTENU ===
 Type de contenu: ${params.contentType}

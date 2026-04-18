@@ -4,6 +4,7 @@ import { Upload, X, Replace, ImagePlus, FileText, TrendingUp, Lightbulb, Loader2
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { generateIdeas, generateIdeaFromImages } from '@/lib/kreator-ai';
@@ -11,12 +12,23 @@ import { generateIdeas, generateIdeaFromImages } from '@/lib/kreator-ai';
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
 
+const objectives = [
+  '🎯 Capter — Attirer l\'attention',
+  '🧲 Retenir — Maintenir l\'intérêt',
+  '💡 Convaincre — Créer le désir',
+  '🔥 Inciter — Pousser à l\'action',
+  '💎 Fidéliser — Faire revenir',
+  '✏️ Personnaliser',
+];
+
 const StartingPointBlock = () => {
   const { user } = useAuth();
   const {
     input_photos, setInputPhotos, input_text, setInputText, setInputImageUrl,
     type, format, idea_chosen, setIdeaChosen,
-    company_activity, setCompanyActivity, company_sector, setCompanySector, objective,
+    company_activity, setCompanyActivity, company_sector, setCompanySector,
+    product_service, setProductService,
+    objective, setObjective,
     options,
   } = useKreatorStore();
 
@@ -93,7 +105,7 @@ const StartingPointBlock = () => {
     }
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, objective);
+      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service);
       setIdeas(result.ideas);
       setShowIdeas(true);
     } catch (err) {
@@ -113,7 +125,7 @@ const StartingPointBlock = () => {
   const handleGenerateMore = async () => {
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, objective);
+      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service);
       setIdeas(result.ideas);
     } catch {
       toast.error('Erreur lors de la génération');
@@ -155,6 +167,7 @@ const StartingPointBlock = () => {
         format,
         activity: company_activity,
         sector: company_sector,
+        productService: product_service,
         ton: options.ton,
         visualStyle: options.visual_style,
       });
@@ -357,6 +370,44 @@ const StartingPointBlock = () => {
                 placeholder="Ex: Santé, Alimentation..."
                 className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
               />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Quel est votre produit ou service ?</label>
+              <Input
+                value={product_service}
+                onChange={(e) => setProductService(e.target.value)}
+                placeholder="Ex: Programme fitness 30 jours, Pain au levain bio..."
+                className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Objectif du contenu</label>
+              <Select
+                value={objective.startsWith('custom:') ? '✏️ Personnaliser' : objective}
+                onValueChange={(v) => {
+                  if (v === '✏️ Personnaliser') setObjective('custom:');
+                  else setObjective(v);
+                }}
+              >
+                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                  <SelectValue placeholder="Choisir un objectif..." />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-foreground/10">
+                  {objectives.map((o) => (
+                    <SelectItem key={o} value={o} className="text-foreground focus:bg-secondary/20">
+                      {o}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {objective.startsWith('custom:') && (
+                <Input
+                  value={objective.replace('custom:', '')}
+                  onChange={(e) => setObjective(`custom:${e.target.value}`)}
+                  placeholder="Décrivez votre objectif personnalisé..."
+                  className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
+                />
+              )}
             </div>
           </div>
           <Button
