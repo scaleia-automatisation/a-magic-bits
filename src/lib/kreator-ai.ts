@@ -392,7 +392,45 @@ ${params.activity ? `Activité: ${params.activity}` : ''}`;
   }
 }
 
-export async function generateImage(promptEn: string, aiModel: AIModel = 'dall-e-3', format: string = '1:1') {
+export async function generateImage(
+  promptEn: string,
+  aiModel: AIModel = 'dall-e-3',
+  format: string = '1:1',
+  inputImageUrl?: string
+) {
+  const isKieImageModel = ['qwen/image-edit', 'ideogram/character', 'ideogram/image'].includes(aiModel);
+
+  // === kie.ai image models — start + polling ===
+  if (isKieImageModel) {
+    const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
+      body: {
+        action: 'kie_start_image',
+        prompt: promptEn,
+        ai_model: aiModel,
+        size: format,
+        input_image_url: inputImageUrl || '',
+      },
+    });
+    if (startError) throw startError;
+    if (startData?.error) throw new Error(startData.error);
+    if (startData?.done && startData?.image_url) return startData.image_url;
+
+    const taskId = startData?.task_id;
+    if (!taskId) throw new Error('No task_id returned from kie.ai');
+
+    const maxAttempts = 60;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      await new Promise((r) => setTimeout(r, 4000));
+      const { data: pollData, error: pollError } = await supabase.functions.invoke('kreator-ai', {
+        body: { action: 'kie_poll_image', task_id: taskId },
+      });
+      if (pollError) { console.warn('kie.ai poll error', pollError); continue; }
+      if (pollData?.error) throw new Error(pollData.error);
+      if (pollData?.done && pollData?.image_url) return pollData.image_url;
+    }
+    throw new Error('La génération image kie.ai a pris trop de temps. Réessayez.');
+  }
+
   // Map format to DALL-E size
   const dalleSize = format === '9:16' ? '1024x1792' : format === '16:9' ? '1792x1024' : '1024x1024';
 
@@ -401,7 +439,7 @@ export async function generateImage(promptEn: string, aiModel: AIModel = 'dall-e
       action: 'generate_image',
       prompt: promptEn,
       ai_model: aiModel,
-      size: format, // Pass the ratio directly; edge function handles per-model mapping
+      size: format,
       dalle_size: dalleSize,
       quality: 'hd',
     },
