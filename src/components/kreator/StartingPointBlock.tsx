@@ -21,6 +21,17 @@ const objectives = [
   '✏️ Personnaliser',
 ];
 
+const markets = [
+  'Asiatique',
+  'Européen',
+  'Américain',
+  'Africain',
+  'Moyen-oriental',
+  'Latino/Hispanique',
+  'Amérindien',
+  'Océanien',
+];
+
 const StartingPointBlock = () => {
   const { user } = useAuth();
   const {
@@ -28,6 +39,7 @@ const StartingPointBlock = () => {
     type, format, idea_chosen, setIdeaChosen,
     company_activity, setCompanyActivity, company_sector, setCompanySector,
     product_service, setProductService,
+    market, setMarket,
     objective, setObjective,
     options,
   } = useKreatorStore();
@@ -105,7 +117,7 @@ const StartingPointBlock = () => {
     }
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service);
+      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service, market);
       setIdeas(result.ideas);
       setShowIdeas(true);
     } catch (err) {
@@ -125,7 +137,7 @@ const StartingPointBlock = () => {
   const handleGenerateMore = async () => {
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service);
+      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service, market);
       setIdeas(result.ideas);
     } catch {
       toast.error('Erreur lors de la génération');
@@ -168,6 +180,7 @@ const StartingPointBlock = () => {
         activity: company_activity,
         sector: company_sector,
         productService: product_service,
+        market,
         ton: options.ton,
         visualStyle: options.visual_style,
       });
@@ -379,6 +392,20 @@ const StartingPointBlock = () => {
                 placeholder="Ex: Programme fitness 30 jours, Pain au levain bio..."
                 className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
               />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Marché / Localisation</label>
+              <Select value={market} onValueChange={(v) => setMarket(v === '__none__' ? '' : v)}>
+                <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                  <SelectValue placeholder="Choisir un marché cible..." />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-foreground/10">
+                  <SelectItem value="__none__" className="text-foreground focus:bg-secondary/20">Aucun (automatique)</SelectItem>
+                  {markets.map((m) => (
+                    <SelectItem key={m} value={m} className="text-foreground focus:bg-secondary/20">{m}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground mb-1.5 block">Objectif du contenu</label>

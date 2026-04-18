@@ -46,6 +46,8 @@ interface KreatorState {
   setCompanySector: (val: string) => void;
   product_service: string;
   setProductService: (val: string) => void;
+  market: string;
+  setMarket: (val: string) => void;
 
   format: Format;
   setFormat: (format: Format) => void;
@@ -95,6 +97,7 @@ const initialState = {
   company_activity: '',
   company_sector: '',
   product_service: '',
+  market: '',
   video_render_style: '',
   video_resolution: '1080p' as VideoResolution,
   format: '9:16' as Format,
@@ -139,6 +142,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setCompanyActivity: (val) => set({ company_activity: val }),
   setCompanySector: (val) => set({ company_sector: val }),
   setProductService: (val) => set({ product_service: val }),
+  setMarket: (val) => set({ market: val }),
   setFormat: (format) => set({ format }),
   setInputImageUrl: (url) => set({ input_image_url: url }),
   setInputImageDescription: (desc) => set({ input_image_description: desc }),

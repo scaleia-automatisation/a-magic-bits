@@ -23,7 +23,8 @@ export async function generateIdeas(
   sector: string,
   contentType: string,
   objective: string,
-  productService?: string
+  productService?: string,
+  market?: string
 ) {
   const systemPrompt = `Tu es un expert en marketing digital viral. Génère exactement 3 idées de contenu PERSUASIVES, IMPACTANTES, ENGAGEANTES qui suscitent immédiatement l'intérêt et le partage.
 
@@ -31,6 +32,9 @@ RÈGLE ABSOLUE — HOOK 0-2 SECONDES (NON NÉGOCIABLE) :
 Chaque idée DOIT s'ouvrir sur un hook ULTRA PUISSANT et PERSUASIF capable de capter l'attention dans les 2 PREMIÈRES SECONDES, quel que soit le type de contenu (image, carrousel, vidéo).
 Le hook doit être : émotionnel, intrigant, choquant ou provoquant une curiosité irrésistible (ex : "Personne ne te dit ça…", "Arrête tout de suite si tu fais ça", "J'ai perdu X à cause de ça", "90% se trompent ici", "Le secret que personne ne révèle…").
 Aucune idée molle, descriptive ou générique n'est acceptée. Le scroll-stop est PRIORITAIRE sur tout. La description doit expliciter le hook d'ouverture.
+
+RÈGLE — MARCHÉ / LOCALISATION :
+${market ? `Le marché cible est "${market}". Adapter les références culturelles, le vocabulaire, les codes sociaux, les habitudes de consommation, les personnages évoqués et l'environnement à ce marché.` : `Aucun marché précisé : rester culturellement neutre et universel, éviter toute référence ethnique, géographique ou culturelle marquée. Personnages et environnements doivent rester cohérents et plausibles sans imposer une origine spécifique.`}
 
 Chaque idée doit avoir un angle viral fort (curiosité, émotion, controverse douce, transformation, preuve sociale, urgence) aligné sur l'objectif.
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
@@ -40,6 +44,7 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown:
 ${activity ? `Activité principale: ${activity}` : ''}
 ${sector ? `Secteur: ${sector}` : ''}
 ${productService ? `Produit ou service à mettre en avant: ${productService}` : ''}
+${market ? `Marché / Localisation: ${market}` : 'Marché: non précisé (rester neutre)'}
 
 === CONTENU ===
 Type de contenu: ${contentType}
@@ -73,6 +78,7 @@ export async function generateIdeaFromImages(params: {
   activity: string;
   sector: string;
   productService?: string;
+  market?: string;
   ton?: string;
   visualStyle?: string;
 }) {
@@ -97,6 +103,7 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown:
 ${params.activity ? `Activité principale: ${params.activity}` : 'Activité: non renseignée'}
 ${params.sector ? `Secteur d'activité: ${params.sector}` : 'Secteur: non renseigné'}
 ${params.productService ? `Produit ou service à mettre en avant: ${params.productService}` : ''}
+${params.market ? `Marché / Localisation: ${params.market} (adapter personnages, environnement et codes culturels à ce marché)` : 'Marché: non précisé (rester culturellement neutre et universel)'}
 
 === CONTENU ===
 Type de contenu: ${params.contentType}
@@ -137,6 +144,7 @@ export async function generatePrompt(params: {
   companyActivity: string;
   companySector: string;
   productService?: string;
+  market?: string;
   showText: boolean;
   textContent: string;
   paletteEnabled: boolean;
@@ -281,6 +289,10 @@ Le visuel généré DOIT être STRICTEMENT cohérent avec l'idée, la descriptio
 - Subtilité et intelligence : suggérer plutôt qu'envahir. Un visuel pro ne sur-charge pas, il met en valeur l'offre avec justesse.
 - Si du texte overlay est demandé : reproduire EXACTEMENT le texte fourni par l'utilisateur, sans rien ajouter, sans rien modifier (ni chiffres, ni mots, ni unités).
 Toute incohérence entre l'offre décrite et le visuel généré est une ERREUR CRITIQUE à éviter absolument.
+
+RÈGLE ABSOLUE — MARCHÉ / LOCALISATION / CASTING (NON NÉGOCIABLE) :
+${params.market ? `Le marché cible est "${params.market}". Les personnages générés (ethnies, traits, tenues, coiffures), l'environnement (architecture, mobilier urbain, signalétique, végétation, climat), les accessoires et les codes culturels DOIVENT être cohérents avec ce marché. Pas de mélange incohérent (ex : ne pas mettre un décor scandinave pour un marché Africain).` : `Aucun marché précisé : par défaut, choisir des personnages et un environnement CULTURELLEMENT NEUTRES, plausibles et universels. NE PAS imposer une ethnie, une nationalité ou un décor culturellement marqué de façon arbitraire. Privilégier des cadres sobres, neutres, sans signalétique étrangère ni références ethniques fortes, pour rester cohérent quel que soit le marché du business.`}
+Cette règle est PRIORITAIRE sur les choix esthétiques et ne doit JAMAIS être ignorée.
 ${videoDirectives}
 RETOURNE UNIQUEMENT un JSON valide sans markdown:
 {"prompt_fr":"...","palette_used":["#HEX"],"marketing_angle":"..."}`;
@@ -289,6 +301,7 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown:
 ${params.companyActivity ? `Activité principale: ${params.companyActivity}` : 'Activité: non renseignée'}
 ${params.companySector ? `Secteur d'activité: ${params.companySector}` : 'Secteur: non renseigné'}
 ${params.productService ? `Produit ou service mis en avant (RÉFÉRENCE EXACTE pour la cohérence visuelle): ${params.productService}` : ''}
+${params.market ? `Marché / Localisation cible: ${params.market} (adapter casting, environnement et codes culturels en conséquence)` : 'Marché / Localisation: non précisé (rester culturellement neutre, casting et décor universels)'}
 
 === CONTENU ===
 Type de contenu: ${params.contentType}
