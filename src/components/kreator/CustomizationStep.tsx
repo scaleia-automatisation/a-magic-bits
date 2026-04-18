@@ -52,7 +52,7 @@ const CustomizationStep = () => {
         </div>
       )}
       {isVisible && (
-        <StepContainer stepNumber={4} title="Personnalisation">
+        <StepContainer stepNumber={3} title="Personnalisation">
           <Accordion type="multiple" className="space-y-2">
             {/* Text overlay */}
             <AccordionItem value="text" className="border-foreground/10">

@@ -277,7 +277,7 @@ const GenerationStep = () => {
 
   return (
     <>
-      <StepContainer stepNumber={6} title="Génération">
+      <StepContainer stepNumber={5} title="Génération">
         {status === 'idle' && (
           <Button
             onClick={handleGenerate}
