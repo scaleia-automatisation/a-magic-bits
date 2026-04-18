@@ -21,6 +21,17 @@ const objectives = [
   '✏️ Personnaliser',
 ];
 
+const markets = [
+  'Asiatique',
+  'Européen',
+  'Américain',
+  'Africain',
+  'Moyen-oriental',
+  'Latino/Hispanique',
+  'Amérindien',
+  'Océanien',
+];
+
 const StartingPointBlock = () => {
   const { user } = useAuth();
   const {
@@ -28,6 +39,7 @@ const StartingPointBlock = () => {
     type, format, idea_chosen, setIdeaChosen,
     company_activity, setCompanyActivity, company_sector, setCompanySector,
     product_service, setProductService,
+    market, setMarket,
     objective, setObjective,
     options,
   } = useKreatorStore();
@@ -105,7 +117,7 @@ const StartingPointBlock = () => {
     }
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service);
+      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service, market);
       setIdeas(result.ideas);
       setShowIdeas(true);
     } catch (err) {
@@ -125,7 +137,7 @@ const StartingPointBlock = () => {
   const handleGenerateMore = async () => {
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service);
+      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service, market);
       setIdeas(result.ideas);
     } catch {
       toast.error('Erreur lors de la génération');
@@ -168,6 +180,7 @@ const StartingPointBlock = () => {
         activity: company_activity,
         sector: company_sector,
         productService: product_service,
+        market,
         ton: options.ton,
         visualStyle: options.visual_style,
       });
