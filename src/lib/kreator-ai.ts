@@ -145,6 +145,7 @@ export async function generatePrompt(params: {
   companySector: string;
   productService?: string;
   market?: string;
+  market?: string;
   showText: boolean;
   textContent: string;
   paletteEnabled: boolean;
