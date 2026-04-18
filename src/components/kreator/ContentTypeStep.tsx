@@ -1,7 +1,6 @@
 import { useKreatorStore, type ContentType, type AIModel, type VideoResolution } from '@/store/useKreatorStore';
 import { Image, Layers, Video } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import StepContainer from './StepContainer';
 
 const contentTypes: { type: ContentType; label: string; icon: typeof Image }[] = [
@@ -65,19 +64,10 @@ const videoRenderStyles = [
   'Démo produit (mise en valeur)',
 ];
 
-const objectives = [
-  '🎯 Capter — Attirer l\'attention',
-  '🧲 Retenir — Maintenir l\'intérêt',
-  '💡 Convaincre — Créer le désir',
-  '🔥 Inciter — Pousser à l\'action',
-  '💎 Fidéliser — Faire revenir',
-  '✏️ Personnaliser',
-];
-
 const ContentTypeStep = () => {
   const {
     type, setType, slides_count, setSlidesCount,
-    ai_model, setAiModel, objective, setObjective,
+    ai_model, setAiModel,
     render_style, setRenderStyle,
     video_render_style, setVideoRenderStyle,
     format, setFormat,
