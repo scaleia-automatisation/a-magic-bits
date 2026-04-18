@@ -12,6 +12,7 @@ Updated: 4h ago
 - **Prompts**: French prompt exclusively used for generation. English removed.
 - **Captions**: Call to Action (CTA) must be strictly separated from the description text.
 - **Hooks**: Tous les contenus (images, carrousels, vidéos, captions) DOIVENT avoir un hook ultra-persuasif scroll-stop dans les 2 premières secondes, aligné sur l'objectif. Règle absolue, jamais d'exception.
+- **Cohérence visuelle**: Aucun nom de marque/enseigne/label inventé, aucun prix/quantité/promo qui contredit l'idée. Les chiffres et mentions doivent matcher EXACTEMENT l'offre décrite. Sobriété > décoration parasite.
 
 ## Memories
 - [Vision](mem://project/vision) — BoosterApp SaaS overview: AI marketing content with credits
