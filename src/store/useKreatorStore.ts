@@ -13,6 +13,7 @@ export type AIModel =
 export type VideoResolution = '720p' | '1080p';
 export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
+export type SoraCharacterScene = { duration: number };
 
 interface KreatorOptions {
   show_text: boolean;
