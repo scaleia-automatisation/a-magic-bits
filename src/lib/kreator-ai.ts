@@ -518,8 +518,8 @@ export async function generateVideo(
 ) {
   const isKieModel = [
     'veo-3', 'veo-3.1', 'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
-    'grok-imagine', 'bytedance/seedance-2-fast', 'bytedance/seedance-2',
-    'hailuo/2-3-image-to-video-standard', 'hailuo/2-3-image-to-video-standard-pro',
+    'grok-imagine-i2v', 'grok-imagine-t2v',
+    'bytedance/seedance-1.5-pro', 'bytedance/seedance-2',
   ].includes(aiModel);
 
   // === kie.ai models — start + polling ===
