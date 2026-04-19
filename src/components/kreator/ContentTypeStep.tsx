@@ -52,12 +52,34 @@ const ContentTypeStep = () => {
     ai_model, setAiModel,
     format, setFormat,
     video_resolution, setVideoResolution,
+    sora_character_total_duration, setSoraCharacterTotalDuration,
+    sora_character_scenes, setSoraCharacterScenes,
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
   const availableFormats = type === 'video'
     ? formats.filter((f) => f.value !== '1:1')
     : formats;
+
+  const isSoraCharacter = type === 'video' && ai_model === 'sora-2-pro-character';
+  const scenesTotal = sora_character_scenes.reduce((sum, s) => sum + (Number(s.duration) || 0), 0);
+  const scenesValid = scenesTotal === sora_character_total_duration;
+
+  const updateSceneCount = (count: number) => {
+    const current = sora_character_scenes;
+    if (count > current.length) {
+      const toAdd = Array.from({ length: count - current.length }, () => ({ duration: 0 }));
+      setSoraCharacterScenes([...current, ...toAdd]);
+    } else {
+      setSoraCharacterScenes(current.slice(0, count));
+    }
+  };
+
+  const updateSceneDuration = (index: number, duration: number) => {
+    const next = [...sora_character_scenes];
+    next[index] = { duration };
+    setSoraCharacterScenes(next);
+  };
 
   return (
     <StepContainer stepNumber={1} title="Type de contenu">
