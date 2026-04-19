@@ -55,7 +55,6 @@ const ContentTypeStep = () => {
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
-  const videoGuide = type === 'video' ? videoModelGuidance[ai_model] : null;
   const availableFormats = type === 'video'
     ? formats.filter((f) => f.value !== '1:1')
     : formats;
@@ -124,35 +123,19 @@ const ContentTypeStep = () => {
         </Select>
       </div>
 
-      {/* Video model guidance + resolution */}
-      {type === 'video' && videoGuide && (
-        <div className="mb-6 space-y-4">
-          <div className="flex gap-3 p-3 rounded-card bg-primary/5 border border-primary/20">
-            <Info className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-            <div className="space-y-1.5">
-              <div className="flex flex-wrap gap-1.5">
-                {videoGuide.inputs.map((i) => (
-                  <span key={i} className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-pill bg-primary/15 text-primary">
-                    {i === 'image' ? '🖼️ Image requise' : '✍️ Texte'}
-                  </span>
-                ))}
-              </div>
-              <p className="text-xs text-foreground/80 leading-relaxed">{videoGuide.hint}</p>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-muted-foreground mb-2 block">Résolution</label>
-            <Select value={video_resolution} onValueChange={(v) => setVideoResolution(v as VideoResolution)}>
-              <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-card border-foreground/10">
-                <SelectItem value="720p" className="text-foreground focus:bg-secondary/20">720p</SelectItem>
-                <SelectItem value="1080p" className="text-foreground focus:bg-secondary/20">1080p</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      {/* Video resolution */}
+      {type === 'video' && (
+        <div className="mb-6">
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Résolution</label>
+          <Select value={video_resolution} onValueChange={(v) => setVideoResolution(v as VideoResolution)}>
+            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-foreground/10">
+              <SelectItem value="720p" className="text-foreground focus:bg-secondary/20">720p</SelectItem>
+              <SelectItem value="1080p" className="text-foreground focus:bg-secondary/20">1080p</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       )}
 
