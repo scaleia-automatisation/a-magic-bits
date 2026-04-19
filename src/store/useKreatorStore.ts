@@ -43,6 +43,10 @@ interface KreatorState {
   setVideoRenderStyle: (val: string) => void;
   video_resolution: VideoResolution;
   setVideoResolution: (val: VideoResolution) => void;
+  sora_character_total_duration: 10 | 15 | 25;
+  setSoraCharacterTotalDuration: (val: 10 | 15 | 25) => void;
+  sora_character_scenes: SoraCharacterScene[];
+  setSoraCharacterScenes: (scenes: SoraCharacterScene[]) => void;
   company_activity: string;
   setCompanyActivity: (val: string) => void;
   company_sector: string;
