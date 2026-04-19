@@ -15,6 +15,32 @@ export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
 export type SoraCharacterScene = { duration: number };
 
+// Réglages spécifiques par modèle vidéo (flexible, par clé de modèle)
+export type SoraAspect = 'portrait' | 'paysage';
+export type SoraDuration = 10 | 15;
+export type SoraProSize = 'standard' | 'high';
+export type VeoSubMode = 't2v' | 'i2v' | 'reference';
+export type VeoSubModel = 'veo-3.1-lite' | 'veo-3.1-fast' | 'veo-3.1-quality';
+export type VeoAspect = '16:9' | '9:16';
+export type VeoResolution = '720p' | '1080p' | '4K';
+
+export interface ModelSettings {
+  // Sora 2 / Sora 2 Pro
+  sora_aspect_ratio?: SoraAspect;
+  sora_n_frames?: SoraDuration;
+  sora_remove_watermark?: boolean;
+  sora_image_url?: string;
+  sora_pro_size?: SoraProSize;
+  // Veo 3 / 3.1
+  veo_sub_mode?: VeoSubMode;
+  veo_sub_model?: VeoSubModel;
+  veo_aspect?: VeoAspect;
+  veo_resolution?: VeoResolution;
+  veo_start_image_url?: string;
+  veo_end_image_url?: string;
+  veo_reference_image_urls?: string[];
+}
+
 interface KreatorOptions {
   show_text: boolean;
   text_content: string;
