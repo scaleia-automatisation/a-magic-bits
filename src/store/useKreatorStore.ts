@@ -148,6 +148,8 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setRenderStyle: (val) => set({ render_style: val }),
   setVideoRenderStyle: (val) => set({ video_render_style: val }),
   setVideoResolution: (val) => set({ video_resolution: val }),
+  setSoraCharacterTotalDuration: (val) => set({ sora_character_total_duration: val }),
+  setSoraCharacterScenes: (scenes) => set({ sora_character_scenes: scenes }),
   setCompanyActivity: (val) => set({ company_activity: val }),
   setCompanySector: (val) => set({ company_sector: val }),
   setProductService: (val) => set({ product_service: val }),
