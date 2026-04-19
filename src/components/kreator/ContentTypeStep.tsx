@@ -1,5 +1,5 @@
 import { useKreatorStore, type ContentType, type AIModel, type VideoResolution, type Format } from '@/store/useKreatorStore';
-import { Image, Layers, Video, Info } from 'lucide-react';
+import { Image, Layers, Video } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StepContainer from './StepContainer';
 
@@ -22,33 +22,23 @@ const imageModels: { value: AIModel; label: string }[] = [
 ];
 
 const videoModels: { value: AIModel; label: string }[] = [
+  { value: 'sora-2-t2v', label: 'Sora 2 — Text to Video' },
+  { value: 'sora-2-i2v', label: 'Sora 2 — Image to Video' },
+  { value: 'sora-2-pro-t2v', label: 'Sora 2 Pro — Text to Video' },
+  { value: 'sora-2-pro-i2v', label: 'Sora 2 Pro — Image to Video' },
+  { value: 'sora-2-pro-character', label: 'Sora 2 Pro — avec Personnage' },
   { value: 'veo-3', label: 'Veo 3' },
   { value: 'veo-3.1', label: 'Veo 3.1' },
+  { value: 'grok-imagine-i2v', label: 'Grok Imagine — Image to Video' },
+  { value: 'grok-imagine-t2v', label: 'Grok Imagine — Text to Video' },
+  { value: 'bytedance/seedance-1.5-pro', label: 'Seedance 1.5 Pro' },
+  { value: 'bytedance/seedance-2', label: 'Seedance 2.0' },
   { value: 'kling-2.1', label: 'Kling 2.1' },
   { value: 'kling-2.5', label: 'Kling 2.5' },
   { value: 'kling-2.6', label: 'Kling 2.6' },
-  { value: 'kling-3.0', label: 'Kling 3.0 Video' },
-  { value: 'grok-imagine', label: 'Grok Imagine' },
-  { value: 'bytedance/seedance-2-fast', label: 'Seedance 2 Fast' },
-  { value: 'bytedance/seedance-2', label: 'Seedance 2' },
-  { value: 'hailuo/2-3-image-to-video-standard', label: 'Hailuo 2.3 I2V Standard' },
-  { value: 'hailuo/2-3-image-to-video-standard-pro', label: 'Hailuo 2.3 I2V Standard Pro' },
+  { value: 'kling-3.0', label: 'Kling 3.0' },
 ];
 
-// Per-model required inputs + simple guidance
-const videoModelGuidance: Record<string, { inputs: string[]; hint: string }> = {
-  'veo-3': { inputs: ['text'], hint: 'Décrivez simplement la scène en français — Veo 3 génère la vidéo à partir de votre texte.' },
-  'veo-3.1': { inputs: ['text', 'image'], hint: 'Vous pouvez ajouter une image de référence (optionnel) et décrire la scène souhaitée.' },
-  'kling-2.1': { inputs: ['image', 'text'], hint: 'Importez une image dans "Point de départ" — Kling l\'animera selon votre description.' },
-  'kling-2.5': { inputs: ['image', 'text'], hint: 'Importez une image dans "Point de départ" — Kling l\'animera selon votre description.' },
-  'kling-2.6': { inputs: ['image', 'text'], hint: 'Importez une image dans "Point de départ" — Kling l\'animera selon votre description.' },
-  'kling-3.0': { inputs: ['text', 'image'], hint: 'Décrivez la scène. Une image de référence est optionnelle pour guider le style.' },
-  'grok-imagine': { inputs: ['text'], hint: 'Décrivez la vidéo en quelques phrases claires — Grok s\'occupe du reste.' },
-  'bytedance/seedance-2-fast': { inputs: ['text'], hint: 'Modèle rapide texte→vidéo : décrivez l\'action et l\'ambiance souhaitées.' },
-  'bytedance/seedance-2': { inputs: ['text', 'image'], hint: 'Décrivez votre scène. Vous pouvez ajouter une image de référence pour le style.' },
-  'hailuo/2-3-image-to-video-standard': { inputs: ['image', 'text'], hint: 'Importez une image obligatoire dans "Point de départ" + une courte description du mouvement.' },
-  'hailuo/2-3-image-to-video-standard-pro': { inputs: ['image', 'text'], hint: 'Importez une image obligatoire dans "Point de départ" + une courte description du mouvement (qualité Pro).' },
-};
 
 const formats: { value: Format; label: string; sublabel: string }[] = [
   { value: '9:16', label: '9:16', sublabel: 'Portrait' },
@@ -65,7 +55,6 @@ const ContentTypeStep = () => {
   } = useKreatorStore();
 
   const models = type === 'video' ? videoModels : imageModels;
-  const videoGuide = type === 'video' ? videoModelGuidance[ai_model] : null;
   const availableFormats = type === 'video'
     ? formats.filter((f) => f.value !== '1:1')
     : formats;
@@ -134,35 +123,19 @@ const ContentTypeStep = () => {
         </Select>
       </div>
 
-      {/* Video model guidance + resolution */}
-      {type === 'video' && videoGuide && (
-        <div className="mb-6 space-y-4">
-          <div className="flex gap-3 p-3 rounded-card bg-primary/5 border border-primary/20">
-            <Info className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-            <div className="space-y-1.5">
-              <div className="flex flex-wrap gap-1.5">
-                {videoGuide.inputs.map((i) => (
-                  <span key={i} className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-pill bg-primary/15 text-primary">
-                    {i === 'image' ? '🖼️ Image requise' : '✍️ Texte'}
-                  </span>
-                ))}
-              </div>
-              <p className="text-xs text-foreground/80 leading-relaxed">{videoGuide.hint}</p>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-muted-foreground mb-2 block">Résolution</label>
-            <Select value={video_resolution} onValueChange={(v) => setVideoResolution(v as VideoResolution)}>
-              <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-card border-foreground/10">
-                <SelectItem value="720p" className="text-foreground focus:bg-secondary/20">720p</SelectItem>
-                <SelectItem value="1080p" className="text-foreground focus:bg-secondary/20">1080p</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      {/* Video resolution */}
+      {type === 'video' && (
+        <div className="mb-6">
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Résolution</label>
+          <Select value={video_resolution} onValueChange={(v) => setVideoResolution(v as VideoResolution)}>
+            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-foreground/10">
+              <SelectItem value="720p" className="text-foreground focus:bg-secondary/20">720p</SelectItem>
+              <SelectItem value="1080p" className="text-foreground focus:bg-secondary/20">1080p</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       )}
 
