@@ -107,6 +107,8 @@ const initialState = {
   market: '',
   video_render_style: '',
   video_resolution: '1080p' as VideoResolution,
+  sora_character_total_duration: 10 as 10 | 15 | 25,
+  sora_character_scenes: [{ duration: 10 }] as SoraCharacterScene[],
   format: '9:16' as Format,
   input_image_url: '',
   input_image_description: '',
