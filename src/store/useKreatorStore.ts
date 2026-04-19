@@ -13,6 +13,7 @@ export type AIModel =
 export type VideoResolution = '720p' | '1080p';
 export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
+export type SoraCharacterScene = { duration: number };
 
 interface KreatorOptions {
   show_text: boolean;
@@ -42,6 +43,10 @@ interface KreatorState {
   setVideoRenderStyle: (val: string) => void;
   video_resolution: VideoResolution;
   setVideoResolution: (val: VideoResolution) => void;
+  sora_character_total_duration: 10 | 15 | 25;
+  setSoraCharacterTotalDuration: (val: 10 | 15 | 25) => void;
+  sora_character_scenes: SoraCharacterScene[];
+  setSoraCharacterScenes: (scenes: SoraCharacterScene[]) => void;
   company_activity: string;
   setCompanyActivity: (val: string) => void;
   company_sector: string;
@@ -102,6 +107,8 @@ const initialState = {
   market: '',
   video_render_style: '',
   video_resolution: '1080p' as VideoResolution,
+  sora_character_total_duration: 10 as 10 | 15 | 25,
+  sora_character_scenes: [{ duration: 10 }] as SoraCharacterScene[],
   format: '9:16' as Format,
   input_image_url: '',
   input_image_description: '',
@@ -141,6 +148,8 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setRenderStyle: (val) => set({ render_style: val }),
   setVideoRenderStyle: (val) => set({ video_render_style: val }),
   setVideoResolution: (val) => set({ video_resolution: val }),
+  setSoraCharacterTotalDuration: (val) => set({ sora_character_total_duration: val }),
+  setSoraCharacterScenes: (scenes) => set({ sora_character_scenes: scenes }),
   setCompanyActivity: (val) => set({ company_activity: val }),
   setCompanySector: (val) => set({ company_sector: val }),
   setProductService: (val) => set({ product_service: val }),
