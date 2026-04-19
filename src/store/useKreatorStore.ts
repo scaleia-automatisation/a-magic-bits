@@ -73,6 +73,9 @@ interface KreatorState {
   setSoraCharacterTotalDuration: (val: 10 | 15 | 25) => void;
   sora_character_scenes: SoraCharacterScene[];
   setSoraCharacterScenes: (scenes: SoraCharacterScene[]) => void;
+  model_settings: ModelSettings;
+  setModelSetting: <K extends keyof ModelSettings>(key: K, value: ModelSettings[K]) => void;
+  resetModelSettings: () => void;
   company_activity: string;
   setCompanyActivity: (val: string) => void;
   company_sector: string;
