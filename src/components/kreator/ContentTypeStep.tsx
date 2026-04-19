@@ -123,49 +123,35 @@ const ContentTypeStep = () => {
         </Select>
       </div>
 
-      {/* Video resolution */}
-      {type === 'video' && (
-        <div className="mb-6">
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Résolution</label>
-          <Select value={video_resolution} onValueChange={(v) => setVideoResolution(v as VideoResolution)}>
-            <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-card border-foreground/10">
-              <SelectItem value="720p" className="text-foreground focus:bg-secondary/20">720p</SelectItem>
-              <SelectItem value="1080p" className="text-foreground focus:bg-secondary/20">1080p</SelectItem>
-            </SelectContent>
-          </Select>
+      {/* Format selector — hidden for video */}
+      {type !== 'video' && (
+        <div>
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Format</label>
+          <div className={`grid gap-2 sm:gap-3 ${availableFormats.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            {availableFormats.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setFormat(f.value)}
+                className={`flex flex-col items-center gap-2 p-3 sm:p-4 rounded-card border-[3px] transition-all duration-200 ${
+                  format === f.value
+                    ? 'border-primary bg-card'
+                    : 'border-foreground/10 bg-card hover:border-secondary hover:bg-secondary/5'
+                }`}
+              >
+                <div className={`w-10 ${f.value === '9:16' ? 'h-16' : f.value === '16:9' ? 'h-6' : 'h-10'} rounded border-2 ${
+                  format === f.value ? 'border-primary bg-primary/10' : 'border-muted-foreground/30 bg-muted/30'
+                }`} />
+                <div className="text-center">
+                  <div className={`font-bold text-sm ${format === f.value ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    {f.label}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{f.sublabel}</div>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       )}
-
-      {/* Format selector — bottom of the same block */}
-      <div>
-        <label className="text-sm font-medium text-muted-foreground mb-2 block">Format</label>
-        <div className={`grid gap-2 sm:gap-3 ${availableFormats.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-          {availableFormats.map((f) => (
-            <button
-              key={f.value}
-              onClick={() => setFormat(f.value)}
-              className={`flex flex-col items-center gap-2 p-3 sm:p-4 rounded-card border-[3px] transition-all duration-200 ${
-                format === f.value
-                  ? 'border-primary bg-card'
-                  : 'border-foreground/10 bg-card hover:border-secondary hover:bg-secondary/5'
-              }`}
-            >
-              <div className={`w-10 ${f.value === '9:16' ? 'h-16' : f.value === '16:9' ? 'h-6' : 'h-10'} rounded border-2 ${
-                format === f.value ? 'border-primary bg-primary/10' : 'border-muted-foreground/30 bg-muted/30'
-              }`} />
-              <div className="text-center">
-                <div className={`font-bold text-sm ${format === f.value ? 'text-foreground' : 'text-muted-foreground'}`}>
-                  {f.label}
-                </div>
-                <div className="text-xs text-muted-foreground">{f.sublabel}</div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
     </StepContainer>
   );
 };
