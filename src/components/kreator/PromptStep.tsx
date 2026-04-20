@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Loader2 } from 'lucide-react';
+import { Copy, Loader2, AlertCircle } from 'lucide-react';
 import StepContainer from './StepContainer';
 import { toast } from 'sonner';
 import { generatePrompt } from '@/lib/kreator-ai';
 import { useAuth } from '@/contexts/AuthContext';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const PromptStep = () => {
   const { user } = useAuth();
