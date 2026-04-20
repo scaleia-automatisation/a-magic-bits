@@ -108,6 +108,13 @@ const StartingPointBlock = () => {
       toast.error('Renseignez au moins votre activité principale dans "Votre activité"');
       return;
     }
+    const missing: string[] = [];
+    if (!product_service?.trim()) missing.push('Produit ou service');
+    if (!objective?.trim() || objective === 'custom:') missing.push('Objectif du contenu');
+    if (missing.length > 0) {
+      toast.error(`Veuillez renseigner : ${missing.join(' et ')} avant de générer des idées`);
+      return;
+    }
     setLoadingIdeas(true);
     try {
       const result = await generateIdeas(company_activity, company_sector, type, objective, product_service, market);
