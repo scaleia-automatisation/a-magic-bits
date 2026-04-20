@@ -32,9 +32,18 @@ const PromptStep = () => {
 
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const missingFields: string[] = [];
+  if (!product_service?.trim()) missingFields.push('Produit ou service');
+  if (!objective?.trim() || objective === 'custom:') missingFields.push('Objectif du contenu');
+  const hasMissing = missingFields.length > 0;
+
   const handleGenerate = async () => {
     if (!user) {
       toast.error('Connectez-vous pour générer un prompt');
+      return;
+    }
+    if (hasMissing) {
+      toast.error(`Champs requis manquants : ${missingFields.join(' et ')}`);
       return;
     }
 
