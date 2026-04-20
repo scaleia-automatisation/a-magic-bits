@@ -233,9 +233,8 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   ...initialState,
   setUserMode: (mode) => set({ user_mode: mode }),
   setType: (type) => {
-    const defaultModel = type === 'video' ? 'veo-3' as AIModel : 'nano-banana-2' as AIModel;
     const format = type === 'video' ? '9:16' as Format : '9:16' as Format;
-    set({ type, ai_model: defaultModel, format });
+    set({ type, ai_model: '' as AIModel, model_settings: {}, format });
   },
   setSlidesCount: (count) => set({ slides_count: count }),
   setAiModel: (model) => set({ ai_model: model, model_settings: {} }),
