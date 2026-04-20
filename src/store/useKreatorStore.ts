@@ -15,6 +15,32 @@ export type UserMode = 'beginner' | 'expert';
 export type GenerationStatus = 'idle' | 'generating' | 'done' | 'error';
 export type SoraCharacterScene = { duration: number };
 
+// Réglages spécifiques par modèle vidéo (flexible, par clé de modèle)
+export type SoraAspect = 'portrait' | 'paysage';
+export type SoraDuration = 10 | 15;
+export type SoraProSize = 'standard' | 'high';
+export type VeoSubMode = 't2v' | 'i2v' | 'reference';
+export type VeoSubModel = 'veo-3.1-lite' | 'veo-3.1-fast' | 'veo-3.1-quality';
+export type VeoAspect = '16:9' | '9:16';
+export type VeoResolution = '720p' | '1080p' | '4K';
+
+export interface ModelSettings {
+  // Sora 2 / Sora 2 Pro
+  sora_aspect_ratio?: SoraAspect;
+  sora_n_frames?: SoraDuration;
+  sora_remove_watermark?: boolean;
+  sora_image_url?: string;
+  sora_pro_size?: SoraProSize;
+  // Veo 3 / 3.1
+  veo_sub_mode?: VeoSubMode;
+  veo_sub_model?: VeoSubModel;
+  veo_aspect?: VeoAspect;
+  veo_resolution?: VeoResolution;
+  veo_start_image_url?: string;
+  veo_end_image_url?: string;
+  veo_reference_image_urls?: string[];
+}
+
 interface KreatorOptions {
   show_text: boolean;
   text_content: string;
@@ -47,6 +73,9 @@ interface KreatorState {
   setSoraCharacterTotalDuration: (val: 10 | 15 | 25) => void;
   sora_character_scenes: SoraCharacterScene[];
   setSoraCharacterScenes: (scenes: SoraCharacterScene[]) => void;
+  model_settings: ModelSettings;
+  setModelSetting: <K extends keyof ModelSettings>(key: K, value: ModelSettings[K]) => void;
+  resetModelSettings: () => void;
   company_activity: string;
   setCompanyActivity: (val: string) => void;
   company_sector: string;
@@ -109,6 +138,7 @@ const initialState = {
   video_resolution: '1080p' as VideoResolution,
   sora_character_total_duration: 10 as 10 | 15 | 25,
   sora_character_scenes: [{ duration: 10 }] as SoraCharacterScene[],
+  model_settings: {} as ModelSettings,
   format: '9:16' as Format,
   input_image_url: '',
   input_image_description: '',
@@ -143,7 +173,10 @@ export const useKreatorStore = create<KreatorState>((set) => ({
     set({ type, ai_model: defaultModel, format });
   },
   setSlidesCount: (count) => set({ slides_count: count }),
-  setAiModel: (model) => set({ ai_model: model }),
+  setAiModel: (model) => set({ ai_model: model, model_settings: {} }),
+  setModelSetting: (key, value) =>
+    set((state) => ({ model_settings: { ...state.model_settings, [key]: value } })),
+  resetModelSettings: () => set({ model_settings: {} }),
   setObjective: (obj) => set({ objective: obj }),
   setRenderStyle: (val) => set({ render_style: val }),
   setVideoRenderStyle: (val) => set({ video_render_style: val }),

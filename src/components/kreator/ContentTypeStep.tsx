@@ -2,6 +2,7 @@ import { useKreatorStore, type ContentType, type AIModel, type VideoResolution, 
 import { Image, Layers, Video } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StepContainer from './StepContainer';
+import ModelSettings from './ModelSettings';
 
 const contentTypes: { type: ContentType; label: string; icon: typeof Image }[] = [
   { type: 'image', label: 'Image', icon: Image },
@@ -144,6 +145,13 @@ const ContentTypeStep = () => {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Réglages spécifiques au modèle vidéo (Sora 2 / Veo) */}
+      {type === 'video' && (
+        <div className="mb-6">
+          <ModelSettings />
+        </div>
+      )}
 
       {/* Sora 2 Pro avec personnage — scènes dynamiques */}
       {isSoraCharacter && (
