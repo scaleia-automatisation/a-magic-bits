@@ -192,7 +192,7 @@ const initialState = {
   user_mode: 'beginner' as UserMode,
   type: 'image' as ContentType,
   slides_count: 2,
-  ai_model: 'nano-banana-2' as AIModel,
+  ai_model: '' as AIModel,
   objective: '',
   render_style: '',
   company_activity: '',
