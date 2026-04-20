@@ -514,18 +514,28 @@ export async function generateVideo(
   aiModel: AIModel = 'veo-3',
   format: string = '9:16',
   onProgress?: (pct: number) => void,
-  abortSignal?: AbortSignal
+  abortSignal?: AbortSignal,
+  modelSettings?: Record<string, any>,
+  soraCharacterScenes?: { duration: number }[]
 ) {
   const isKieModel = [
     'veo-3', 'veo-3.1', 'kling-2.1', 'kling-2.5', 'kling-2.6', 'kling-3.0',
     'grok-imagine-i2v', 'grok-imagine-t2v',
     'bytedance/seedance-1.5-pro', 'bytedance/seedance-2',
+    'sora-2-t2v', 'sora-2-i2v', 'sora-2-pro-t2v', 'sora-2-pro-i2v', 'sora-2-pro-character',
   ].includes(aiModel);
 
   // === kie.ai models — start + polling ===
   if (isKieModel) {
     const { data: startData, error: startError } = await supabase.functions.invoke('kreator-ai', {
-      body: { action: 'kie_start_video', prompt: promptEn, ai_model: aiModel, size: format },
+      body: {
+        action: 'kie_start_video',
+        prompt: promptEn,
+        ai_model: aiModel,
+        size: format,
+        model_settings: modelSettings || {},
+        sora_character_scenes: soraCharacterScenes || [],
+      },
     });
     if (startError) throw startError;
     if (startData?.error) throw new Error(startData.error);
