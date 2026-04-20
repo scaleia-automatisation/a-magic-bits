@@ -392,23 +392,205 @@ serve(async (req) => {
       const KIE_AI_API_KEY = Deno.env.get("KIE_AI_API_KEY");
       if (!KIE_AI_API_KEY) return jsonError(500, "KIE_AI_API_KEY non configurée");
 
-      // Map our internal ai_model -> kie.ai model identifier
-      const kieModelMap: Record<string, string> = {
-        "veo-3": "veo3",
-        "veo-3.1": "veo3.1",
-        "kling-2.1": "kling/2.1",
-        "kling-2.5": "kling/2.5",
-        "kling-2.6": "kling/2.6",
-        "kling-3.0": "kling/3.0",
-        "grok-imagine": "grok/imagine",
-        "bytedance/seedance-2-fast": "bytedance/seedance-2-fast",
-        "bytedance/seedance-2": "bytedance/seedance-2",
-        "hailuo/2-3-image-to-video-standard": "hailuo/2-3-image-to-video-standard",
-        "hailuo/2-3-image-to-video-standard-pro": "hailuo/2-3-image-to-video-standard-pro",
-      };
+      const ms = (model_settings || {}) as Record<string, any>;
+      const aspectFromFormat = size === "9:16" ? "9:16" : size === "1:1" ? "1:1" : "16:9";
+      const soraAspect = ms.sora_aspect_ratio === "portrait" ? "portrait" : ms.sora_aspect_ratio === "paysage" ? "landscape" : (size === "9:16" ? "portrait" : "landscape");
 
-      const kieModel = kieModelMap[ai_model || ""] || ai_model;
-      const aspectRatio = size === "9:16" ? "9:16" : size === "1:1" ? "1:1" : "16:9";
+      // Build kie.ai model id + input per family
+      let kieModel = "";
+      const input: Record<string, any> = { prompt: prompt || "" };
+
+      switch (ai_model) {
+        // ---------- SORA ----------
+        case "sora-2-t2v":
+          kieModel = "sora-2-text-to-video";
+          input.aspect_ratio = soraAspect;
+          if (ms.sora_n_frames) input.n_frames = ms.sora_n_frames;
+          if (typeof ms.sora_remove_watermark === "boolean") input.remove_watermark = ms.sora_remove_watermark;
+          break;
+        case "sora-2-i2v":
+          kieModel = "sora-2-image-to-video";
+          if (!ms.sora_image_url) return jsonError(400, "Sora 2 I2V requiert une image source.");
+          input.image_urls = [ms.sora_image_url];
+          input.aspect_ratio = soraAspect;
+          if (ms.sora_n_frames) input.n_frames = ms.sora_n_frames;
+          if (typeof ms.sora_remove_watermark === "boolean") input.remove_watermark = ms.sora_remove_watermark;
+          break;
+        case "sora-2-pro-t2v":
+          kieModel = "sora-2-pro-text-to-video";
+          input.aspect_ratio = soraAspect;
+          if (ms.sora_n_frames) input.n_frames = ms.sora_n_frames;
+          if (!ms.sora_pro_size) return jsonError(400, "Sora 2 Pro requiert un champ qualité (standard/high).");
+          input.size = ms.sora_pro_size;
+          if (typeof ms.sora_remove_watermark === "boolean") input.remove_watermark = ms.sora_remove_watermark;
+          break;
+        case "sora-2-pro-i2v":
+          kieModel = "sora-2-pro-image-to-video";
+          if (!ms.sora_image_url) return jsonError(400, "Sora 2 Pro I2V requiert une image source.");
+          input.image_urls = [ms.sora_image_url];
+          input.aspect_ratio = soraAspect;
+          if (ms.sora_n_frames) input.n_frames = ms.sora_n_frames;
+          if (!ms.sora_pro_size) return jsonError(400, "Sora 2 Pro requiert un champ qualité (standard/high).");
+          input.size = ms.sora_pro_size;
+          break;
+        case "sora-2-pro-character": {
+          kieModel = "sora-2-pro-character";
+          if (!ms.sora_image_url) return jsonError(400, "Sora 2 Pro Character requiert une image source.");
+          if (!ms.sora_aspect_ratio) return jsonError(400, "Sora 2 Pro Character requiert un format.");
+          input.image = ms.sora_image_url;
+          input.aspect_ratio = soraAspect;
+          input.n_frames = ms.sora_n_frames || 10;
+          if (Array.isArray(sora_character_scenes) && sora_character_scenes.length > 0) {
+            input.scenes = sora_character_scenes.map((s: any) => ({ duration: Number(s.duration) || 0 }));
+          }
+          break;
+        }
+
+        // ---------- VEO 3 / 3.1 ----------
+        case "veo-3":
+        case "veo-3.1": {
+          const veoSubModel = ms.veo_sub_model || "veo-3.1-quality";
+          kieModel = veoSubModel;
+          const veoAspect = ms.veo_aspect || (size === "9:16" ? "9:16" : "16:9");
+          const veoSubMode = ms.veo_sub_mode || "t2v";
+          input.aspect_ratio = veoAspect;
+          if (ms.veo_resolution) input.resolution = ms.veo_resolution;
+          if (veoSubMode === "i2v") {
+            if (!ms.veo_start_image_url) return jsonError(400, "Veo I2V requiert une image de départ.");
+            input.image_url = ms.veo_start_image_url;
+            if (ms.veo_end_image_url) input.end_image_url = ms.veo_end_image_url;
+          } else if (veoSubMode === "reference") {
+            const refs = Array.isArray(ms.veo_reference_image_urls) ? ms.veo_reference_image_urls.filter(Boolean) : [];
+            if (refs.length === 0) return jsonError(400, "Veo Référence requiert au moins une image.");
+            input.reference_image_urls = refs;
+          }
+          break;
+        }
+
+        // ---------- GROK IMAGINE ----------
+        case "grok-imagine-t2v":
+          kieModel = "grok/imagine";
+          input.aspect_ratio = ms.grok_aspect || aspectFromFormat;
+          if (ms.grok_mode) input.mode = ms.grok_mode;
+          if (ms.grok_duration) input.n_frames = ms.grok_duration;
+          if (ms.grok_resolution) input.resolution = ms.grok_resolution;
+          break;
+        case "grok-imagine-i2v": {
+          kieModel = "grok/imagine";
+          const refs = Array.isArray(ms.grok_image_urls) ? ms.grok_image_urls.filter(Boolean) : [];
+          if (refs.length === 0) return jsonError(400, "Grok Imagine I2V requiert au moins une image.");
+          input.image_urls = refs;
+          input.aspect_ratio = ms.grok_aspect || aspectFromFormat;
+          if (ms.grok_mode) input.mode = ms.grok_mode;
+          if (ms.grok_duration) input.n_frames = ms.grok_duration;
+          if (ms.grok_resolution) input.resolution = ms.grok_resolution;
+          break;
+        }
+
+        // ---------- SEEDANCE ----------
+        case "bytedance/seedance-1.5-pro": {
+          kieModel = "bytedance/seedance-1.5-pro";
+          const refs = Array.isArray(ms.seedance_image_urls) ? ms.seedance_image_urls.filter(Boolean) : [];
+          if (refs.length > 0) input.image_urls = refs;
+          input.aspect_ratio = ms.seedance_aspect || aspectFromFormat;
+          if (ms.seedance_resolution) input.resolution = ms.seedance_resolution;
+          if (ms.seedance_duration) input.duration = ms.seedance_duration;
+          input.audio = !!ms.seedance_audio_enabled;
+          break;
+        }
+        case "bytedance/seedance-2": {
+          const sub = ms.seedance2_sub_model || "seedance-2";
+          kieModel = sub === "seedance-2-fast" ? "bytedance/seedance-2-fast" : "bytedance/seedance-2";
+          if (ms.seedance2_first_frame_url) input.first_frame_url = ms.seedance2_first_frame_url;
+          if (ms.seedance2_last_frame_url) input.last_frame_url = ms.seedance2_last_frame_url;
+          const refImgs = Array.isArray(ms.seedance2_reference_image_urls) ? ms.seedance2_reference_image_urls.filter(Boolean) : [];
+          if (refImgs.length > 0) input.reference_image_urls = refImgs;
+          const refVids = Array.isArray(ms.seedance2_reference_video_urls) ? ms.seedance2_reference_video_urls.filter(Boolean) : [];
+          if (refVids.length > 0) input.reference_video_urls = refVids;
+          if (ms.seedance2_reference_audio_url) input.reference_audio_url = ms.seedance2_reference_audio_url;
+          input.generate_audio = !!ms.seedance2_generate_audio;
+          if (ms.seedance2_resolution) input.resolution = ms.seedance2_resolution;
+          input.aspect_ratio = ms.seedance2_aspect || aspectFromFormat;
+          if (ms.seedance2_duration) input.duration = ms.seedance2_duration;
+          break;
+        }
+
+        // ---------- KLING ----------
+        case "kling-2.1": {
+          const sub = ms.kling21_sub_model || "master-t2v";
+          const kling21Map: Record<string, string> = {
+            "master-t2v": "kling/2.1-master-text-to-video",
+            "image-to-video": "kling/2.1-image-to-video",
+            "pro": "kling/2.1-pro",
+            "standard": "kling/2.1-standard",
+          };
+          kieModel = kling21Map[sub] || "kling/2.1-master-text-to-video";
+          if (sub !== "master-t2v") {
+            if (!ms.kling21_image_url) return jsonError(400, "Ce modèle Kling 2.1 requiert une image source.");
+            input.image_url = ms.kling21_image_url;
+          }
+          if (ms.kling21_duration) input.duration = ms.kling21_duration;
+          if ((sub === "master-t2v" || sub === "image-to-video") && ms.kling21_aspect) {
+            input.aspect_ratio = ms.kling21_aspect;
+          }
+          break;
+        }
+        case "kling-2.5": {
+          const sub = ms.kling25_sub_model || "turbo-t2v-pro";
+          kieModel = sub === "turbo-i2v-pro"
+            ? "kling/2.5-turbo-image-to-video-pro"
+            : "kling/2.5-turbo-text-to-video-pro";
+          if (sub === "turbo-i2v-pro") {
+            if (!ms.kling25_image_url) return jsonError(400, "Kling 2.5 I2V Pro requiert une image source.");
+            input.image_url = ms.kling25_image_url;
+            if (ms.kling25_tail_image_url) input.tail_image_url = ms.kling25_tail_image_url;
+          } else if (ms.kling25_aspect) {
+            input.aspect_ratio = ms.kling25_aspect;
+          }
+          if (ms.kling25_duration) input.duration = ms.kling25_duration;
+          break;
+        }
+        case "kling-2.6": {
+          const sub = ms.kling26_sub_model || "t2v";
+          kieModel = sub === "i2v" ? "kling/2.6-image-to-video" : "kling/2.6-text-to-video";
+          if (sub === "i2v") {
+            if (!ms.kling26_image_url) return jsonError(400, "Kling 2.6 I2V requiert une image source.");
+            input.image_url = ms.kling26_image_url;
+          } else if (ms.kling26_aspect) {
+            input.aspect_ratio = ms.kling26_aspect;
+          }
+          input.audio = !!ms.kling26_audio_enabled;
+          if (ms.kling26_duration) input.duration = ms.kling26_duration;
+          break;
+        }
+        case "kling-3.0": {
+          kieModel = "kling/3.0";
+          if (ms.kling30_start_image_url) input.start_image_url = ms.kling30_start_image_url;
+          if (ms.kling30_end_image_url) input.end_image_url = ms.kling30_end_image_url;
+          input.audio = !!ms.kling30_audio_enabled;
+          if (ms.kling30_duration) input.duration = ms.kling30_duration;
+          if (ms.kling30_mode) input.mode = ms.kling30_mode;
+          break;
+        }
+
+        default: {
+          const kieModelMap: Record<string, string> = {
+            "veo-3": "veo3",
+            "veo-3.1": "veo3.1",
+            "kling-2.1": "kling/2.1",
+            "kling-2.5": "kling/2.5",
+            "kling-2.6": "kling/2.6",
+            "kling-3.0": "kling/3.0",
+            "grok-imagine": "grok/imagine",
+            "bytedance/seedance-2-fast": "bytedance/seedance-2-fast",
+            "bytedance/seedance-2": "bytedance/seedance-2",
+          };
+          kieModel = kieModelMap[ai_model || ""] || ai_model;
+          input.aspect_ratio = aspectFromFormat;
+        }
+      }
+
+      console.log(`[kie_start_video] ai_model=${ai_model} → kieModel=${kieModel}`, JSON.stringify(input).substring(0, 500));
 
       const startRes = await fetch("https://api.kie.ai/api/v1/jobs/createTask", {
         method: "POST",
@@ -416,13 +598,7 @@ serve(async (req) => {
           Authorization: `Bearer ${KIE_AI_API_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          model: kieModel,
-          input: {
-            prompt: prompt || "",
-            aspect_ratio: aspectRatio,
-          },
-        }),
+        body: JSON.stringify({ model: kieModel, input }),
       });
 
       const startText = await startRes.text();
