@@ -24,6 +24,24 @@ export type VeoSubModel = 'veo-3.1-lite' | 'veo-3.1-fast' | 'veo-3.1-quality';
 export type VeoAspect = '16:9' | '9:16';
 export type VeoResolution = '720p' | '1080p' | '4K';
 
+// Grok
+export type GrokAspect = '2:3' | '3:2' | '1:1' | '16:9' | '9:16';
+export type GrokMode = 'amusant' | 'normale' | 'epice';
+export type GrokResolution = '480p' | '720p';
+
+// Seedance
+export type SeedanceAspect = '1:1' | '21:9' | '4:3' | '3:4' | '16:9' | '9:16';
+export type SeedanceResolution = '480p' | '720p' | '1080p';
+export type Seedance2SubModel = 'seedance-2' | 'seedance-2-fast';
+
+// Kling
+export type KlingAspect = '16:9' | '9:16' | '1:1';
+export type KlingDuration = 5 | 10;
+export type Kling21SubModel = 'master-t2v' | 'image-to-video' | 'pro' | 'standard';
+export type Kling25SubModel = 'turbo-t2v-pro' | 'turbo-i2v-pro';
+export type Kling26SubModel = 't2v' | 'i2v';
+export type Kling30Mode = 'std' | 'pro';
+
 export interface ModelSettings {
   // Sora 2 / Sora 2 Pro
   sora_aspect_ratio?: SoraAspect;
@@ -39,6 +57,52 @@ export interface ModelSettings {
   veo_start_image_url?: string;
   veo_end_image_url?: string;
   veo_reference_image_urls?: string[];
+  // Grok Imagine
+  grok_aspect?: GrokAspect;
+  grok_mode?: GrokMode;
+  grok_duration?: number; // 6..30
+  grok_resolution?: GrokResolution;
+  grok_image_urls?: string[]; // i2v max 7
+  // Seedance 1.5 Pro
+  seedance_image_urls?: string[]; // max 2
+  seedance_aspect?: SeedanceAspect;
+  seedance_resolution?: SeedanceResolution;
+  seedance_duration?: 4 | 8 | 12;
+  seedance_audio_enabled?: boolean;
+  // Seedance 2 / 2 Fast
+  seedance2_sub_model?: Seedance2SubModel;
+  seedance2_first_frame_url?: string;
+  seedance2_last_frame_url?: string;
+  seedance2_reference_image_urls?: string[]; // max 9
+  seedance2_reference_video_urls?: string[]; // max 3 / total 15s
+  seedance2_reference_audio_url?: string;
+  seedance2_generate_audio?: boolean;
+  seedance2_resolution?: SeedanceResolution;
+  seedance2_aspect?: SeedanceAspect;
+  seedance2_duration?: number; // 4..15
+  // Kling 2.1
+  kling21_sub_model?: Kling21SubModel;
+  kling21_image_url?: string;
+  kling21_duration?: KlingDuration;
+  kling21_aspect?: KlingAspect;
+  // Kling 2.5
+  kling25_sub_model?: Kling25SubModel;
+  kling25_image_url?: string;
+  kling25_tail_image_url?: string;
+  kling25_duration?: KlingDuration;
+  kling25_aspect?: KlingAspect;
+  // Kling 2.6
+  kling26_sub_model?: Kling26SubModel;
+  kling26_image_url?: string;
+  kling26_audio_enabled?: boolean;
+  kling26_duration?: KlingDuration;
+  kling26_aspect?: KlingAspect;
+  // Kling 3.0
+  kling30_start_image_url?: string;
+  kling30_end_image_url?: string;
+  kling30_audio_enabled?: boolean;
+  kling30_duration?: number; // 3..15
+  kling30_mode?: Kling30Mode;
 }
 
 interface KreatorOptions {
