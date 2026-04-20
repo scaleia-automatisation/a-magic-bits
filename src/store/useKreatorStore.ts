@@ -173,7 +173,10 @@ export const useKreatorStore = create<KreatorState>((set) => ({
     set({ type, ai_model: defaultModel, format });
   },
   setSlidesCount: (count) => set({ slides_count: count }),
-  setAiModel: (model) => set({ ai_model: model }),
+  setAiModel: (model) => set({ ai_model: model, model_settings: {} }),
+  setModelSetting: (key, value) =>
+    set((state) => ({ model_settings: { ...state.model_settings, [key]: value } })),
+  resetModelSettings: () => set({ model_settings: {} }),
   setObjective: (obj) => set({ objective: obj }),
   setRenderStyle: (val) => set({ render_style: val }),
   setVideoRenderStyle: (val) => set({ video_render_style: val }),
