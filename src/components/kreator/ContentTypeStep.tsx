@@ -132,9 +132,9 @@ const ContentTypeStep = () => {
       {/* AI Model */}
       <div className="mb-6">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">Modèle IA</label>
-        <Select value={ai_model} onValueChange={(v) => setAiModel(v as AIModel)}>
+        <Select value={ai_model || undefined} onValueChange={(v) => setAiModel(v as AIModel)}>
           <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-            <SelectValue />
+            <SelectValue placeholder="Choisissez votre modèle d'IA" />
           </SelectTrigger>
           <SelectContent className="bg-card border-foreground/10">
             {models.map((m) => (
