@@ -146,6 +146,13 @@ const ContentTypeStep = () => {
         </Select>
       </div>
 
+      {/* Réglages spécifiques au modèle vidéo (Sora 2 / Veo) */}
+      {type === 'video' && (
+        <div className="mb-6">
+          <ModelSettings />
+        </div>
+      )}
+
       {/* Sora 2 Pro avec personnage — scènes dynamiques */}
       {isSoraCharacter && (
         <div className="mb-6 space-y-4 p-4 rounded-card border border-foreground/10 bg-card/50">
