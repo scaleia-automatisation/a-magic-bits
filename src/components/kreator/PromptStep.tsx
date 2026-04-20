@@ -105,20 +105,32 @@ const PromptStep = () => {
   return (
     <>
       {!hasPrompt && (
-        <div className="flex justify-center">
-          <Button
-            onClick={handleGenerate}
-            disabled={isGenerating}
-            className="w-full max-w-md py-6 text-lg font-extrabold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn"
-          >
-            {isGenerating ? (
-              <span className="flex items-center gap-2">
-                <Loader2 className="w-5 h-5 animate-spin" /> Génération en cours…
-              </span>
-            ) : (
-              'Générer le prompt'
-            )}
-          </Button>
+        <div className="space-y-3">
+          {hasMissing && (
+            <Alert variant="destructive" className="max-w-md mx-auto bg-destructive/10 border-destructive/30">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="text-destructive text-sm">
+                Avant de générer le prompt, veuillez renseigner&nbsp;:{' '}
+                <strong>{missingFields.join(' et ')}</strong>{' '}
+                {missingFields.length > 1 ? 'sont requis' : 'est requis'} dans le bloc «&nbsp;Votre activité&nbsp;».
+              </AlertDescription>
+            </Alert>
+          )}
+          <div className="flex justify-center">
+            <Button
+              onClick={handleGenerate}
+              disabled={isGenerating || hasMissing}
+              className="w-full max-w-md py-6 text-lg font-extrabold gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn disabled:opacity-50"
+            >
+              {isGenerating ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" /> Génération en cours…
+                </span>
+              ) : (
+                'Générer le prompt'
+              )}
+            </Button>
+          </div>
         </div>
       )}
 
