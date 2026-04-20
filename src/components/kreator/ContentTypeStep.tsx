@@ -147,7 +147,7 @@ const ContentTypeStep = () => {
       </div>
 
       {/* Réglages spécifiques au modèle vidéo (Sora 2 / Veo) */}
-      {type === 'video' && (
+      {type === 'video' && ai_model && (
         <div className="mb-6">
           <ModelSettings />
         </div>
