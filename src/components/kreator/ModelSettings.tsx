@@ -4,73 +4,10 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import FileDropUpload from './FileDropUpload';
 import MultiFileUpload from './MultiFileUpload';
-
-const IMAGE_HINT = 'Formats pris en charge : JPG, JPEG, PNG ; chaque fichier a une taille maximale de 10 Mo.';
-
-const PillGroup = <T extends string | number>({
-  options, value, onChange,
-}: {
-  options: { value: T; label: string; sublabel?: string }[];
-  value: T | undefined;
-  onChange: (v: T) => void;
-}) => (
-  <div className={`grid gap-2 sm:gap-3 grid-cols-${Math.min(options.length, 3)}`}>
-    {options.map((o) => (
-      <button
-        key={String(o.value)}
-        type="button"
-        onClick={() => onChange(o.value)}
-        className={`px-3 py-2 rounded-btn text-sm font-medium transition-all border-2 ${
-          value === o.value
-            ? 'border-primary bg-primary/10 text-foreground'
-            : 'border-foreground/10 bg-card text-muted-foreground hover:border-secondary'
-        }`}
-      >
-        <div>{o.label}</div>
-        {o.sublabel && <div className="text-xs text-muted-foreground">{o.sublabel}</div>}
-      </button>
-    ))}
-  </div>
-);
-
-const AspectCards = ({
-  options, value, onChange,
-}: {
-  options: VeoAspect[];
-  value?: VeoAspect;
-  onChange: (v: VeoAspect) => void;
-}) => (
-  <div className="grid grid-cols-2 gap-3">
-    {options.map((a) => (
-      <button
-        key={a}
-        type="button"
-        onClick={() => onChange(a)}
-        className={`flex flex-col items-center gap-2 p-3 rounded-card border-2 transition-all ${
-          value === a ? 'border-primary bg-card' : 'border-foreground/10 bg-card hover:border-secondary'
-        }`}
-      >
-        <div className={`${a === '9:16' ? 'w-8 h-14' : 'w-14 h-8'} rounded border-2 ${
-          value === a ? 'border-primary bg-primary/10' : 'border-muted-foreground/30 bg-muted/30'
-        }`} />
-        <span className={`text-sm font-bold ${value === a ? 'text-foreground' : 'text-muted-foreground'}`}>{a}</span>
-      </button>
-    ))}
-  </div>
-);
-
-const Section = ({ children }: { children: React.ReactNode }) => (
-  <div className="space-y-4 p-4 rounded-card border border-foreground/10 bg-card/50">{children}</div>
-);
-
-const Field = ({ label, children, required }: { label: string; children: React.ReactNode; required?: boolean }) => (
-  <div>
-    <label className="text-sm font-medium text-foreground mb-2 block">
-      {label} {required && <span className="text-destructive">*</span>}
-    </label>
-    {children}
-  </div>
-);
+import { Section, Field, PillGroup, AspectCards, SubModelTabs, IMAGE_HINT } from './model-settings/shared';
+import { GrokT2V, GrokI2V } from './model-settings/GrokSettings';
+import { Seedance15Pro, Seedance2 } from './model-settings/SeedanceSettings';
+import { Kling21, Kling25, Kling26, Kling30 } from './model-settings/KlingSettings';
 
 // ---------- SORA ----------
 const SoraT2V = ({ pro = false }: { pro?: boolean }) => {
@@ -169,26 +106,15 @@ const VeoSettings = () => {
   return (
     <Section>
       <Field label="Type de génération" required>
-        <div className="grid grid-cols-3 gap-2">
-          {([
-            { v: 't2v', l: 'Texte vers vidéo' },
-            { v: 'i2v', l: 'Image vers vidéo' },
-            { v: 'reference', l: 'Référence' },
-          ] as { v: VeoSubMode; l: string }[]).map((o) => (
-            <button
-              key={o.v}
-              type="button"
-              onClick={() => setModelSetting('veo_sub_mode', o.v)}
-              className={`px-3 py-2 rounded-card text-sm font-medium border-2 transition-all ${
-                sub === o.v
-                  ? 'border-primary bg-primary/10 text-foreground'
-                  : 'border-foreground/10 bg-card text-muted-foreground hover:border-secondary'
-              }`}
-            >
-              {o.l}
-            </button>
-          ))}
-        </div>
+        <SubModelTabs<VeoSubMode>
+          options={[
+            { value: 't2v', label: 'Texte vers vidéo' },
+            { value: 'i2v', label: 'Image vers vidéo' },
+            { value: 'reference', label: 'Référence' },
+          ]}
+          value={sub}
+          onChange={(v) => setModelSetting('veo_sub_mode', v)}
+        />
       </Field>
 
       <Field label="Modèle">
@@ -233,7 +159,7 @@ const VeoSettings = () => {
       )}
 
       <Field label="Format" required>
-        <AspectCards
+        <AspectCards<VeoAspect>
           options={['16:9', '9:16']}
           value={model_settings.veo_aspect}
           onChange={(v) => setModelSetting('veo_aspect', v)}
@@ -265,6 +191,14 @@ const ModelSettings = () => {
   if (m === 'sora-2-pro-t2v') return <SoraT2V pro />;
   if (m === 'sora-2-pro-i2v') return <SoraI2V pro />;
   if (m === 'veo-3' || m === 'veo-3.1') return <VeoSettings />;
+  if (m === 'grok-imagine-t2v') return <GrokT2V />;
+  if (m === 'grok-imagine-i2v') return <GrokI2V />;
+  if (m === 'bytedance/seedance-1.5-pro') return <Seedance15Pro />;
+  if (m === 'bytedance/seedance-2') return <Seedance2 />;
+  if (m === 'kling-2.1') return <Kling21 />;
+  if (m === 'kling-2.5') return <Kling25 />;
+  if (m === 'kling-2.6') return <Kling26 />;
+  if (m === 'kling-3.0') return <Kling30 />;
 
   return null;
 };
