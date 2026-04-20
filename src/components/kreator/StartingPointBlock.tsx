@@ -190,6 +190,123 @@ const StartingPointBlock = () => {
   };
 
   const slots = [input_photos[0] || { url: '', description: '' }];
+  const isVideo = type === 'video';
+
+  // ===== Vidéo : UI simplifiée =====
+  if (isVideo) {
+    return (
+      <div className="step-border bg-background p-4 sm:p-6 md:p-8">
+        <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full gradient-bg" />
+            <h2 className="text-lg font-bold text-foreground">Point de départ</h2>
+          </div>
+          {!showIdeas && !loadingIdeas && (
+            <Button
+              onClick={handleNoIdea}
+              size="sm"
+              className="gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs font-bold px-4"
+            >
+              <Lightbulb className="w-4 h-4 mr-1.5" />
+              Je n'ai pas d'idée de vidéo
+            </Button>
+          )}
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-foreground">Idée de vidéo</span>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">
+            Décrivez votre idée de vidéo en quelques phrases
+          </p>
+          <Textarea
+            value={input_text}
+            onChange={(e) => {
+              if (e.target.value.length <= 500) setInputText(e.target.value);
+            }}
+            placeholder="Ex: Une vidéo qui montre la transformation avant/après de mon programme fitness..."
+            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground text-sm min-h-[140px] resize-none"
+          />
+          <div className="text-xs text-muted-foreground text-right">{input_text.length}/500</div>
+        </div>
+
+        {loadingIdeas && (
+          <div className="flex flex-col items-center py-8 mt-6 border-t border-foreground/10">
+            <div className="text-3xl mb-3 animate-bounce">✨</div>
+            <p className="text-sm text-muted-foreground">Génération des idées de vidéo en cours…</p>
+            <Loader2 className="w-5 h-5 animate-spin text-primary mt-2" />
+          </div>
+        )}
+
+        {showIdeas && !loadingIdeas && (
+          <div className="mt-6 pt-6 border-t border-foreground/10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              {ideas.map((idea) => (
+                <div
+                  key={idea.id}
+                  className={`relative p-5 rounded-xl border-[2px] transition-all duration-300 cursor-pointer ${
+                    idea_chosen === idea.title
+                      ? 'border-primary shadow-lg shadow-primary/20 scale-[1.02]'
+                      : 'border-foreground/10 hover:border-secondary/50 hover:shadow-md'
+                  }`}
+                  style={{
+                    background: idea_chosen === idea.title
+                      ? 'linear-gradient(135deg, rgba(255,45,115,0.08), rgba(255,106,61,0.08))'
+                      : 'linear-gradient(180deg, hsl(0 0% 100% / 0.06), hsl(0 0% 100% / 0.02))',
+                  }}
+                  onClick={() => {
+                    setIdeaChosen(idea.title);
+                    setInputText(`${idea.title} — ${idea.description || ''}`);
+                  }}
+                >
+                  {idea_chosen === idea.title && (
+                    <div className="absolute -top-2 -right-2">
+                      <CheckCircle className="w-5 h-5 text-primary" />
+                    </div>
+                  )}
+                  <div className="text-center mb-3">
+                    <span className="text-2xl">{idea.title.match(/^\p{Emoji}/u)?.[0] || '🎬'}</span>
+                  </div>
+                  <h3 className="font-bold text-sm text-foreground text-center mb-2">
+                    {idea.title.replace(/^\p{Emoji}\s*/u, '')}
+                  </h3>
+                  {idea.description && (
+                    <p className="text-xs text-muted-foreground text-center">{idea.description}</p>
+                  )}
+                  <Button
+                    size="sm"
+                    className={`mt-4 w-full text-xs font-semibold ${
+                      idea_chosen === idea.title
+                        ? 'gradient-bg border-0 text-primary-foreground'
+                        : 'bg-card border border-foreground/10 text-foreground hover:border-secondary'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIdeaChosen(idea.title);
+                      setInputText(`${idea.title} — ${idea.description || ''}`);
+                    }}
+                  >
+                    {idea_chosen === idea.title ? '✓ Idée choisie' : 'Je choisis cette idée'}
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={handleGenerateMore}
+              disabled={loadingIdeas}
+            >
+              <RefreshCw className="w-3 h-3 mr-1" /> Régénérer 3 nouvelles idées
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="step-border bg-background p-4 sm:p-6 md:p-8">
