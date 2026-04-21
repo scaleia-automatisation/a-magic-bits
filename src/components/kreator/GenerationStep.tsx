@@ -543,15 +543,27 @@ const GenerationStep = () => {
                     return (
                       <div
                         key={p}
-                        onClick={() => setPublishPlatforms(prev => ({ ...prev, [p]: !prev[p] }))}
-                        className={`flex flex-col items-center justify-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                        className={`flex flex-col items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
                           selected
                             ? 'border-primary bg-primary/10 shadow-md'
                             : 'border-foreground/10 hover:border-primary/40'
                         }`}
                       >
-                        <img src={logos[p]} alt={labels[p]} className="w-10 h-10 rounded-lg object-contain" />
-                        <span className="text-xs font-semibold text-foreground">{labels[p]}</span>
+                        <div
+                          onClick={() => setPublishPlatforms(prev => ({ ...prev, [p]: !prev[p] }))}
+                          className="flex flex-col items-center gap-2 cursor-pointer w-full"
+                        >
+                          <img src={logos[p]} alt={labels[p]} className="w-10 h-10 rounded-lg object-contain" />
+                          <span className="text-xs font-semibold text-foreground">{labels[p]}</span>
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={(e) => { e.stopPropagation(); handlePublishSinglePlatform(p); }}
+                          disabled={publishing}
+                          className="w-full mt-1 gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn h-8 text-xs font-bold"
+                        >
+                          {publishing ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Rocket className="w-3 h-3 mr-1" /> Publier</>}
+                        </Button>
                       </div>
                     );
                   })}
