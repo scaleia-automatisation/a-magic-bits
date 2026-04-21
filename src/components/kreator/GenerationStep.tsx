@@ -83,6 +83,13 @@ const GenerationStep = () => {
       return;
     }
 
+    // Modèles d'édition d'image nécessitant une image de référence
+    const requiresReferenceImage = ['qwen/image-edit', 'ideogram/character'].includes(ai_model);
+    if (requiresReferenceImage && !input_photos?.[0]?.url) {
+      toast.error("Ce modèle nécessite une image de référence. Ajoutez-en une dans le bloc 'Point de départ'.");
+      return;
+    }
+
     setGenerating(true);
     setStatus('generating');
     setProgress(0);
