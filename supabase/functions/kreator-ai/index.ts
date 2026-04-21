@@ -728,7 +728,9 @@ serve(async (req) => {
       const taskId = startJson?.data?.taskId || startJson?.taskId || startJson?.data?.id || startJson?.id;
       if (!taskId) {
         console.error("kie.ai image no taskId:", startText);
-        return jsonError(500, "kie.ai n'a pas retourné de taskId");
+        const apiMsg = startJson?.msg || startJson?.message || startJson?.error;
+        const apiCode = startJson?.code;
+        return jsonError(400, apiMsg ? `kie.ai: ${apiMsg}${apiCode ? ` (code ${apiCode})` : ""}` : "kie.ai n'a pas retourné de taskId");
       }
 
       return jsonResp({ task_id: taskId, done: false });
