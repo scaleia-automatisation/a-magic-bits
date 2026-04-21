@@ -259,6 +259,33 @@ const GenerationStep = () => {
     }
   };
 
+  const handlePublishSinglePlatform = async (platform: Platform) => {
+    setPublishing(true);
+    try {
+      const webhookUrl = 'https://hook.eu2.make.com/kreator-publish';
+      const captionData = captions ? { [platform]: captions[platform] } : {};
+
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          platforms: [platform],
+          content_url: result_url,
+          content_type: type,
+          captions: captionData,
+          user_id: user?.id,
+        }),
+      }).catch(() => {});
+
+      setShowPublishDialog(false);
+      setShowPublishedPopup(true);
+    } catch {
+      toast.error('Erreur lors de la publication');
+    } finally {
+      setPublishing(false);
+    }
+  };
+
   const handlePublishLater = async () => {
     handleSave();
   };
