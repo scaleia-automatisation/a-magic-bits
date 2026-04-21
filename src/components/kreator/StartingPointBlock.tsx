@@ -378,7 +378,7 @@ const StartingPointBlock = () => {
               <input
                 ref={photoRefs[index]}
                 type="file"
-                accept=".jpg,.jpeg,.png,.webp"
+                accept=".jpg,.jpeg,.png"
                 className="hidden"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
@@ -466,7 +466,7 @@ const StartingPointBlock = () => {
           <input
             ref={perfRef}
             type="file"
-            accept=".jpg,.jpeg,.png,.webp"
+            accept=".jpg,.jpeg,.png"
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0];
