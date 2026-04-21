@@ -112,7 +112,7 @@ const PhotoUpload = () => {
             <input
               ref={fileInputRefs[index]}
               type="file"
-              accept=".jpg,.jpeg,.png,.webp"
+              accept=".jpg,.jpeg,.png"
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];

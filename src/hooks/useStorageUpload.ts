@@ -7,7 +7,7 @@ const BUCKET = 'kreator-uploads';
 export type UploadKind = 'image' | 'video' | 'audio';
 
 const ACCEPT: Record<UploadKind, string> = {
-  image: 'image/jpeg,image/jpg,image/png,image/webp',
+  image: 'image/jpeg,image/jpg,image/png',
   video: 'video/mp4,video/quicktime,video/webm',
   audio: 'audio/mpeg,audio/wav,audio/x-wav,audio/aac,audio/mp4,audio/ogg',
 };
@@ -22,6 +22,15 @@ export function useStorageUpload() {
   const [uploading, setUploading] = useState(false);
 
   const upload = async (file: File, kind: UploadKind = 'image'): Promise<string | null> => {
+    if (kind === 'image') {
+      const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
+      const ext = (file.name.split('.').pop() || '').toLowerCase();
+      const allowedExt = ['jpg', 'jpeg', 'png'];
+      if (!allowed.includes(file.type) || !allowedExt.includes(ext)) {
+        toast.error('Format non supporté. Formats acceptés : .jpg, .jpeg, .png');
+        return null;
+      }
+    }
     const limitMb = MAX_SIZE_MB[kind];
     if (file.size > limitMb * 1024 * 1024) {
       toast.error(`Le fichier dépasse ${limitMb} Mo.`);
