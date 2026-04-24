@@ -28,14 +28,13 @@ const Landing = () => {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.05] mb-6">
-            <span className="text-foreground">Boostez vos revenus</span>
+            <span className="text-foreground">Boostez vos revenus en créant et</span>
             <br />
-            <span className="gradient-text">avec du contenu viral.</span>
+            <span className="gradient-text">en publiant du contenu viral.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            Créez et publiez du contenu viral en <strong className="text-foreground">3 clics</strong>, <strong className="text-foreground">même sans idée</strong>.
-            Notre IA imagine, rédige et produit images, vidéos et textes adaptés à votre activité — pour attirer plus de clients et faire décoller votre chiffre d'affaires.
+            En <strong className="text-foreground">3 clics</strong>, <strong className="text-foreground">même sans idée</strong>, notre IA imagine, rédige et produit images, vidéos et textes adaptés à votre activité — puis les publie sur vos réseaux pour attirer plus de clients et faire décoller votre chiffre d'affaires.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
