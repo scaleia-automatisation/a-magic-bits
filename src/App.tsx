@@ -7,6 +7,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import OnboardingModal from "@/components/OnboardingModal";
 import Index from "./pages/Index.tsx";
+import Landing from "./pages/Landing.tsx";
+import Features from "./pages/Features.tsx";
+import UseCases from "./pages/UseCases.tsx";
+import FAQ from "./pages/FAQ.tsx";
+import Contact from "./pages/Contact.tsx";
+import About from "./pages/About.tsx";
 import AuthPage from "./pages/Auth.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import MyGenerations from "./pages/MyGenerations.tsx";
@@ -30,7 +36,13 @@ const App = () => (
           <AuthProvider>
             <OnboardingModal />
             <Routes>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<Landing />} />
+              <Route path="/app" element={<Index />} />
+              <Route path="/fonctionnalites" element={<Features />} />
+              <Route path="/cas-dusage" element={<UseCases />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/a-propos" element={<About />} />
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/generations" element={<MyGenerations />} />
