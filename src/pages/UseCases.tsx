@@ -27,7 +27,7 @@ const UseCases = () => {
     >
       <section className="pt-16 md:pt-24 pb-12 text-center">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-5">
+          <h1 className="font-display text-4xl md:text-6xl font-black tracking-tight mb-5">
             Pensé pour <span className="gradient-text">tous les métiers.</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -57,7 +57,7 @@ const UseCases = () => {
 
       <section className="py-20 border-t border-foreground/5 bg-card/30 text-center">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
-          <h2 className="text-3xl md:text-4xl font-black mb-4">
+          <h2 className="font-display text-3xl md:text-4xl font-black mb-4">
             Votre activité n'est pas listée ?
           </h2>
           <p className="text-muted-foreground mb-8">
