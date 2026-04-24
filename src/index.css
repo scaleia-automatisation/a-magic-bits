@@ -156,12 +156,12 @@
   }
 
   .card-surface {
-    background: #111;
+    background: hsl(var(--card));
     border-radius: 12px;
   }
 
   .card-elevated {
-    background: #161616;
+    background: hsl(var(--surface-elevated));
     border-radius: 12px;
   }
 
