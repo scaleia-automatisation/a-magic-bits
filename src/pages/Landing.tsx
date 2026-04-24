@@ -27,10 +27,7 @@ const Landing = () => {
             <span className="text-xs font-medium text-foreground">Nouveau · Génération vidéo IA Sora 2 & Veo 3</span>
           </div>
 
-          <h1
-            style={{ fontFamily: "'Fraunces', 'Times New Roman', serif" }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05] mb-6 max-w-4xl mx-auto"
-          >
+          <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05] mb-6 max-w-4xl mx-auto">
             <span className="text-foreground">Créez et publiez</span>
             <br />
             <span className="text-foreground">du contenu viral</span>
