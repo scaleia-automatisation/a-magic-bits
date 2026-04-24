@@ -12,7 +12,7 @@ const Landing = () => {
   return (
     <MarketingLayout
       title="Créafacile — L'IA marketing qui crée vos publications en 3 clics"
-      description="Générez images, vidéos et textes marketing pour Facebook, Instagram, TikTok et LinkedIn. Conçu pour les TPE/PME françaises. Essai gratuit, sans carte bancaire."
+      description="Augmentez vos revenus avec du contenu viral prêt à publier en 3 clics, même sans idée. L'IA marketing pensée pour les TPE/PME françaises. Essai gratuit, sans carte bancaire."
     >
       {/* HERO */}
       <section className="relative overflow-hidden">
@@ -28,14 +28,14 @@ const Landing = () => {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.05] mb-6">
-            <span className="text-foreground">Le marketing</span>
+            <span className="text-foreground">Augmentez vos revenus</span>
             <br />
-            <span className="gradient-text">enfin simple.</span>
+            <span className="gradient-text">avec du contenu viral.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            Créez des publications professionnelles pour vos réseaux sociaux en <strong className="text-foreground">3 clics</strong>.
-            Images, vidéos et textes adaptés à votre activité — sans compétence technique.
+            Publiez du contenu prêt à devenir viral en <strong className="text-foreground">3 clics</strong>, <strong className="text-foreground">même sans idée</strong>.
+            Notre IA imagine, rédige et produit images, vidéos et textes adaptés à votre activité — pour attirer plus de clients et faire décoller votre chiffre d'affaires.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
