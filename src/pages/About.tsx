@@ -12,7 +12,7 @@ const About = () => {
     >
       <section className="pt-16 md:pt-24 pb-16 text-center">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6">
+          <h1 className="font-display text-4xl md:text-6xl font-black tracking-tight mb-6">
             Le marketing IA, <span className="gradient-text">pour tous.</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
@@ -26,7 +26,7 @@ const About = () => {
       <section className="py-16 border-y border-foreground/5 bg-card/30">
         <div className="max-w-5xl mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-10 items-center">
           <div>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">Notre mission</h2>
+            <h2 className="font-display text-3xl md:text-4xl font-black mb-4">Notre mission</h2>
             <p className="text-base text-muted-foreground leading-relaxed mb-4">
               Démocratiser l'accès au marketing professionnel pour les <strong className="text-foreground">3 millions de TPE françaises</strong>.
               Nous croyons que chaque entrepreneur mérite des outils de qualité, sans complexité ni coût prohibitif.
@@ -56,7 +56,7 @@ const About = () => {
       <section className="py-20">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black mb-4">Nos valeurs</h2>
+            <h2 className="font-display text-3xl md:text-4xl font-black mb-4">Nos valeurs</h2>
             <p className="text-muted-foreground">Ce qui guide chacune de nos décisions.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
@@ -76,7 +76,7 @@ const About = () => {
 
       <section className="py-20 border-t border-foreground/5 bg-card/30 text-center">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
-          <h2 className="text-3xl md:text-4xl font-black mb-4">
+          <h2 className="font-display text-3xl md:text-4xl font-black mb-4">
             Rejoignez l'aventure
           </h2>
           <p className="text-muted-foreground mb-8">Donnez à votre activité la visibilité qu'elle mérite.</p>

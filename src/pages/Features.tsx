@@ -55,7 +55,7 @@ const Features = () => {
     >
       <section className="pt-16 md:pt-24 pb-12 text-center">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-5">
+          <h1 className="font-display text-4xl md:text-6xl font-black tracking-tight mb-5">
             Tout pour <span className="gradient-text">créer, sans effort.</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -89,7 +89,7 @@ const Features = () => {
 
       <section className="py-20 text-center">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
-          <h2 className="text-3xl md:text-4xl font-black mb-4">
+          <h2 className="font-display text-3xl md:text-4xl font-black mb-4">
             Essayez tout ça <span className="gradient-text">gratuitement</span>
           </h2>
           <p className="text-muted-foreground mb-8">5 crédits offerts à l'inscription. Sans carte bancaire.</p>

@@ -27,10 +27,7 @@ const Landing = () => {
             <span className="text-xs font-medium text-foreground">Nouveau · Génération vidéo IA Sora 2 & Veo 3</span>
           </div>
 
-          <h1
-            style={{ fontFamily: "'Fraunces', 'Times New Roman', serif" }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05] mb-6 max-w-4xl mx-auto"
-          >
+          <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05] mb-6 max-w-4xl mx-auto">
             <span className="text-foreground">Créez et publiez</span>
             <br />
             <span className="text-foreground">du contenu viral</span>
@@ -102,7 +99,7 @@ const Landing = () => {
       <section className="py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
+            <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
               Tout ce qu'il vous faut. <span className="gradient-text">Rien de plus.</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -135,7 +132,7 @@ const Landing = () => {
       <section className="py-20 md:py-28 border-y border-foreground/5 bg-card/30">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
+            <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
               Comment ça marche
             </h2>
             <p className="text-lg text-muted-foreground">Trois étapes. Trois minutes. Zéro effort.</p>
@@ -163,7 +160,7 @@ const Landing = () => {
       <section className="py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
+            <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
               Conçu pour <span className="gradient-text">votre métier</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -206,7 +203,7 @@ const Landing = () => {
       <section className="py-20 md:py-28 border-y border-foreground/5 bg-card/30">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
+            <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
               Le coût d'une agence. <span className="gradient-text">Sans agence.</span>
             </h2>
           </div>
@@ -250,7 +247,7 @@ const Landing = () => {
       {/* FINAL CTA */}
       <section className="py-20 md:py-28">
         <div className="max-w-4xl mx-auto px-4 md:px-6 text-center">
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-6">
+          <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-6">
             Prêt à créer du contenu <span className="gradient-text">qui convertit ?</span>
           </h2>
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">

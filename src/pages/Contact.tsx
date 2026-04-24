@@ -26,7 +26,7 @@ const Contact = () => {
     >
       <section className="pt-16 md:pt-24 pb-12 text-center">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-5">
+          <h1 className="font-display text-4xl md:text-6xl font-black tracking-tight mb-5">
             Parlons <span className="gradient-text">ensemble.</span>
           </h1>
           <p className="text-lg text-muted-foreground">Une question, un retour, un partenariat ? Nous répondons sous 24h ouvrées.</p>
