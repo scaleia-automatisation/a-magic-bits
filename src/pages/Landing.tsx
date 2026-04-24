@@ -27,10 +27,9 @@ const Landing = () => {
             <span className="text-xs font-medium text-foreground">Nouveau · Génération vidéo IA Sora 2 & Veo 3</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.05] mb-6">
-            <span className="text-foreground">Boostez vos revenus en créant et</span>
-            <br />
-            <span className="gradient-text">en publiant du contenu viral.</span>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tight leading-[1.1] mb-6">
+            <span className="text-foreground">Créez et publiez du contenu viral</span>{' '}
+            <span className="gradient-text">en 3 clics, même sans idée.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
