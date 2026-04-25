@@ -4,7 +4,7 @@ import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import boosterLogo from '@/assets/boosterapp-logo.png';
+import boosterLogo from '@/assets/creafacile-logo.png';
 
 const links = [
   { label: 'Fonctionnalités', to: '/fonctionnalites' },

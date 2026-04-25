@@ -1,4 +1,4 @@
-import boosterLogo from '@/assets/boosterapp-logo.png';
+import boosterLogo from '@/assets/creafacile-logo.png';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
