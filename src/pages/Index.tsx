@@ -1,4 +1,4 @@
-import boosterLogo from '@/assets/boosterapp-logo.png';
+import boosterLogo from '@/assets/creafacile-logo.png';
 import ModeToggle from '@/components/kreator/ModeToggle';
 import MobileMenu from '@/components/MobileMenu';
 import StartingPointBlock from '@/components/kreator/StartingPointBlock';

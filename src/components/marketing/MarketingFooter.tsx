@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import boosterLogo from '@/assets/boosterapp-logo.png';
+import boosterLogo from '@/assets/creafacile-logo.png';
 
 const MarketingFooter = () => {
   return (

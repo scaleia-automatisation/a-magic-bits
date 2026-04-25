@@ -1,4 +1,4 @@
-import boosterLogo from '@/assets/boosterapp-logo.png';
+import boosterLogo from '@/assets/creafacile-logo.png';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
