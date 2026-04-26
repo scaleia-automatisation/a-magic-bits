@@ -16,7 +16,7 @@ const LegalPageLayout = ({ children }: LegalPageLayoutProps) => {
     <div className="min-h-screen bg-background">
       <header className="border-b border-foreground/5">
         <div className="max-w-4xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
-          <img src={boosterLogo} alt="BoosterApp" className="h-12 md:h-[62px] cursor-pointer" onClick={() => navigate('/')} />
+          <img src={boosterLogo} alt="Créafacile" className="h-12 md:h-[62px] cursor-pointer" onClick={() => navigate('/')} />
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground h-9 w-9" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
               {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -36,7 +36,7 @@ const LegalPageLayout = ({ children }: LegalPageLayoutProps) => {
 
       <footer className="border-t border-foreground/5 py-6 mt-20">
         <div className="max-w-4xl mx-auto px-4 text-center text-xs text-muted-foreground">
-          © 2026 BoosterApp — Génération de contenu marketing par IA
+          © 2026 Créafacile — Génération de contenu marketing par IA
         </div>
       </footer>
     </div>
