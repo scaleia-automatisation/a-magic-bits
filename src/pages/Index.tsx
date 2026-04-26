@@ -24,7 +24,7 @@ const Index = () => {
       {/* Header */}
       <header className="border-b border-foreground/5 relative">
         <div className="max-w-4xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
-          <img src={boosterLogo} alt="BoosterApp" className="h-12 md:h-[62px] cursor-pointer" onClick={() => navigate('/')} />
+          <img src={boosterLogo} alt="Créafacile" className="h-12 md:h-[62px] cursor-pointer" onClick={() => navigate('/')} />
           <div className="flex items-center gap-2 md:gap-4">
             <Button
               variant="ghost"
@@ -107,7 +107,7 @@ const Index = () => {
             <button onClick={() => navigate('/data-deletion')} className="text-xs text-muted-foreground hover:text-primary transition-colors">Suppression des données</button>
             <button onClick={() => navigate('/data-deletion-reminder')} className="text-xs text-muted-foreground hover:text-primary transition-colors">Rappel de suppression</button>
           </div>
-          <p className="text-center text-xs text-muted-foreground">© 2026 BoosterApp — Génération de contenu marketing par IA</p>
+          <p className="text-center text-xs text-muted-foreground">© 2026 Créafacile — Génération de contenu marketing par IA</p>
         </div>
       </footer>
     </div>
