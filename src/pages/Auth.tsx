@@ -4,6 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
 
+const PRODUCTION_AUTH_ORIGIN = 'https://www.creafacile.com';
+
+const getGoogleRedirectUri = () => {
+  const { hostname, origin } = window.location;
+
+  if (hostname.endsWith('lovable.app') || hostname === 'localhost' || hostname === '127.0.0.1') {
+    return PRODUCTION_AUTH_ORIGIN;
+  }
+
+  return origin;
+};
+
 const AuthPage = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -16,7 +28,7 @@ const AuthPage = () => {
 
   const handleGoogleSignIn = async () => {
     await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: window.location.origin,
+      redirect_uri: getGoogleRedirectUri(),
     });
   };
 
