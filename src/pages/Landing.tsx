@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles, Zap, Image as ImageIcon, Video, MessageSquare, Check, Play, Clock, TrendingUp, Shield, Globe } from 'lucide-react';
 import MarketingLayout from '@/components/marketing/MarketingLayout';
+import PartnershipForm from '@/components/marketing/PartnershipForm';
 import facebookLogo from '@/assets/facebook-logo.png';
 import instagramLogo from '@/assets/instagram-logo.png';
 import tiktokLogo from '@/assets/tiktok-logo.png';
@@ -265,6 +266,31 @@ const Landing = () => {
             <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> 3 minutes</span>
             <span className="flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> 5 crédits offerts</span>
             <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /> RGPD</span>
+          </div>
+        </div>
+      </section>
+
+      {/* PARTENARIAT */}
+      <section id="partenariat" className="py-20 md:py-28 border-t border-foreground/5 bg-card/30">
+        <div className="max-w-5xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-pill border border-foreground/10 bg-card/50 backdrop-blur mb-6">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span className="text-xs font-medium">Programme partenaires</span>
+            </div>
+            <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
+              Influenceur, YouTubeur, entreprise ?<br />
+              <span className="gradient-text italic">Devenez partenaire Créafacile.</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              30% de commission récurrente pendant 12 mois, compte Premium offert, kit créatif sur-mesure.
+              <button onClick={() => navigate('/partenariat')} className="text-primary hover:underline ml-1">
+                Voir le programme complet →
+              </button>
+            </p>
+          </div>
+          <div className="max-w-2xl mx-auto">
+            <PartnershipForm />
           </div>
         </div>
       </section>

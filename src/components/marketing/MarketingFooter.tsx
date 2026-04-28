@@ -29,6 +29,8 @@ const MarketingFooter = () => {
               <li><Link to="/a-propos" className="text-muted-foreground hover:text-foreground">À propos</Link></li>
               <li><Link to="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
               <li><Link to="/faq" className="text-muted-foreground hover:text-foreground">FAQ</Link></li>
+              <li><Link to="/partenariat" className="text-muted-foreground hover:text-foreground">Partenariat</Link></li>
+              <li><Link to="/parrainage" className="text-muted-foreground hover:text-foreground">Parrainage</Link></li>
             </ul>
           </div>
 
