@@ -84,7 +84,7 @@ const MyGenerations = () => {
           <div className="card-surface p-8 md:p-12 border border-foreground/10 rounded-card text-center">
             <Image className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground mb-4">Aucune génération pour le moment</p>
-            <Button onClick={() => navigate('/')} className="gradient-bg border-0 text-primary-foreground">
+            <Button onClick={() => navigate('/app')} className="gradient-bg border-0 text-primary-foreground">
               Créer du contenu ✨
             </Button>
           </div>
