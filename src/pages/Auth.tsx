@@ -1,6 +1,6 @@
 import { lovable } from '@/integrations/lovable';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
 
@@ -19,6 +19,15 @@ const getGoogleRedirectUri = () => {
 const AuthPage = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Capture le code parrain depuis l'URL ?ref=XXXX et le persiste
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) {
+      localStorage.setItem('pending_referral_code', ref.toUpperCase());
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (user && !loading) {

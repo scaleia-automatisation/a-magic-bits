@@ -82,6 +82,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setTimeout(() => {
           fetchProfile(session.user.id);
           checkSubscription();
+          // Réclame le parrainage si un code est en attente
+          const pendingRef = localStorage.getItem('pending_referral_code');
+          if (pendingRef) {
+            supabase.functions.invoke('claim-referral', {
+              body: { referralCode: pendingRef },
+            }).then(({ error }) => {
+              if (!error) {
+                localStorage.removeItem('pending_referral_code');
+                fetchProfile(session.user.id);
+              }
+            });
+          }
         }, 0);
       } else {
         setProfile(null);

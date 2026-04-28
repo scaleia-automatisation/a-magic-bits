@@ -221,6 +221,42 @@ export type Database = {
         }
         Relationships: []
       }
+      partnership_requests: {
+        Row: {
+          audience_size: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          message: string
+          partner_type: string
+          social_handle: string | null
+          status: string
+        }
+        Insert: {
+          audience_size?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          message: string
+          partner_type: string
+          social_handle?: string | null
+          status?: string
+        }
+        Update: {
+          audience_size?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          message?: string
+          partner_type?: string
+          social_handle?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -263,6 +299,39 @@ export type Database = {
           referred_by?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      referral_invitations: {
+        Row: {
+          converted_at: string | null
+          converted_user_id: string | null
+          created_at: string
+          id: string
+          invited_email: string
+          inviter_id: string
+          referral_code: string
+          status: string
+        }
+        Insert: {
+          converted_at?: string | null
+          converted_user_id?: string | null
+          created_at?: string
+          id?: string
+          invited_email: string
+          inviter_id: string
+          referral_code: string
+          status?: string
+        }
+        Update: {
+          converted_at?: string | null
+          converted_user_id?: string | null
+          created_at?: string
+          id?: string
+          invited_email?: string
+          inviter_id?: string
+          referral_code?: string
+          status?: string
         }
         Relationships: []
       }
