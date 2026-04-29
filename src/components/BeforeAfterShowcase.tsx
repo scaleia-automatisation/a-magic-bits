@@ -115,7 +115,7 @@ const BeforeAfterShowcase = () => {
   ];
 
   return (
-    <section className="pt-6 md:pt-8 pb-20 md:pb-28">
+    <section className="py-12 md:py-16">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-pill border border-foreground/10 bg-card/50 backdrop-blur mb-6">

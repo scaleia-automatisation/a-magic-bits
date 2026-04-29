@@ -156,7 +156,7 @@ const Landing = () => {
       <BeforeAfterShowcase />
 
       {/* FEATURES */}
-      <section className="py-20 md:py-28">
+      <section className="py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
             <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
@@ -189,7 +189,7 @@ const Landing = () => {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="py-20 md:py-28 border-y border-foreground/5 bg-card/30">
+      <section className="py-12 md:py-16 border-y border-foreground/5 bg-card/30">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
             <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
@@ -217,7 +217,7 @@ const Landing = () => {
       </section>
 
       {/* USE CASES */}
-      <section className="py-20 md:py-28">
+      <section className="py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
             <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
@@ -260,7 +260,7 @@ const Landing = () => {
       </section>
 
       {/* COMPARISON */}
-      <section className="py-20 md:py-28 border-y border-foreground/5 bg-card/30">
+      <section className="py-12 md:py-16 border-y border-foreground/5 bg-card/30">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
@@ -305,7 +305,7 @@ const Landing = () => {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-20 md:py-28 scroll-mt-20">
+      <section id="faq" className="py-12 md:py-16 scroll-mt-20">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
@@ -344,7 +344,7 @@ const Landing = () => {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-20 md:py-28">
+      <section className="py-12 md:py-16">
         <div className="max-w-4xl mx-auto px-4 md:px-6 text-center">
           <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-6">
             Prêt à créer du contenu <span className="gradient-text">qui convertit ?</span>
@@ -369,7 +369,7 @@ const Landing = () => {
       </section>
 
       {/* PARTENARIAT */}
-      <section id="partenariat" className="py-20 md:py-28 border-t border-foreground/5 bg-card/30">
+      <section id="partenariat" className="py-12 md:py-16 border-t border-foreground/5 bg-card/30">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-pill border border-foreground/10 bg-card/50 backdrop-blur mb-6">
