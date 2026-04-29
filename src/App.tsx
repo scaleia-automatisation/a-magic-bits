@@ -10,7 +10,6 @@ import Index from "./pages/Index.tsx";
 import Landing from "./pages/Landing.tsx";
 import Features from "./pages/Features.tsx";
 import UseCases from "./pages/UseCases.tsx";
-import FAQ from "./pages/FAQ.tsx";
 import Contact from "./pages/Contact.tsx";
 import About from "./pages/About.tsx";
 import AuthPage from "./pages/Auth.tsx";
@@ -42,7 +41,6 @@ const App = () => (
               <Route path="/app" element={<Index />} />
               <Route path="/fonctionnalites" element={<Features />} />
               <Route path="/cas-dusage" element={<UseCases />} />
-              <Route path="/faq" element={<FAQ />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/a-propos" element={<About />} />
               <Route path="/auth" element={<AuthPage />} />
