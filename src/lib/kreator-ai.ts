@@ -154,6 +154,13 @@ export async function generatePrompt(params: {
   aiModel?: string;
   renderStyle?: string;
   videoRenderStyle?: string;
+  // Logo + text positioning + font + color
+  logoEnabled?: boolean;
+  logoUrl?: string;
+  logoPosition?: 'bottom-center' | 'bottom-right';
+  textPosition?: 'top-center-1' | 'top-center-2' | 'bottom-center-1' | 'bottom-center-2';
+  textFont?: string;
+  textColor?: string;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
   
@@ -322,7 +329,20 @@ ${params.referenceImageCount && params.referenceImageCount > 1 ? `IMPORTANT: ${p
 === RÉGLAGES AVANCÉS ===
 ${params.ton ? `Ton: ${params.ton}` : 'Ton: automatique'}
 ${params.visualStyle ? `Style visuel: ${params.visualStyle}` : 'Style: automatique'}
-${params.showText ? `Texte overlay (À REPRODUIRE EXACTEMENT, AUCUNE MODIFICATION): "${params.textContent}"` : 'Pas de texte overlay — NE PAS générer de texte, pancarte, étiquette, logo ou enseigne dans l\'image'}
+${params.showText
+  ? `Texte overlay (À REPRODUIRE EXACTEMENT, MOT POUR MOT, AUCUNE MODIFICATION NI AJOUT): "${params.textContent}"
+Position du texte: ${
+        params.textPosition === 'top-center-1' ? 'centré en haut sur UNE seule ligne'
+      : params.textPosition === 'top-center-2' ? 'centré en haut sur DEUX lignes maximum'
+      : params.textPosition === 'bottom-center-2' ? 'centré en bas sur DEUX lignes maximum'
+      : 'centré en bas sur UNE seule ligne'
+    } — respecter STRICTEMENT cette position et ce nombre de lignes.
+Police d'écriture: "${params.textFont || 'Montserrat'}" — utiliser cette typographie (ou la plus proche visuellement disponible), bien lisible, kerning soigné.
+${params.contentType === 'video' && params.textColor ? `Couleur du texte: ${params.textColor} — appliquer EXACTEMENT cette couleur au texte affiché à l'écran (avec contour ou ombre subtile pour la lisibilité si nécessaire).` : ''}`
+  : 'Pas de texte overlay — NE PAS générer de texte, pancarte, étiquette, logo ou enseigne dans l\'image'}
+${params.logoEnabled && params.logoUrl
+  ? `Logo de marque: présent dans le visuel, intégré ${params.logoPosition === 'bottom-right' ? 'en bas à droite' : 'en bas au centre'}, taille discrète et professionnelle, parfaitement lisible, sans déformation, ne couvrant pas le sujet principal. Référence du logo fourni par l'utilisateur: ${params.logoUrl}`
+  : 'Pas de logo à intégrer'}
 ${params.paletteEnabled ? `Palette de couleurs active: ${params.paletteHex.join(', ')} — utiliser entre 30% et 50% dans le visuel` : 'Palette automatique'}
 
 Génère un prompt unifié, cohérent et fidèle à l'offre. Sobriété et précision priment sur la décoration.`;

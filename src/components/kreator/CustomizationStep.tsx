@@ -1,9 +1,14 @@
+import { useRef, useState } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import StepContainer from './StepContainer';
+import { Upload, X, Loader2 } from 'lucide-react';
+import { useStorageUpload } from '@/hooks/useStorageUpload';
+import { toast } from 'sonner';
 
 const tons = [
   'Humoristique / Décontracté', 'Promotionnel / Persuasif', 'Engageant / Participatif',
@@ -12,9 +17,74 @@ const tons = [
 
 const styles = ['Luxe', 'Moderne', 'Impact', 'Lifestyle'];
 
+const CLASSIC_FONTS = [
+  'Playfair Display', 'Merriweather', 'Lora', 'Libre Baskerville', 'EB Garamond',
+  'Georgia', 'Times New Roman', 'Crimson Text', 'Cormorant Garamond', 'Palatino',
+];
+const DESIGN_FONTS = [
+  'Montserrat', 'Raleway', 'Bebas Neue', 'Oswald', 'Poppins',
+  'Nunito', 'DM Sans', 'Space Grotesk', 'Syne', 'Outfit',
+];
+const ALL_FONTS = [...CLASSIC_FONTS, ...DESIGN_FONTS];
+
+const TEXT_POSITIONS: { value: 'top-center-1' | 'top-center-2' | 'bottom-center-1' | 'bottom-center-2'; label: string }[] = [
+  { value: 'top-center-1', label: 'Centré en haut — 1 ligne' },
+  { value: 'top-center-2', label: 'Centré en haut — 2 lignes' },
+  { value: 'bottom-center-1', label: 'Centré en bas — 1 ligne' },
+  { value: 'bottom-center-2', label: 'Centré en bas — 2 lignes' },
+];
+
+// Video text colors palette
+const TEXT_COLORS: { name: string; hex: string }[] = [
+  { name: 'Noir', hex: '#000000' },
+  { name: 'Blanc', hex: '#FFFFFF' },
+  { name: 'Rouge', hex: '#E11D2E' },
+  { name: 'Rouge foncé', hex: '#7F1D1D' },
+  { name: 'Orange', hex: '#F97316' },
+  { name: 'Jaune', hex: '#FACC15' },
+  { name: 'Vert', hex: '#22C55E' },
+  { name: 'Vert foncé', hex: '#14532D' },
+  { name: 'Bleu', hex: '#2563EB' },
+  { name: 'Bleu nuit', hex: '#0B1E4A' },
+  { name: 'Violet', hex: '#8B5CF6' },
+  { name: 'Rose', hex: '#EC4899' },
+  { name: 'Or', hex: '#D4AF37' },
+  { name: 'Argent', hex: '#C0C0C0' },
+  { name: 'Turquoise', hex: '#14B8A6' },
+];
+
+const normalizeHex = (v: string): string | null => {
+  let s = v.trim();
+  if (!s) return null;
+  if (!s.startsWith('#')) s = `#${s}`;
+  if (/^#([0-9a-fA-F]{6})$/.test(s)) return s.toUpperCase();
+  if (/^#([0-9a-fA-F]{3})$/.test(s)) {
+    const r = s[1], g = s[2], b = s[3];
+    return `#${r}${r}${g}${g}${b}${b}`.toUpperCase();
+  }
+  return null;
+};
+
 const CustomizationStep = () => {
   const { type, user_mode, showAdvanced, setShowAdvanced, options, setOptions } = useKreatorStore();
   const isVideo = type === 'video';
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const { upload, uploading } = useStorageUpload();
+  const [hexInput, setHexInput] = useState('');
+
+  const handleLogoUpload = async (file: File) => {
+    const url = await upload(file, 'image');
+    if (url) {
+      setOptions({ logo_url: url });
+      toast.success('Logo importé');
+    }
+  };
+
+  const handleHexChange = (v: string) => {
+    setHexInput(v);
+    const norm = normalizeHex(v);
+    if (norm) setOptions({ text_color: norm });
+  };
 
   const isVisible = user_mode === 'expert' || showAdvanced;
 
@@ -54,6 +124,91 @@ const CustomizationStep = () => {
       {isVisible && (
         <StepContainer stepNumber={3} title="Personnalisation">
           <Accordion type="multiple" className="space-y-2">
+            {/* Logo (image & carousel uniquement) */}
+            {!isVideo && (
+              <AccordionItem value="logo" className="border-foreground/10">
+                <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline">
+                  Ajouter un logo
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">Désactivé</span>
+                    <Switch
+                      checked={options.logo_enabled}
+                      onCheckedChange={(v) => setOptions({ logo_enabled: v })}
+                    />
+                    <span className="text-xs text-muted-foreground">Activé</span>
+                  </div>
+                  {options.logo_enabled && (
+                    <>
+                      <div className="flex items-center gap-3">
+                        {options.logo_url ? (
+                          <div className="relative h-16 w-16 rounded-card overflow-hidden border border-foreground/10 bg-card flex items-center justify-center">
+                            <img src={options.logo_url} alt="Logo" className="max-h-full max-w-full object-contain" />
+                            <button
+                              onClick={() => setOptions({ logo_url: '' })}
+                              className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"
+                              type="button"
+                              aria-label="Supprimer le logo"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => logoInputRef.current?.click()}
+                            disabled={uploading}
+                            className="h-16 w-16 rounded-card border-2 border-dashed border-foreground/10 bg-card hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-primary"
+                          >
+                            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                            <span className="text-[9px] font-medium">Logo</span>
+                          </button>
+                        )}
+                        <div className="flex-1">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => logoInputRef.current?.click()}
+                            disabled={uploading}
+                          >
+                            {options.logo_url ? 'Remplacer' : 'Importer'} (PNG transparent recommandé)
+                          </Button>
+                          <input
+                            ref={logoInputRef}
+                            type="file"
+                            accept="image/png,image/jpeg,image/jpg"
+                            className="hidden"
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) handleLogoUpload(f);
+                              e.target.value = '';
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-xs text-muted-foreground mb-1 block">Position du logo</label>
+                        <Select
+                          value={options.logo_position}
+                          onValueChange={(v) => setOptions({ logo_position: v as 'bottom-center' | 'bottom-right' })}
+                        >
+                          <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-card border-foreground/10">
+                            <SelectItem value="bottom-center" className="text-foreground focus:bg-secondary/20">Logo en bas au centre</SelectItem>
+                            <SelectItem value="bottom-right" className="text-foreground focus:bg-secondary/20">Logo en bas à droite</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            )}
+
             {/* Text overlay */}
             <AccordionItem value="text" className="border-foreground/10">
               <AccordionTrigger className="text-sm font-medium text-foreground hover:no-underline">
@@ -69,14 +224,103 @@ const CustomizationStep = () => {
                   <span className="text-xs text-muted-foreground">Avec</span>
                 </div>
                 {options.show_text && (
-                  <Input
-                    value={options.text_content}
-                    onChange={(e) => {
-                      if (e.target.value.length <= 15) setOptions({ text_content: e.target.value });
-                    }}
-                    placeholder="Max 15 caractères"
-                    className="bg-card border-foreground/10 text-foreground text-sm"
-                  />
+                  <div className="space-y-3">
+                    <Input
+                      value={options.text_content}
+                      onChange={(e) => {
+                        if (e.target.value.length <= 60) setOptions({ text_content: e.target.value });
+                      }}
+                      placeholder="Texte à afficher (max 60 caractères)"
+                      className="bg-card border-foreground/10 text-foreground text-sm"
+                    />
+                    <div>
+                      <label className="text-xs text-muted-foreground mb-1 block">Position du texte</label>
+                      <Select
+                        value={options.text_position}
+                        onValueChange={(v) =>
+                          setOptions({ text_position: v as typeof options.text_position })
+                        }
+                      >
+                        <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-foreground/10">
+                          {TEXT_POSITIONS.map((p) => (
+                            <SelectItem key={p.value} value={p.value} className="text-foreground focus:bg-secondary/20">
+                              {p.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground mb-1 block">Police d'écriture</label>
+                      <Select
+                        value={options.text_font}
+                        onValueChange={(v) => setOptions({ text_font: v })}
+                      >
+                        <SelectTrigger className="bg-card border-foreground/10 text-foreground">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-foreground/10 max-h-[280px]">
+                          <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">Classiques</div>
+                          {CLASSIC_FONTS.map((f) => (
+                            <SelectItem key={f} value={f} className="text-foreground focus:bg-secondary/20" style={{ fontFamily: f }}>
+                              {f}
+                            </SelectItem>
+                          ))}
+                          <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">Design</div>
+                          {DESIGN_FONTS.map((f) => (
+                            <SelectItem key={f} value={f} className="text-foreground focus:bg-secondary/20" style={{ fontFamily: f }}>
+                              {f}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Text color (vidéo) */}
+                    {isVideo && (
+                      <div className="space-y-2">
+                        <label className="text-xs text-muted-foreground block">Couleur du texte</label>
+                        <div className="grid grid-cols-8 gap-2">
+                          {TEXT_COLORS.map((c) => {
+                            const selected = options.text_color?.toUpperCase() === c.hex.toUpperCase();
+                            return (
+                              <button
+                                key={c.hex}
+                                type="button"
+                                title={`${c.name} ${c.hex}`}
+                                onClick={() => {
+                                  setOptions({ text_color: c.hex });
+                                  setHexInput(c.hex);
+                                }}
+                                className={`h-7 w-7 rounded-full border transition-all ${
+                                  selected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background border-foreground/40' : 'border-foreground/10 hover:scale-110'
+                                }`}
+                                style={{ backgroundColor: c.hex }}
+                                aria-label={c.name}
+                              />
+                            );
+                          })}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground">Code hex</span>
+                          <Input
+                            value={hexInput || options.text_color}
+                            onChange={(e) => handleHexChange(e.target.value)}
+                            placeholder="#FFFFFF"
+                            className="bg-card border-foreground/10 text-foreground text-xs h-8 w-28 font-mono uppercase"
+                            maxLength={7}
+                          />
+                          <div
+                            className="h-6 w-6 rounded-md border border-foreground/10"
+                            style={{ backgroundColor: options.text_color }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
               </AccordionContent>
             </AccordionItem>
