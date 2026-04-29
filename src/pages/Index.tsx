@@ -13,7 +13,6 @@ import { useNavigate } from 'react-router-dom';
 import { Coins, LayoutDashboard, LogOut, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
-import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 
 const Index = () => {
   const { user, profile, signOut } = useAuth();
@@ -101,9 +100,6 @@ const Index = () => {
           <GenerationStep />
         </div>
       </main>
-
-      <TestimonialsCarousel />
-
 
       <footer className="border-t border-foreground/5 py-8 mt-20">
         <div className="max-w-4xl mx-auto px-4">
