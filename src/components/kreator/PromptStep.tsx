@@ -70,6 +70,12 @@ const PromptStep = () => {
         aiModel: ai_model,
         renderStyle: render_style,
         videoRenderStyle: video_render_style,
+        logoEnabled: options.logo_enabled,
+        logoUrl: options.logo_url,
+        logoPosition: options.logo_position,
+        textPosition: options.text_position,
+        textFont: options.text_font,
+        textColor: options.text_color,
       });
 
       setPromptFr(result.prompt_fr || '');
