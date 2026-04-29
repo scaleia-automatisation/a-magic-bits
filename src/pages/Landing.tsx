@@ -89,12 +89,11 @@ const Landing = () => {
             <span className="text-foreground">du contenu viral</span>
             <br />
             <span className="gradient-text italic">en 3 clics,</span>
-            <br />
-            <span className="gradient-text italic">même sans idée.</span>
+            <span className="gradient-text italic"> même sans idée.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            En <strong className="text-foreground">3 clics</strong>, <strong className="text-foreground">même sans idée</strong>, notre IA imagine, rédige et produit images, vidéos et textes adaptés à votre activité — puis les publie sur vos réseaux pour attirer plus de clients et faire décoller votre chiffre d'affaires.
+            En <strong className="text-foreground">quelques clics</strong> seulement, transformez votre activité en machine à contenu : l'IA imagine vos idées, crée textes, images et vidéos sur-mesure, puis les publie automatiquement pour générer plus de clients et de revenus.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
