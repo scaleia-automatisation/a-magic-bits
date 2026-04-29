@@ -154,6 +154,13 @@ export async function generatePrompt(params: {
   aiModel?: string;
   renderStyle?: string;
   videoRenderStyle?: string;
+  // Logo + text positioning + font + color
+  logoEnabled?: boolean;
+  logoUrl?: string;
+  logoPosition?: 'bottom-center' | 'bottom-right';
+  textPosition?: 'top-center-1' | 'top-center-2' | 'bottom-center-1' | 'bottom-center-2';
+  textFont?: string;
+  textColor?: string;
 }) {
   const formatLabel = params.format === '1:1' ? 'carré (1:1)' : params.format === '16:9' ? 'horizontal large (16:9)' : 'vertical plein écran (9:16)';
   
