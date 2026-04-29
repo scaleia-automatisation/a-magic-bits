@@ -29,11 +29,14 @@ const MARKETS = [
 ];
 
 const OBJECTIVES = [
-  '🎯 Capter — Attirer l\'attention',
-  '🧲 Retenir — Maintenir l\'intérêt',
-  '💡 Convaincre — Créer le désir',
-  '🔥 Inciter — Pousser à l\'action',
-  '💎 Fidéliser — Faire revenir',
+  '🚀 Attirer — Générer trafic qualifié',
+  '📚 Éduquer — Expliquer problème et solution',
+  '💖 Créer le désir — Donner envie d\'acheter',
+  '🎯 Positionner — Clarifier valeur du produit',
+  '🛡️ Rassurer — Instaurer confiance client',
+  '💰 Convertir — Déclencher passage à l\'achat',
+  '💎 Fidéliser — Faire revenir les clients',
+  '⭐ Différencier — Se démarquer du marché',
   '✏️ Personnaliser',
 ];
 
