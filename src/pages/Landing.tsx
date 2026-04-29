@@ -6,6 +6,7 @@ import facebookLogo from '@/assets/facebook-logo.png';
 import instagramLogo from '@/assets/instagram-logo.png';
 import tiktokLogo from '@/assets/tiktok-logo.png';
 import linkedinLogo from '@/assets/linkedin-logo.png';
+import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -95,6 +96,8 @@ const Landing = () => {
           </div>
         </div>
       </section>
+
+      <TestimonialsCarousel />
 
       {/* FEATURES */}
       <section className="py-20 md:py-28">
