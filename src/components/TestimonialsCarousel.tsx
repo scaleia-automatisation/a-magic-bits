@@ -87,7 +87,9 @@ const TestimonialsCarousel = () => {
   }, [paused]);
 
   const scrollBy = (dir: number) => {
-    scrollRef.current?.scrollBy({ left: dir * 340, behavior: 'smooth' });
+    setPaused(true);
+    scrollRef.current?.scrollBy({ left: dir * 360, behavior: 'smooth' });
+    window.setTimeout(() => setPaused(false), 1500);
   };
 
   // Duplicate for seamless loop
