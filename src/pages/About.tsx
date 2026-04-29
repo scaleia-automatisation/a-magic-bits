@@ -61,11 +61,12 @@ const About = () => {
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {[
-              { title: 'Simplicité', desc: 'Si ce n\'est pas faisable en 3 clics, ce n\'est pas assez bon. Nous concevons pour l\'utilisateur, pas pour l\'ingénieur.' },
-              { title: 'Qualité', desc: 'Nous utilisons les meilleurs modèles IA du marché (Sora 2, Imagen 4, Veo 3) pour livrer un rendu professionnel.' },
-              { title: 'Confiance', desc: 'Vos données restent en Europe. Pas de revente, pas de tracking abusif. RGPD au cœur de notre architecture.' },
+              { emoji: '✨', title: 'Simplicité', desc: 'Si ce n\'est pas faisable en 3 clics, ce n\'est pas assez bon. Nous concevons pour l\'utilisateur, pas pour l\'ingénieur.' },
+              { emoji: '🎨', title: 'Qualité', desc: 'Nous utilisons les meilleurs modèles IA du marché (Sora 2, Imagen 4, Veo 3) pour livrer un rendu professionnel.' },
+              { emoji: '🔒', title: 'Confiance', desc: 'Vos données restent en Europe. Pas de revente, pas de tracking abusif. RGPD au cœur de notre architecture.' },
             ].map((v) => (
               <div key={v.title} className="p-6 rounded-card border border-foreground/5 bg-card">
+                <div className="text-3xl mb-3">{v.emoji}</div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">{v.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{v.desc}</p>
               </div>
