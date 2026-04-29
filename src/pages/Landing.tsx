@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Sparkles, Zap, Image as ImageIcon, Video, MessageSquare, Check, Play, Clock, TrendingUp, Shield, Globe } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowRight, Sparkles, Zap, Image as ImageIcon, Video, MessageSquare, Check, Play, Clock, TrendingUp, Shield, Globe, ChevronDown } from 'lucide-react';
 import MarketingLayout from '@/components/marketing/MarketingLayout';
 import PartnershipForm from '@/components/marketing/PartnershipForm';
 import facebookLogo from '@/assets/facebook-logo.png';
@@ -10,6 +11,59 @@ import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 
 const Landing = () => {
   const navigate = useNavigate();
+  const [openFaqId, setOpenFaqId] = useState<string | null>('Démarrage-0');
+
+  useEffect(() => {
+    if (window.location.hash === '#faq') {
+      setTimeout(() => {
+        document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, []);
+
+  const faqSections = [
+    {
+      title: 'Démarrage',
+      qa: [
+        { q: 'Comment commencer ?', a: 'Inscrivez-vous gratuitement avec votre compte Google. Vous recevez 5 crédits offerts pour tester immédiatement la plateforme, sans carte bancaire.' },
+        { q: 'Faut-il être un expert en marketing ?', a: 'Non. Créafacile est pensé pour les entrepreneurs et indépendants sans compétence technique. En 3 clics, vous obtenez un contenu prêt à publier.' },
+        { q: 'Combien de temps pour générer un post ?', a: 'Environ 30 secondes pour une image, 1 à 3 minutes pour une vidéo selon le modèle choisi.' },
+      ],
+    },
+    {
+      title: 'Crédits & tarifs',
+      qa: [
+        { q: 'Comment fonctionnent les crédits ?', a: 'Chaque génération consomme un nombre de crédits (image = 1 crédit, vidéo = 3 à 5 selon le modèle). Vos crédits se renouvellent chaque mois selon votre plan.' },
+        { q: 'Les crédits non utilisés sont-ils reportés ?', a: 'Oui, vos crédits non consommés sont reportés sur le mois suivant tant que votre abonnement est actif.' },
+        { q: 'Puis-je annuler à tout moment ?', a: 'Oui, sans engagement. Vous pouvez résilier en un clic depuis votre espace, et conservez l\'accès jusqu\'à la fin de la période payée.' },
+        { q: 'Y a-t-il un essai gratuit ?', a: 'Oui, 5 crédits sont offerts à l\'inscription, sans carte bancaire requise.' },
+      ],
+    },
+    {
+      title: 'Fonctionnalités',
+      qa: [
+        { q: 'Quels formats puis-je générer ?', a: 'Images carrées (1:1), paysage (16:9), portrait (9:16), carrousels multi-slides et vidéos courtes adaptées à chaque réseau social.' },
+        { q: 'L\'IA crée-t-elle aussi les textes ?', a: 'Oui, pour chaque génération vous obtenez 4 versions de caption optimisées (Facebook, Instagram, TikTok, LinkedIn) avec hashtags et CTA séparé.' },
+        { q: 'Puis-je publier directement sur mes réseaux ?', a: 'Oui, vous pouvez connecter Facebook et Instagram pour publier en un clic depuis Créafacile.' },
+        { q: 'Puis-je importer mes propres photos ?', a: 'Oui, jusqu\'à 3 photos de référence par génération pour guider l\'IA (style, produit, lieu).' },
+      ],
+    },
+    {
+      title: 'Sécurité & données',
+      qa: [
+        { q: 'Mes données sont-elles protégées ?', a: 'Oui. Vos données sont hébergées en Europe, conformes RGPD. Vous pouvez les supprimer à tout moment depuis votre espace.' },
+        { q: 'Qui possède les contenus générés ?', a: 'Vous. Tous les contenus que vous générez vous appartiennent et peuvent être utilisés librement, y compris à des fins commerciales.' },
+        { q: 'Comment supprimer mon compte ?', a: 'Depuis votre tableau de bord, ou via la page dédiée Suppression des données accessible en bas de chaque page.' },
+      ],
+    },
+    {
+      title: 'Support',
+      qa: [
+        { q: 'Comment contacter le support ?', a: 'Par email à bonjour@creafacile.com ou via le formulaire de la page Contact. Nous répondons sous 24h ouvrées.' },
+        { q: 'Proposez-vous une formation ?', a: 'L\'application est conçue pour être prise en main sans formation. Une documentation et des exemples sont disponibles dans votre espace.' },
+      ],
+    },
+  ];
 
   return (
     <MarketingLayout
@@ -244,6 +298,45 @@ const Landing = () => {
                 <li className="flex gap-2"><Check className="w-4 h-4 text-primary shrink-0 mt-0.5" /> Disponible 24/7</li>
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="py-20 md:py-28 scroll-mt-20">
+        <div className="max-w-3xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
+              Questions <span className="gradient-text">fréquentes</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">Tout ce que vous devez savoir avant de vous lancer.</p>
+          </div>
+          <div className="space-y-10">
+            {faqSections.map((s) => (
+              <div key={s.title}>
+                <h3 className="text-xl font-bold text-foreground mb-4">{s.title}</h3>
+                <div className="space-y-2">
+                  {s.qa.map((item, i) => {
+                    const id = `${s.title}-${i}`;
+                    const isOpen = openFaqId === id;
+                    return (
+                      <div key={id} className="rounded-card border border-foreground/5 bg-card overflow-hidden">
+                        <button
+                          onClick={() => setOpenFaqId(isOpen ? null : id)}
+                          className="w-full px-5 py-4 flex items-center justify-between gap-4 text-left hover:bg-card/70 transition-colors"
+                        >
+                          <span className="text-sm md:text-base font-semibold text-foreground">{item.q}</span>
+                          <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        {isOpen && (
+                          <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed">{item.a}</div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

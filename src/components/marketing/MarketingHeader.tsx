@@ -7,11 +7,11 @@ import { Button } from '@/components/ui/button';
 import boosterLogo from '@/assets/creafacile-logo.png';
 
 const links = [
+  { label: 'Accueil', to: '/' },
   { label: 'Fonctionnalités', to: '/fonctionnalites' },
   { label: 'Cas d\'usage', to: '/cas-dusage' },
   { label: 'Tarifs', to: '/pricing' },
   { label: 'À propos', to: '/a-propos' },
-  { label: 'FAQ', to: '/faq' },
   { label: 'Contact', to: '/contact' },
 ];
 
