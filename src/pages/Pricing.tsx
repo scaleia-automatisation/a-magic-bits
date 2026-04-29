@@ -2,7 +2,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { STRIPE_PLANS, PlanKey } from '@/lib/stripe-plans';
-import { Check, Sparkles } from 'lucide-react';
+import { Check, Sparkles, Zap, Shield, Clock, Globe, Heart, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useState } from 'react';
@@ -155,6 +155,43 @@ const Pricing = () => {
           </div>
         )}
       </div>
+
+      {/* POURQUOI NOUS CHOISIR */}
+      <section className="py-12 md:py-16 border-t border-foreground/5 bg-card/30">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-pill border border-foreground/10 bg-card/50 backdrop-blur mb-6">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span className="text-xs font-medium">Pourquoi Créafacile</span>
+            </div>
+            <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
+              Pourquoi <span className="gradient-text">nous choisir ?</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              La solution pensée pour les TPE, PME, freelances, coachs et formateurs qui veulent du résultat sans agence.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              { icon: Zap, title: '3 clics, 3 minutes', desc: 'Une publication complète prête à publier en moins de temps qu\'un café.' },
+              { icon: TrendingUp, title: '10x moins cher qu\'une agence', desc: 'À partir de 0€/mois. Le prix d\'un café pour des contenus dignes d\'un studio.' },
+              { icon: Heart, title: 'Pensé pour les non-experts', desc: 'Aucune compétence marketing requise. L\'IA fait le travail à votre place.' },
+              { icon: Globe, title: 'Adapté à votre métier', desc: 'L\'IA connaît votre secteur et adapte le ton, le style et les exemples.' },
+              { icon: Shield, title: 'Vos données protégées', desc: 'Hébergement européen, conforme RGPD. Vous gardez la propriété de vos contenus.' },
+              { icon: Clock, title: 'Sans engagement', desc: 'Annulation en un clic. Crédits reportés. Essai gratuit, sans carte bancaire.' },
+            ].map((f) => (
+              <div key={f.title} className="p-6 rounded-card border border-foreground/5 bg-card hover:border-primary/30 transition-colors">
+                <div className="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center mb-4">
+                  <f.icon className="w-5 h-5 text-primary-foreground" />
+                </div>
+                <h3 className="text-base font-semibold text-foreground mb-2">{f.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </MarketingLayout>
   );
 };
