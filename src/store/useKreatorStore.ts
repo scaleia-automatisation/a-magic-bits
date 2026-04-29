@@ -114,6 +114,19 @@ interface KreatorOptions {
   ton: string;
   objective: string;
   visual_style: string;
+  // Logo (image / carousel)
+  logo_enabled: boolean;
+  logo_url: string;
+  logo_position: 'bottom-center' | 'bottom-right';
+  // Text overlay positioning + font (image / carousel / video)
+  text_position:
+    | 'top-center-1'
+    | 'top-center-2'
+    | 'bottom-center-1'
+    | 'bottom-center-2';
+  text_font: string;
+  // Video-only: text color
+  text_color: string;
 }
 
 interface KreatorState {
@@ -218,6 +231,12 @@ const initialState = {
     ton: '',
     objective: '',
     visual_style: '',
+    logo_enabled: false,
+    logo_url: '',
+    logo_position: 'bottom-center' as const,
+    text_position: 'bottom-center-1' as const,
+    text_font: 'Montserrat',
+    text_color: '#FFFFFF',
   },
   showAdvanced: false,
   prompt_fr: '',
