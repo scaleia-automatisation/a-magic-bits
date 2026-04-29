@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Sparkles, Zap, Image as ImageIcon, Video, MessageSquare, Check, Play, Clock, TrendingUp, Shield, Globe } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowRight, Sparkles, Zap, Image as ImageIcon, Video, MessageSquare, Check, Play, Clock, TrendingUp, Shield, Globe, ChevronDown } from 'lucide-react';
 import MarketingLayout from '@/components/marketing/MarketingLayout';
 import PartnershipForm from '@/components/marketing/PartnershipForm';
 import facebookLogo from '@/assets/facebook-logo.png';
@@ -10,6 +11,59 @@ import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 
 const Landing = () => {
   const navigate = useNavigate();
+  const [openFaqId, setOpenFaqId] = useState<string | null>('Démarrage-0');
+
+  useEffect(() => {
+    if (window.location.hash === '#faq') {
+      setTimeout(() => {
+        document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, []);
+
+  const faqSections = [
+    {
+      title: 'Démarrage',
+      qa: [
+        { q: 'Comment commencer ?', a: 'Inscrivez-vous gratuitement avec votre compte Google. Vous recevez 5 crédits offerts pour tester immédiatement la plateforme, sans carte bancaire.' },
+        { q: 'Faut-il être un expert en marketing ?', a: 'Non. Créafacile est pensé pour les entrepreneurs et indépendants sans compétence technique. En 3 clics, vous obtenez un contenu prêt à publier.' },
+        { q: 'Combien de temps pour générer un post ?', a: 'Environ 30 secondes pour une image, 1 à 3 minutes pour une vidéo selon le modèle choisi.' },
+      ],
+    },
+    {
+      title: 'Crédits & tarifs',
+      qa: [
+        { q: 'Comment fonctionnent les crédits ?', a: 'Chaque génération consomme un nombre de crédits (image = 1 crédit, vidéo = 3 à 5 selon le modèle). Vos crédits se renouvellent chaque mois selon votre plan.' },
+        { q: 'Les crédits non utilisés sont-ils reportés ?', a: 'Oui, vos crédits non consommés sont reportés sur le mois suivant tant que votre abonnement est actif.' },
+        { q: 'Puis-je annuler à tout moment ?', a: 'Oui, sans engagement. Vous pouvez résilier en un clic depuis votre espace, et conservez l\'accès jusqu\'à la fin de la période payée.' },
+        { q: 'Y a-t-il un essai gratuit ?', a: 'Oui, 5 crédits sont offerts à l\'inscription, sans carte bancaire requise.' },
+      ],
+    },
+    {
+      title: 'Fonctionnalités',
+      qa: [
+        { q: 'Quels formats puis-je générer ?', a: 'Images carrées (1:1), paysage (16:9), portrait (9:16), carrousels multi-slides et vidéos courtes adaptées à chaque réseau social.' },
+        { q: 'L\'IA crée-t-elle aussi les textes ?', a: 'Oui, pour chaque génération vous obtenez 4 versions de caption optimisées (Facebook, Instagram, TikTok, LinkedIn) avec hashtags et CTA séparé.' },
+        { q: 'Puis-je publier directement sur mes réseaux ?', a: 'Oui, vous pouvez connecter Facebook et Instagram pour publier en un clic depuis Créafacile.' },
+        { q: 'Puis-je importer mes propres photos ?', a: 'Oui, jusqu\'à 3 photos de référence par génération pour guider l\'IA (style, produit, lieu).' },
+      ],
+    },
+    {
+      title: 'Sécurité & données',
+      qa: [
+        { q: 'Mes données sont-elles protégées ?', a: 'Oui. Vos données sont hébergées en Europe, conformes RGPD. Vous pouvez les supprimer à tout moment depuis votre espace.' },
+        { q: 'Qui possède les contenus générés ?', a: 'Vous. Tous les contenus que vous générez vous appartiennent et peuvent être utilisés librement, y compris à des fins commerciales.' },
+        { q: 'Comment supprimer mon compte ?', a: 'Depuis votre tableau de bord, ou via la page dédiée Suppression des données accessible en bas de chaque page.' },
+      ],
+    },
+    {
+      title: 'Support',
+      qa: [
+        { q: 'Comment contacter le support ?', a: 'Par email à bonjour@creafacile.com ou via le formulaire de la page Contact. Nous répondons sous 24h ouvrées.' },
+        { q: 'Proposez-vous une formation ?', a: 'L\'application est conçue pour être prise en main sans formation. Une documentation et des exemples sont disponibles dans votre espace.' },
+      ],
+    },
+  ];
 
   return (
     <MarketingLayout
