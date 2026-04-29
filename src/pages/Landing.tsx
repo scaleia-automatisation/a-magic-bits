@@ -302,6 +302,45 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section id="faq" className="py-20 md:py-28 scroll-mt-20">
+        <div className="max-w-3xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight mb-4">
+              Questions <span className="gradient-text">fréquentes</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">Tout ce que vous devez savoir avant de vous lancer.</p>
+          </div>
+          <div className="space-y-10">
+            {faqSections.map((s) => (
+              <div key={s.title}>
+                <h3 className="text-xl font-bold text-foreground mb-4">{s.title}</h3>
+                <div className="space-y-2">
+                  {s.qa.map((item, i) => {
+                    const id = `${s.title}-${i}`;
+                    const isOpen = openFaqId === id;
+                    return (
+                      <div key={id} className="rounded-card border border-foreground/5 bg-card overflow-hidden">
+                        <button
+                          onClick={() => setOpenFaqId(isOpen ? null : id)}
+                          className="w-full px-5 py-4 flex items-center justify-between gap-4 text-left hover:bg-card/70 transition-colors"
+                        >
+                          <span className="text-sm md:text-base font-semibold text-foreground">{item.q}</span>
+                          <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        {isOpen && (
+                          <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed">{item.a}</div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FINAL CTA */}
       <section className="py-20 md:py-28">
         <div className="max-w-4xl mx-auto px-4 md:px-6 text-center">
