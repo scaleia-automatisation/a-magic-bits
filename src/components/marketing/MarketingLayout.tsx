@@ -1,6 +1,7 @@
 import { ReactNode, useEffect } from 'react';
 import MarketingHeader from './MarketingHeader';
 import MarketingFooter from './MarketingFooter';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 
 interface Props {
   children: ReactNode;
@@ -27,6 +28,7 @@ const MarketingLayout = ({ children, title, description }: Props) => {
       <MarketingHeader />
       <main className="flex-1">{children}</main>
       <MarketingFooter />
+      <ScrollToTopButton />
     </div>
   );
 };

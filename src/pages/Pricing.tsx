@@ -1,12 +1,12 @@
-import boosterLogo from '@/assets/creafacile-logo.png';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { STRIPE_PLANS, PlanKey } from '@/lib/stripe-plans';
-import { Check, Sparkles, ArrowLeft } from 'lucide-react';
+import { Check, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import MarketingLayout from '@/components/marketing/MarketingLayout';
 
 const Pricing = () => {
   const { user, profile } = useAuth();
@@ -54,17 +54,11 @@ const Pricing = () => {
   const currentPlan = profile?.plan || 'free';
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-foreground/5">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <img src={boosterLogo} alt="Créafacile" className="h-8 md:h-10 cursor-pointer" onClick={() => navigate('/')} />
-        </div>
-      </header>
-
-      <main className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+    <MarketingLayout
+      title="Tarifs — Créafacile"
+      description="Choisissez le plan Créafacile adapté à votre activité. Sans engagement, annulation à tout moment."
+    >
+      <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
         <div className="text-center mb-8 md:mb-12">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mb-3">
             Choisissez votre plan
@@ -160,8 +154,8 @@ const Pricing = () => {
             </Button>
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </MarketingLayout>
   );
 };
 
