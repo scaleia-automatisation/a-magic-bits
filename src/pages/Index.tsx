@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { Coins, LayoutDashboard, LogOut, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
+import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 
 const Index = () => {
   const { user, profile, signOut } = useAuth();
@@ -77,10 +78,12 @@ const Index = () => {
 
       {/* Main */}
       <main className="max-w-4xl mx-auto px-4 py-6 md:py-10">
-        <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-center mb-4 md:mb-6 leading-tight">
-          <span className="gradient-text">L'outil qui crée du contenu</span>
+        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-center mb-4 md:mb-6 leading-[1.05]">
+          <span className="text-foreground">Crée et publie du contenu</span>
           <br />
-          <span className="gradient-text">qui convertit en 3 clics.</span>
+          <span className="gradient-text italic">engageant en 3 clics,</span>
+          <br />
+          <span className="gradient-text italic">même sans idée</span>
         </h1>
 
         {/* Mode toggle below title */}
@@ -98,6 +101,9 @@ const Index = () => {
           <GenerationStep />
         </div>
       </main>
+
+      <TestimonialsCarousel />
+
 
       <footer className="border-t border-foreground/5 py-8 mt-20">
         <div className="max-w-4xl mx-auto px-4">
