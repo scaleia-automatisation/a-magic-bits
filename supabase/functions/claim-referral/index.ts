@@ -82,6 +82,13 @@ serve(async (req) => {
       p_action: "referral_signup",
     });
 
+    // +5 crédits au filleul (bonus de bienvenue parrainage)
+    await supabase.rpc("add_credits", {
+      p_user_id: user.id,
+      p_amount: 5,
+      p_action: "referral_welcome",
+    });
+
     // Marque l'invitation si elle existe
     if (user.email) {
       await supabase.from("referral_invitations")
