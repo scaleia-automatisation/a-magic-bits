@@ -11,6 +11,7 @@ const links = [
   { label: 'Fonctionnalités', to: '/fonctionnalites' },
   { label: 'Cas d\'usage', to: '/cas-dusage' },
   { label: 'Tarifs', to: '/pricing' },
+  { label: 'Partenaires', to: '/partenaires' },
   { label: 'À propos', to: '/a-propos' },
   { label: 'Contact', to: '/contact' },
 ];
