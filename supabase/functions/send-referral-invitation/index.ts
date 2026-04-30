@@ -31,7 +31,7 @@ serve(async (req) => {
     const emailsRaw: string[] = Array.isArray(body?.emails) ? body.emails : [];
     const emails = Array.from(new Set(
       emailsRaw.map((e) => String(e).trim().toLowerCase()).filter((e) => EMAIL_RE.test(e))
-    )).slice(0, 20);
+    )).slice(0, 10);
 
     if (emails.length === 0) {
       return new Response(JSON.stringify({ error: "No valid emails" }), {

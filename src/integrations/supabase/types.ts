@@ -386,6 +386,10 @@ export type Database = {
         Args: { p_action: string; p_amount: number; p_user_id: string }
         Returns: undefined
       }
+      build_referral_code_from_name: {
+        Args: { p_name: string }
+        Returns: string
+      }
       deduct_credits: {
         Args: { p_action: string; p_amount: number; p_user_id: string }
         Returns: boolean
@@ -423,6 +427,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      unaccent: { Args: { "": string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

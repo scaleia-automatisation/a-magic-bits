@@ -22,7 +22,7 @@ import TermsOfUse from "./pages/TermsOfUse.tsx";
 import DataDeletion from "./pages/DataDeletion.tsx";
 import DataDeletionReminder from "./pages/DataDeletionReminder.tsx";
 import DataDeletionConfirmation from "./pages/DataDeletionConfirmation.tsx";
-import Partnership from "./pages/Partnership.tsx";
+import Partners from "./pages/Partners.tsx";
 import ReferralPage from "./pages/Referral.tsx";
 
 const queryClient = new QueryClient();
@@ -52,7 +52,8 @@ const App = () => (
               <Route path="/data-deletion" element={<DataDeletion />} />
               <Route path="/data-deletion-reminder" element={<DataDeletionReminder />} />
               <Route path="/data-deletion-confirmation" element={<DataDeletionConfirmation />} />
-              <Route path="/partenariat" element={<Partnership />} />
+              <Route path="/partenaires" element={<Partners />} />
+              <Route path="/partenariat" element={<Partners />} />
               <Route path="/parrainage" element={<ReferralPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

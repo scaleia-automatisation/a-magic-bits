@@ -35,6 +35,15 @@ const ReferralInvitationEmail = ({
           <Text style={text}>
             Inscrivez-vous gratuitement et recevez des crédits offerts pour tester l'app dès maintenant.
           </Text>
+          {referralCode && (
+            <Section style={codeBox}>
+              <Text style={codeLabel}>Votre code de parrainage</Text>
+              <Text style={codeValue}>{referralCode}</Text>
+              <Text style={codeHint}>
+                Saisissez ce code à l'inscription pour recevoir <strong>5 crédits offerts</strong>.
+              </Text>
+            </Section>
+          )}
           <Section style={{ textAlign: 'center', margin: '32px 0' }}>
             <Button href={url} style={button}>
               Créer mon compte gratuit
@@ -79,3 +88,14 @@ const button = {
   fontWeight: 'bold',
   textDecoration: 'none',
 }
+const codeBox = {
+  backgroundColor: '#f9fafb',
+  border: '1px solid #e5e7eb',
+  borderRadius: '12px',
+  padding: '20px',
+  textAlign: 'center' as const,
+  margin: '24px 0',
+}
+const codeLabel = { fontSize: '12px', color: '#6b7280', margin: '0 0 8px', textTransform: 'uppercase' as const, letterSpacing: '0.05em' }
+const codeValue = { fontSize: '28px', fontWeight: 'bold' as const, color: '#000000', margin: '0 0 8px', letterSpacing: '0.1em', fontFamily: 'monospace' }
+const codeHint = { fontSize: '13px', color: '#374151', margin: '0' }
