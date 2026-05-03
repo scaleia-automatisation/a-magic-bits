@@ -143,6 +143,7 @@ const GenerationStep = () => {
         result_url: contentUrl,
         credits_used: creditsNeeded,
         status: 'done',
+        captions: captionResult ?? null,
       });
 
       setResultUrl(contentUrl);
