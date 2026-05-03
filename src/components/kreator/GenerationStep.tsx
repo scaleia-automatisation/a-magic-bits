@@ -133,7 +133,7 @@ const GenerationStep = () => {
         return;
       }
 
-      await supabase.from('generations').insert({
+      await supabase.from('generations').insert([{
         user_id: user.id,
         type,
         ai_model,
@@ -143,8 +143,8 @@ const GenerationStep = () => {
         result_url: contentUrl,
         credits_used: creditsNeeded,
         status: 'done',
-        captions: captionResult ?? null,
-      });
+        captions: (captionResult ?? null) as any,
+      }]);
 
       setResultUrl(contentUrl);
       setCreditsUsed(creditsNeeded);
