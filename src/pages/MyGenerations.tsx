@@ -87,7 +87,7 @@ const MyGenerations = () => {
     }
   };
 
-  const openShare = (platform: 'facebook' | 'instagram' | 'tiktok' | 'linkedin' | 'x' | 'whatsapp', url: string) => {
+  const openShare = (platform: 'facebook' | 'instagram' | 'tiktok' | 'linkedin', url: string) => {
     const enc = encodeURIComponent(url);
     let target = '';
     switch (platform) {
@@ -96,12 +96,6 @@ const MyGenerations = () => {
         break;
       case 'linkedin':
         target = `https://www.linkedin.com/sharing/share-offsite/?url=${enc}`;
-        break;
-      case 'x':
-        target = `https://twitter.com/intent/tweet?url=${enc}`;
-        break;
-      case 'whatsapp':
-        target = `https://api.whatsapp.com/send?text=${enc}`;
         break;
       case 'instagram':
       case 'tiktok':
@@ -259,7 +253,7 @@ const MyGenerations = () => {
               </Button>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <Button variant="outline" size="sm" className="flex flex-col h-auto py-3 gap-1" onClick={() => openShare('facebook', shareGen.result_url!)}>
                 <Facebook className="w-5 h-5" />
                 <span className="text-xs">Facebook</span>
@@ -275,14 +269,6 @@ const MyGenerations = () => {
               <Button variant="outline" size="sm" className="flex flex-col h-auto py-3 gap-1" onClick={() => openShare('linkedin', shareGen.result_url!)}>
                 <Linkedin className="w-5 h-5" />
                 <span className="text-xs">LinkedIn</span>
-              </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-auto py-3 gap-1" onClick={() => openShare('x', shareGen.result_url!)}>
-                <X className="w-5 h-5" />
-                <span className="text-xs">X</span>
-              </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-auto py-3 gap-1" onClick={() => openShare('whatsapp', shareGen.result_url!)}>
-                <Share2 className="w-5 h-5" />
-                <span className="text-xs">WhatsApp</span>
               </Button>
             </div>
           </div>
