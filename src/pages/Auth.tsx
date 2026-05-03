@@ -1,18 +1,22 @@
-import { lovable } from '@/integrations/lovable';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { lovable } from '@/integrations/lovable';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 const PRODUCTION_AUTH_ORIGIN = 'https://www.creafacile.com';
 
-const getGoogleRedirectUri = () => {
+const getRedirectOrigin = () => {
   const { hostname, origin } = window.location;
-
   if (hostname.endsWith('lovable.app') || hostname === 'localhost' || hostname === '127.0.0.1') {
     return PRODUCTION_AUTH_ORIGIN;
   }
-
   return origin;
 };
 
@@ -21,47 +25,95 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Capture le code parrain depuis l'URL ?ref=XXXX et le persiste
+  const [tab, setTab] = useState<'signin' | 'signup' | 'forgot'>('signin');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
     const ref = searchParams.get('ref');
-    if (ref) {
-      localStorage.setItem('pending_referral_code', ref.toUpperCase());
-    }
+    if (ref) localStorage.setItem('pending_referral_code', ref.toUpperCase());
+    const mode = searchParams.get('mode');
+    if (mode === 'signup' || mode === 'signin' || mode === 'forgot') setTab(mode);
   }, [searchParams]);
 
   useEffect(() => {
-    if (user && !loading) {
-      navigate('/app');
-    }
+    if (user && !loading) navigate('/app');
   }, [user, loading, navigate]);
 
-  const handleGoogleSignIn = async () => {
-    await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: getGoogleRedirectUri(),
+  const handleGoogle = async () => {
+    await lovable.auth.signInWithOAuth('google', { redirect_uri: getRedirectOrigin() });
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setSubmitting(false);
+    if (error) {
+      toast.error(error.message === 'Invalid login credentials' ? 'Email ou mot de passe incorrect.' : error.message);
+      return;
+    }
+    toast.success('Connexion réussie');
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password.length < 8) {
+      toast.error('Le mot de passe doit contenir au moins 8 caractères.');
+      return;
+    }
+    setSubmitting(true);
+    const referralCode = localStorage.getItem('pending_referral_code') || undefined;
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${getRedirectOrigin()}/app`,
+        data: {
+          full_name: fullName,
+          name: fullName,
+          ...(referralCode ? { referral_code: referralCode } : {}),
+        },
+      },
     });
+    setSubmitting(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success('Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse.');
+    setTab('signin');
+  };
+
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${getRedirectOrigin()}/reset-password`,
+    });
+    setSubmitting(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success('Email envoyé ! Consultez votre boîte mail pour réinitialiser votre mot de passe.');
+    setTab('signin');
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-black gradient-text mb-2">Créafacile</h1>
-          <p className="text-muted-foreground">
-            Générez du contenu marketing qui convertit
-          </p>
+          <p className="text-muted-foreground">Générez du contenu marketing qui convertit</p>
         </div>
 
         <div className="card-surface p-8 border border-foreground/10 rounded-card">
-          <h2 className="text-lg font-bold text-foreground text-center mb-6">
-            Commencer gratuitement
-          </h2>
-          <p className="text-sm text-muted-foreground text-center mb-6">
-            5 crédits offerts à l'inscription
-          </p>
-
           <Button
-            onClick={handleGoogleSignIn}
-            className="w-full py-6 bg-foreground text-background hover:bg-foreground/90 font-semibold rounded-btn flex items-center justify-center gap-3"
+            onClick={handleGoogle}
+            className="w-full py-6 bg-foreground text-background hover:bg-foreground/90 font-semibold rounded-btn flex items-center justify-center gap-3 mb-6"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -72,7 +124,90 @@ const AuthPage = () => {
             Continuer avec Google
           </Button>
 
-          <p className="text-xs text-muted-foreground text-center mt-4">
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-foreground/10" /></div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">ou avec votre email</span>
+            </div>
+          </div>
+
+          <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="signin">Connexion</TabsTrigger>
+              <TabsTrigger value="signup">Inscription</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="signin">
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signin-email">Email</Label>
+                  <Input id="signin-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vous@exemple.com" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signin-password">Mot de passe</Label>
+                  <Input id="signin-password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+                </div>
+                <Button type="submit" disabled={submitting} className="w-full gradient-bg text-primary-foreground font-semibold rounded-btn">
+                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Se connecter
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setTab('forgot')}
+                  className="w-full text-center text-xs text-muted-foreground hover:text-foreground"
+                >
+                  Mot de passe oublié ?
+                </button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="signup">
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-name">Nom complet</Label>
+                  <Input id="signup-name" type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Jean Dupont" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input id="signup-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vous@exemple.com" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password">Mot de passe</Label>
+                  <Input id="signup-password" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="8 caractères minimum" />
+                </div>
+                <Button type="submit" disabled={submitting} className="w-full gradient-bg text-primary-foreground font-semibold rounded-btn">
+                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Créer mon compte
+                </Button>
+                <p className="text-xs text-muted-foreground text-center">5 crédits offerts à l'inscription</p>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="forgot">
+              <form onSubmit={handleForgot} className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Entrez votre email, nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                </p>
+                <div className="space-y-2">
+                  <Label htmlFor="forgot-email">Email</Label>
+                  <Input id="forgot-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vous@exemple.com" />
+                </div>
+                <Button type="submit" disabled={submitting} className="w-full gradient-bg text-primary-foreground font-semibold rounded-btn">
+                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Envoyer le lien
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setTab('signin')}
+                  className="w-full text-center text-xs text-muted-foreground hover:text-foreground"
+                >
+                  Retour à la connexion
+                </button>
+              </form>
+            </TabsContent>
+          </Tabs>
+
+          <p className="text-xs text-muted-foreground text-center mt-6">
             En continuant, vous acceptez nos conditions d'utilisation
           </p>
         </div>
