@@ -121,11 +121,18 @@ const Landing = () => {
           {/* Plateformes supportées */}
           <div className="mt-16">
             <p className="text-xs uppercase tracking-wider text-muted-foreground mb-5">Compatible avec</p>
-            <div className="flex items-center justify-center gap-8 md:gap-12 opacity-70">
-              <img src={facebookLogo} alt="Facebook" className="h-7 md:h-8" />
-              <img src={instagramLogo} alt="Instagram" className="h-7 md:h-8" />
-              <img src={tiktokLogo} alt="TikTok" className="h-7 md:h-8" />
-              <img src={linkedinLogo} alt="LinkedIn" className="h-7 md:h-8" />
+            <div className="flex items-start justify-center gap-10 md:gap-16">
+              {[
+                { src: facebookLogo, name: 'Facebook' },
+                { src: instagramLogo, name: 'Instagram' },
+                { src: tiktokLogo, name: 'TikTok' },
+                { src: linkedinLogo, name: 'LinkedIn' },
+              ].map((p) => (
+                <div key={p.name} className="flex flex-col items-center gap-2">
+                  <img src={p.src} alt={p.name} className="h-12 md:h-16 w-auto" />
+                  <span className="text-xs md:text-sm font-medium text-foreground">{p.name}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
