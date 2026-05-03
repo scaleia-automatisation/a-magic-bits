@@ -13,6 +13,7 @@ import UseCases from "./pages/UseCases.tsx";
 import Contact from "./pages/Contact.tsx";
 import About from "./pages/About.tsx";
 import AuthPage from "./pages/Auth.tsx";
+import ResetPasswordPage from "./pages/ResetPassword.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import MyGenerations from "./pages/MyGenerations.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/a-propos" element={<About />} />
               <Route path="/auth" element={<AuthPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/generations" element={<MyGenerations />} />
               <Route path="/pricing" element={<Pricing />} />
