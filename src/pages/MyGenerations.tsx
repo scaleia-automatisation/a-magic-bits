@@ -2,9 +2,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Image, Layers, Video, Trash2, Eye, ArrowLeft, X, Share2, Download, Copy, Facebook, Instagram, Linkedin } from 'lucide-react';
+import { Image, Layers, Video, Trash2, ArrowLeft, X, Download, Copy, Facebook, Instagram, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+
+type PlatformKey = 'facebook' | 'instagram' | 'tiktok' | 'linkedin';
+
+interface CaptionBlock {
+  hook?: string;
+  description?: string;
+  cta?: string;
+  hashtags?: string;
+}
 
 interface Generation {
   id: string;
@@ -15,16 +24,16 @@ interface Generation {
   created_at: string;
   result_url: string | null;
   prompt_fr_final: string | null;
+  captions?: Partial<Record<PlatformKey, CaptionBlock>> | null;
 }
 
 const MyGenerations = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [generations, setGenerations] = useState<Generation[]>([]);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewType, setPreviewType] = useState<string>('image');
   const [loadingData, setLoadingData] = useState(true);
-  const [shareGen, setShareGen] = useState<Generation | null>(null);
+  const [detailGen, setDetailGen] = useState<Generation | null>(null);
+  const [activePlatform, setActivePlatform] = useState<PlatformKey>('facebook');
 
   useEffect(() => {
     if (!loading && !user) navigate('/auth');
@@ -52,6 +61,7 @@ const MyGenerations = () => {
       return;
     }
     setGenerations((prev) => prev.filter((g) => g.id !== id));
+    if (detailGen?.id === id) setDetailGen(null);
     toast.success('Génération supprimée');
   };
 
@@ -108,6 +118,39 @@ const MyGenerations = () => {
     window.open(target, '_blank', 'noopener,noreferrer');
   };
 
+  const buildFullCaption = (c?: CaptionBlock | null) => {
+    if (!c) return '';
+    return [c.hook, c.description, c.cta, c.hashtags].filter(Boolean).join('\n\n');
+  };
+
+  const handleCopyCaption = async (c?: CaptionBlock | null) => {
+    const text = buildFullCaption(c);
+    if (!text) {
+      toast.error('Aucune caption disponible');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success('Caption copiée — collez-la dans votre publication');
+    } catch {
+      toast.error('Copie impossible');
+    }
+  };
+
+  const openDetail = (gen: Generation) => {
+    setDetailGen(gen);
+    const firstAvailable = (['facebook', 'instagram', 'tiktok', 'linkedin'] as PlatformKey[])
+      .find(p => gen.captions?.[p]) || 'facebook';
+    setActivePlatform(firstAvailable);
+  };
+
+  const platforms: { key: PlatformKey; label: string; icon: JSX.Element }[] = [
+    { key: 'facebook', label: 'Facebook', icon: <Facebook className="w-4 h-4" /> },
+    { key: 'instagram', label: 'Instagram', icon: <Instagram className="w-4 h-4" /> },
+    { key: 'tiktok', label: 'TikTok', icon: <Video className="w-4 h-4" /> },
+    { key: 'linkedin', label: 'LinkedIn', icon: <Linkedin className="w-4 h-4" /> },
+  ];
+
   if (loading || loadingData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -139,7 +182,11 @@ const MyGenerations = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {generations.map((gen) => (
-              <div key={gen.id} className="card-surface border border-foreground/10 rounded-card overflow-hidden group">
+              <div
+                key={gen.id}
+                className="card-surface border border-foreground/10 rounded-card overflow-hidden group cursor-pointer hover:border-primary/40 transition"
+                onClick={() => openDetail(gen)}
+              >
                 {gen.result_url ? (
                   <div className="relative aspect-square bg-muted">
                     {gen.type === 'video' ? (
@@ -147,28 +194,12 @@ const MyGenerations = () => {
                     ) : (
                       <img src={gen.result_url} alt="" className="w-full h-full object-cover" />
                     )}
-                    <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="bg-card/80 text-foreground hover:bg-card"
-                        onClick={() => { setPreviewUrl(gen.result_url); setPreviewType(gen.type); }}
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="bg-primary/20 text-primary hover:bg-primary/30"
-                        onClick={() => setShareGen(gen)}
-                      >
-                        <Share2 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="bg-destructive/20 text-destructive hover:bg-destructive/30"
-                        onClick={() => handleDelete(gen.id)}
+                        className="bg-destructive/20 text-destructive hover:bg-destructive/30 h-8 w-8 p-0"
+                        onClick={(e) => { e.stopPropagation(); handleDelete(gen.id); }}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -200,76 +231,146 @@ const MyGenerations = () => {
         )}
       </main>
 
-      {/* Preview modal */}
-      {previewUrl && (
-        <div className="fixed inset-0 z-50 bg-background/80 flex items-center justify-center p-4" onClick={() => setPreviewUrl(null)}>
-          <div className="relative max-w-3xl max-h-[90vh] w-full" onClick={(e) => e.stopPropagation()}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute -top-10 right-0 text-foreground"
-              onClick={() => setPreviewUrl(null)}
-            >
-              <X className="w-5 h-5" />
-            </Button>
-            {previewType === 'video' ? (
-              <video src={previewUrl} controls autoPlay loop playsInline className="w-full rounded-card" style={{ maxHeight: '80vh' }} />
-            ) : (
-              <img src={previewUrl} alt="Aperçu" className="w-full h-auto rounded-card" />
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Share / Republish modal */}
-      {shareGen && shareGen.result_url && (
-        <div className="fixed inset-0 z-50 bg-background/80 flex items-center justify-center p-4" onClick={() => setShareGen(null)}>
-          <div className="relative w-full max-w-md card-surface border border-foreground/10 rounded-card p-5" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold gradient-text">Republier</h3>
-              <Button variant="ghost" size="sm" onClick={() => setShareGen(null)}>
+      {/* Detail modal: media + captions par réseau + publier/télécharger */}
+      {detailGen && (
+        <div className="fixed inset-0 z-50 bg-background/90 flex items-center justify-center p-2 md:p-4 overflow-y-auto" onClick={() => setDetailGen(null)}>
+          <div
+            className="relative w-full max-w-5xl my-auto card-surface border border-foreground/10 rounded-card overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-4 border-b border-foreground/10">
+              <h3 className="text-lg font-bold gradient-text capitalize">
+                {detailGen.type} · {new Date(detailGen.created_at).toLocaleDateString('fr-FR')}
+              </h3>
+              <Button variant="ghost" size="sm" onClick={() => setDetailGen(null)}>
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground mb-4">
-              Téléchargez le média puis publiez-le sur le réseau de votre choix. Pour Facebook / LinkedIn / X / WhatsApp, vous pouvez partager directement le lien.
-            </p>
 
-            <div className="flex gap-2 mb-4">
-              <Button
-                size="sm"
-                className="flex-1 gradient-bg border-0 text-primary-foreground"
-                onClick={() => handleDownload(shareGen.result_url!, shareGen.type)}
-              >
-                <Download className="w-4 h-4 mr-2" /> Télécharger
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1"
-                onClick={() => handleCopyLink(shareGen.result_url!)}
-              >
-                <Copy className="w-4 h-4 mr-2" /> Copier le lien
-              </Button>
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-4 max-h-[80vh] overflow-y-auto">
+              {/* Média */}
+              <div className="p-4 bg-muted/30 flex items-center justify-center">
+                {detailGen.result_url ? (
+                  detailGen.type === 'video' ? (
+                    <video src={detailGen.result_url} controls autoPlay loop playsInline className="w-full rounded-card" style={{ maxHeight: '70vh' }} />
+                  ) : (
+                    <img src={detailGen.result_url} alt="Aperçu" className="w-full h-auto rounded-card" style={{ maxHeight: '70vh', objectFit: 'contain' }} />
+                  )
+                ) : (
+                  <div className="text-muted-foreground">Aucun média</div>
+                )}
+              </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" size="sm" className="flex flex-col h-auto py-3 gap-1" onClick={() => openShare('facebook', shareGen.result_url!)}>
-                <Facebook className="w-5 h-5" />
-                <span className="text-xs">Facebook</span>
-              </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-auto py-3 gap-1" onClick={() => openShare('instagram', shareGen.result_url!)}>
-                <Instagram className="w-5 h-5" />
-                <span className="text-xs">Instagram</span>
-              </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-auto py-3 gap-1" onClick={() => openShare('tiktok', shareGen.result_url!)}>
-                <Video className="w-5 h-5" />
-                <span className="text-xs">TikTok</span>
-              </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-auto py-3 gap-1" onClick={() => openShare('linkedin', shareGen.result_url!)}>
-                <Linkedin className="w-5 h-5" />
-                <span className="text-xs">LinkedIn</span>
-              </Button>
+              {/* Captions + actions */}
+              <div className="p-4 space-y-4">
+                {/* Onglets réseaux */}
+                <div className="flex gap-1 flex-wrap">
+                  {platforms.map(p => {
+                    const has = !!detailGen.captions?.[p.key];
+                    const active = activePlatform === p.key;
+                    return (
+                      <button
+                        key={p.key}
+                        onClick={() => setActivePlatform(p.key)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-pill text-xs font-medium transition ${
+                          active
+                            ? 'gradient-bg text-primary-foreground'
+                            : 'bg-muted text-muted-foreground hover:bg-muted/70'
+                        } ${!has ? 'opacity-50' : ''}`}
+                      >
+                        {p.icon}
+                        {p.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Caption du réseau actif */}
+                {detailGen.captions?.[activePlatform] ? (
+                  <div className="space-y-3">
+                    {detailGen.captions[activePlatform]?.hook && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Hook</div>
+                        <p className="text-sm text-foreground font-semibold">{detailGen.captions[activePlatform]?.hook}</p>
+                      </div>
+                    )}
+                    {detailGen.captions[activePlatform]?.description && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Description</div>
+                        <p className="text-sm text-foreground whitespace-pre-wrap">{detailGen.captions[activePlatform]?.description}</p>
+                      </div>
+                    )}
+                    {detailGen.captions[activePlatform]?.cta && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Call to action</div>
+                        <p className="text-sm text-primary font-semibold">{detailGen.captions[activePlatform]?.cta}</p>
+                      </div>
+                    )}
+                    {detailGen.captions[activePlatform]?.hashtags && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Hashtags</div>
+                        <p className="text-sm text-muted-foreground">{detailGen.captions[activePlatform]?.hashtags}</p>
+                      </div>
+                    )}
+
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => handleCopyCaption(detailGen.captions?.[activePlatform])}
+                    >
+                      <Copy className="w-4 h-4 mr-2" /> Copier la caption {platforms.find(p => p.key === activePlatform)?.label}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground italic py-6 text-center border border-dashed border-foreground/10 rounded-card">
+                    Aucune caption enregistrée pour ce réseau.
+                  </div>
+                )}
+
+                {/* Actions média + publication */}
+                <div className="pt-3 border-t border-foreground/10 space-y-2">
+                  {detailGen.result_url && (
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        className="flex-1 gradient-bg border-0 text-primary-foreground"
+                        onClick={() => handleDownload(detailGen.result_url!, detailGen.type)}
+                      >
+                        <Download className="w-4 h-4 mr-2" /> Télécharger
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1"
+                        onClick={() => handleCopyLink(detailGen.result_url!)}
+                      >
+                        <Copy className="w-4 h-4 mr-2" /> Copier le lien
+                      </Button>
+                    </div>
+                  )}
+
+                  {detailGen.result_url && (
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Publier sur</div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {platforms.map(p => (
+                          <Button
+                            key={p.key}
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center justify-center gap-2"
+                            onClick={() => openShare(p.key, detailGen.result_url!)}
+                          >
+                            {p.icon}
+                            <span className="text-xs">{p.label}</span>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
