@@ -134,6 +134,7 @@ export type Database = {
       generations: {
         Row: {
           ai_model: string
+          captions: Json | null
           created_at: string
           credits_used: number
           format: string | null
@@ -148,6 +149,7 @@ export type Database = {
         }
         Insert: {
           ai_model: string
+          captions?: Json | null
           created_at?: string
           credits_used?: number
           format?: string | null
@@ -162,6 +164,7 @@ export type Database = {
         }
         Update: {
           ai_model?: string
+          captions?: Json | null
           created_at?: string
           credits_used?: number
           format?: string | null
