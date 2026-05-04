@@ -3,6 +3,7 @@ import { useKreatorStore } from '@/store/useKreatorStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import StepContainer from './StepContainer';
 
 const SECTORS = [
   '🛍️ E-commerce / Retail (DTC, marketplaces)',
@@ -39,8 +40,6 @@ const ActivitySectorFields = () => {
     company_activity, setCompanyActivity,
     company_sector, setCompanySector,
     market, setMarket,
-    marketing_angle, setMarketingAngle,
-    visual_style_brief, setVisualStyleBrief,
   } = useKreatorStore();
   const [sectorMode, setSectorMode] = useState<'preset' | 'custom'>('preset');
 
@@ -69,11 +68,7 @@ const ActivitySectorFields = () => {
   };
 
   return (
-    <div className="step-border bg-background p-4 sm:p-6 md:p-8">
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-2 h-2 rounded-full gradient-bg" />
-        <h2 className="text-lg font-bold text-foreground">Votre activité</h2>
-      </div>
+    <StepContainer stepNumber={3} title="Votre activité">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Activité principale *</label>
@@ -118,7 +113,7 @@ const ActivitySectorFields = () => {
             </div>
           )}
         </div>
-        <div>
+        <div className="md:col-span-2">
           <label className="text-sm font-medium text-muted-foreground mb-2 block">Marché / Localisation</label>
           <Select value={market} onValueChange={(v) => setMarket(v === '__none__' ? '' : v)}>
             <SelectTrigger className="bg-card border-foreground/10 text-foreground">
@@ -132,26 +127,8 @@ const ActivitySectorFields = () => {
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Angle marketing</label>
-          <Input
-            value={marketing_angle}
-            onChange={(e) => setMarketingAngle(e.target.value)}
-            placeholder="Ex: Gain de temps, transformation, statut, économies…"
-            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-          />
-        </div>
-        <div className="md:col-span-2">
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Style visuel</label>
-          <Input
-            value={visual_style_brief}
-            onChange={(e) => setVisualStyleBrief(e.target.value)}
-            placeholder="Ex: minimaliste premium, lifestyle authentique, cinématographique…"
-            className="bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
-          />
-        </div>
       </div>
-    </div>
+    </StepContainer>
   );
 };
 
