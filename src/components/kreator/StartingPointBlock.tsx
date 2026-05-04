@@ -276,7 +276,7 @@ const StartingPointBlock = () => {
   // ===== Vidéo : UI simplifiée =====
   if (isVideo) {
     return (
-      <div className="step-border bg-background p-4 sm:p-6 md:p-8">
+      <div id="starting-point-block" className="step-border bg-background p-4 sm:p-6 md:p-8">
         <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 rounded-full gradient-bg" />
@@ -390,7 +390,7 @@ const StartingPointBlock = () => {
   }
 
   return (
-    <div className="step-border bg-background p-4 sm:p-6 md:p-8">
+    <div id="starting-point-block" className="step-border bg-background p-4 sm:p-6 md:p-8">
       <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="w-2 h-2 rounded-full gradient-bg" />
