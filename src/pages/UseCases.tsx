@@ -3,18 +3,21 @@ import { ArrowRight } from 'lucide-react';
 import MarketingLayout from '@/components/marketing/MarketingLayout';
 
 const cases = [
-  { emoji: '🍽️', title: 'Restauration', desc: 'Plat du jour, événements, promotions, ambiance — créez 30 posts par mois en 1 heure.', examples: ['Photo plat du jour', 'Story menu hebdo', 'Reel cuisine'] },
-  { emoji: '💇', title: 'Coiffure & beauté', desc: 'Avant/après, nouveautés, conseils — fidélisez votre clientèle locale.', examples: ['Carrousel transformation', 'Conseils soin', 'Promo flash'] },
-  { emoji: '🛍️', title: 'E-commerce', desc: 'Lancements produits, soldes, témoignages — augmentez votre taux de conversion.', examples: ['Visuel produit', 'Story collection', 'Pub Reels'] },
-  { emoji: '🏠', title: 'Immobilier', desc: 'Annonces visuelles, conseils marché, témoignages clients.', examples: ['Visite virtuelle', 'Conseil acheteur', 'Bien à vendre'] },
-  { emoji: '💼', title: 'Consultants & coachs', desc: 'Posts LinkedIn experts, citations, lead magnets — positionnez-vous.', examples: ['Post expertise', 'Citation visuelle', 'Carrousel conseils'] },
-  { emoji: '🏋️', title: 'Sport & fitness', desc: 'Programmes, motivation, transformations — engagez votre communauté.', examples: ['Vidéo exercice', 'Avant/après', 'Conseil nutrition'] },
-  { emoji: '🎓', title: 'Formation & éducation', desc: 'Annonces de cours, témoignages élèves, contenus pédagogiques.', examples: ['Carrousel pédagogique', 'Témoignage', 'Annonce session'] },
-  { emoji: '🚗', title: 'Artisans & services', desc: 'Réalisations, équipe, devis express — montrez votre savoir-faire.', examples: ['Avant/après chantier', 'Présentation équipe', 'Témoignage client'] },
-  { emoji: '☕', title: 'Café & boulangerie', desc: 'Nouveautés, ambiance, promotions matinales — attirez votre quartier.', examples: ['Photo viennoiserie', 'Story ouverture', 'Promo café'] },
-  { emoji: '🎨', title: 'Artistes & créateurs', desc: 'Showcases, processus créatif, ventes — développez votre audience.', examples: ['Reveal œuvre', 'Behind the scenes', 'Annonce expo'] },
-  { emoji: '🐾', title: 'Animalerie & vétérinaires', desc: 'Conseils soins, promos accessoires, témoignages adoptions.', examples: ['Conseil animal', 'Photo client', 'Promo croquettes'] },
-  { emoji: '🌿', title: 'Bien-être & yoga', desc: 'Cours, bienfaits, citations inspirantes — créez une communauté.', examples: ['Vidéo posture', 'Citation matin', 'Annonce stage'] },
+  { emoji: '🛍️', title: 'E-commerce / Retail', desc: 'DTC, marketplaces — lancements produits, soldes, social proof pour booster vos conversions.', examples: ['Visuel produit', 'Story collection', 'Pub Reels'] },
+  { emoji: '🧃', title: 'FMCG / Grande conso', desc: 'Cosmétiques, food, boissons — créez des assets shoppable à grande échelle.', examples: ['Packshot lifestyle', 'Reel recette', 'Campagne saison'] },
+  { emoji: '👗', title: 'Mode / Fashion / Luxe', desc: 'Collections, lookbooks, drops — un univers visuel premium et cohérent.', examples: ['Lookbook', 'Drop teaser', 'Édito carrousel'] },
+  { emoji: '🧴', title: 'Beauté / Cosmétique / Skincare', desc: 'Routines, avant/après, ingrédients — engagez une communauté beauté experte.', examples: ['Routine vidéo', 'Avant/après', 'Texture macro'] },
+  { emoji: '💻', title: 'Tech / SaaS / IA / Startups', desc: 'Features, use cases, growth — du contenu B2B qui génère des leads qualifiés.', examples: ['Demo feature', 'Cas client', 'Post LinkedIn'] },
+  { emoji: '🏦', title: 'Banque / Finance / Assurance', desc: 'Fintech incluse — pédagogie, confiance et conformité au cœur du contenu.', examples: ['Carrousel pédago', 'Témoignage', 'Reel conseil'] },
+  { emoji: '🏠', title: 'Immobilier', desc: 'Promotion, agences, location courte durée — annonces et conseils marché percutants.', examples: ['Visite virtuelle', 'Bien à vendre', 'Conseil acheteur'] },
+  { emoji: '🚗', title: 'Automobile', desc: 'Constructeurs et concessionnaires — modèles, essais, offres et événements showroom.', examples: ['Reveal modèle', 'Essai client', 'Offre flash'] },
+  { emoji: '✈️', title: 'Tourisme / Voyage / Hôtellerie', desc: 'Destinations, expériences, séjours — donnez envie de réserver dès le 1er scroll.', examples: ['Reel destination', 'Story chambre', 'Carrousel itinéraire'] },
+  { emoji: '🍽️', title: 'Restauration / Food brands', desc: 'Dark kitchens, restaurants, marques food — plats, ambiance, promos saisonnières.', examples: ['Photo plat', 'Story menu', 'Reel cuisine'] },
+  { emoji: '🩺', title: 'Santé / Pharma / Cliniques', desc: 'Bien-être inclus — vulgarisation, prévention et confiance patient.', examples: ['Conseil santé', 'Témoignage', 'Carrousel pédago'] },
+  { emoji: '🎓', title: 'Éducation / Formation / Infoproduits', desc: 'Annonces de programmes, résultats élèves, contenus pédagogiques à fort engagement.', examples: ['Carrousel cours', 'Témoignage', 'Annonce session'] },
+  { emoji: '💼', title: 'Coaching / Consulting / B2B', desc: 'Posts experts, citations, lead magnets — positionnez votre autorité.', examples: ['Post expertise', 'Citation visuelle', 'Carrousel conseils'] },
+  { emoji: '🎮', title: 'Médias / Divertissement / Gaming / Créateurs', desc: 'Trailers, drops, communautés — du contenu viral, stop-scroll garanti.', examples: ['Teaser drop', 'Reel highlight', 'Cover stream'] },
+  { emoji: '📡', title: 'Télécom / Internet / Services digitaux', desc: 'Offres, forfaits, support, innovation — clarifiez et convertissez.', examples: ['Offre forfait', 'Carrousel feature', 'Story promo'] },
 ];
 
 const UseCases = () => {
