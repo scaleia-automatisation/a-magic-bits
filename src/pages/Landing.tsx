@@ -231,20 +231,20 @@ const Landing = () => {
               Conçu pour <span className="gradient-text">votre métier</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Que vous soyez restaurateur, coiffeur, e-commerçant ou consultant, Créafacile s'adapte à votre activité.
+              E-commerce, mode, beauté, tech, finance, immobilier… Créafacile s'adapte à votre secteur.
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
-              { emoji: '🍽️', title: 'Restauration', desc: 'Plats du jour, événements, promotions saisonnières.' },
-              { emoji: '💇', title: 'Beauté & soins', desc: 'Avant/après, nouveautés, conseils experts.' },
-              { emoji: '🛍️', title: 'E-commerce', desc: 'Lancements produit, soldes, témoignages clients.' },
-              { emoji: '🏠', title: 'Immobilier', desc: 'Annonces, visites virtuelles, conseils marché.' },
-              { emoji: '💼', title: 'Consultants & coachs', desc: 'Posts LinkedIn experts, citations inspirantes.' },
-              { emoji: '🏋️', title: 'Sport & fitness', desc: 'Programmes, motivation, transformations.' },
-              { emoji: '🎓', title: 'Formation', desc: 'Annonces de cours, témoignages élèves.' },
-              { emoji: '🚗', title: 'Artisans & services', desc: 'Réalisations, équipe, devis express.' },
+              { emoji: '🛍️', title: 'E-commerce / Retail', desc: 'DTC, marketplaces, lancements produits, soldes.' },
+              { emoji: '🧴', title: 'Beauté / Cosmétique', desc: 'Skincare, maquillage, routines, avant/après.' },
+              { emoji: '👗', title: 'Mode / Luxe', desc: 'Collections, lookbooks, drops, éditoriaux.' },
+              { emoji: '💻', title: 'Tech / SaaS / IA', desc: 'Startups digitales, features, growth, B2B.' },
+              { emoji: '🏦', title: 'Banque / Finance', desc: 'Assurance, fintech, pédagogie, confiance.' },
+              { emoji: '🏠', title: 'Immobilier', desc: 'Promotion, agences, location courte durée.' },
+              { emoji: '🍽️', title: 'Restauration / Food', desc: 'Food brands, dark kitchens, plats, ambiance.' },
+              { emoji: '✈️', title: 'Tourisme / Voyage', desc: 'Hôtellerie, destinations, expériences.' },
             ].map((u) => (
               <div key={u.title} className="p-5 rounded-card border border-foreground/5 bg-card hover:border-primary/30 transition-colors">
                 <div className="text-3xl mb-3">{u.emoji}</div>
