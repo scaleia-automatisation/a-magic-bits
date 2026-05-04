@@ -607,10 +607,6 @@ const StartingPointBlock = () => {
         </div>
       )}
 
-      {/* spacer to keep grid closing intact */}
-      <div className="hidden">
-      </div>
-
       {/* Type de rendu — image/carousel */}
       <div className="mt-6 pt-6 border-t border-foreground/10">
         <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu</label>
