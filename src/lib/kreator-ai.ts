@@ -116,6 +116,21 @@ export async function describeImage(imageBase64: string) {
   return content.trim();
 }
 
+export async function summarizePerformingPosts(descriptions: string[]) {
+  const systemPrompt = `Tu es un expert en marketing digital, copywriting et viralité sur les réseaux sociaux. À partir des descriptions de posts qui ont performé fournies, produis UN résumé synthétique (5 phrases maximum) orienté business, viralité, efficacité de conversion et différenciation, avec un angle marketing fort. Mets en avant les leviers communs (hook, format, ton, preuve, émotion, call-to-action) qui expliquent la performance et qu'il faut réutiliser. Réponds uniquement avec le résumé, sans titre ni mise en forme.`;
+  const userContent = descriptions
+    .map((d, i) => `Post performant ${i + 1} : ${d}`)
+    .join('\n\n');
+  const data = await callKreatorAI({
+    action: 'summarize_performing_posts',
+    messages: [{ role: 'user', content: userContent }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  return content.trim();
+}
+
 export async function generateIdeaFromImages(params: {
   imageDescriptions: string[];
   imageBase64s: string[];
