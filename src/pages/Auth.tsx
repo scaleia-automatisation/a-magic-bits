@@ -14,9 +14,11 @@ const PRODUCTION_AUTH_ORIGIN = 'https://www.creafacile.com';
 
 const getRedirectOrigin = () => {
   const { hostname, origin } = window.location;
-  if (hostname.endsWith('lovable.app') || hostname === 'localhost' || hostname === '127.0.0.1') {
+  // En production custom domain on force www.creafacile.com pour cohérence OAuth
+  if (hostname === 'creafacile.com') {
     return PRODUCTION_AUTH_ORIGIN;
   }
+  // Sinon (preview lovable.app, localhost, www.creafacile.com) on reste sur l'origine courante
   return origin;
 };
 
