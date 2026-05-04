@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Upload, X, Replace, ImagePlus, FileText, TrendingUp, Lightbulb, Loader2, RefreshCw, CheckCircle, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -41,6 +41,7 @@ const StartingPointBlock = () => {
     marketing_angle,
     render_style, setRenderStyle,
     options,
+    starting_choice, setStartingChoice,
   } = useKreatorStore();
 
   // Refs for file inputs (only 1 reference image now)
@@ -64,6 +65,27 @@ const StartingPointBlock = () => {
   
   const [loadingIdeas, setLoadingIdeas] = useState(false);
   const [loadingImageIdea, setLoadingImageIdea] = useState(false);
+
+  // React to global starting_choice (buttons placed above ContentTypeStep)
+  useEffect(() => {
+    if (starting_choice === 'perf') {
+      setShowPerfBlock(true);
+      // scroll into view
+      setTimeout(() => {
+        document.getElementById('starting-point-block')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    } else if (starting_choice === 'scratch') {
+      setShowPerfBlock(false);
+      setTimeout(() => {
+        document.getElementById('starting-point-block')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+      // Trigger idea generation
+      handleNoIdea();
+      // reset selection so re-click works
+      setStartingChoice('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [starting_choice]);
 
   const handlePhotoFile = (file: File, index: number) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
@@ -254,7 +276,7 @@ const StartingPointBlock = () => {
   // ===== Vidéo : UI simplifiée =====
   if (isVideo) {
     return (
-      <div className="step-border bg-background p-4 sm:p-6 md:p-8">
+      <div id="starting-point-block" className="step-border bg-background p-4 sm:p-6 md:p-8">
         <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 rounded-full gradient-bg" />
@@ -368,7 +390,7 @@ const StartingPointBlock = () => {
   }
 
   return (
-    <div className="step-border bg-background p-4 sm:p-6 md:p-8">
+    <div id="starting-point-block" className="step-border bg-background p-4 sm:p-6 md:p-8">
       <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="w-2 h-2 rounded-full gradient-bg" />
