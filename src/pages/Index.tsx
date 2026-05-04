@@ -94,9 +94,9 @@ const Index = () => {
 
         <div className="space-y-6">
           <StartingChoiceButtons />
+          <StartingPointBlock />
           <ContentTypeStep />
           <ProductOfferStep />
-          <StartingPointBlock />
           <ActivitySectorFields />
           
           <CustomizationStep />
