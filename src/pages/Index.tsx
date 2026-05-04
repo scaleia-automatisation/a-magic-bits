@@ -6,6 +6,7 @@ import ActivitySectorFields from '@/components/kreator/ActivitySectorFields';
 import ContentTypeStep from '@/components/kreator/ContentTypeStep';
 import ProductOfferStep from '@/components/kreator/ProductOfferStep';
 import StartingChoiceButtons from '@/components/kreator/StartingChoiceButtons';
+import ObjectiveStep from '@/components/kreator/ObjectiveStep';
 
 import CustomizationStep from '@/components/kreator/CustomizationStep';
 import PromptStep from '@/components/kreator/PromptStep';
@@ -98,7 +99,7 @@ const Index = () => {
           <ContentTypeStep />
           <ProductOfferStep />
           <ActivitySectorFields />
-          
+          <ObjectiveStep />
           <CustomizationStep />
           <PromptStep />
           <GenerationStep />
