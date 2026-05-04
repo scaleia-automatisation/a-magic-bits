@@ -160,6 +160,8 @@ interface KreatorState {
   setCompanySector: (val: string) => void;
   product_service: string;
   setProductService: (val: string) => void;
+  product_image_url: string;
+  setProductImageUrl: (val: string) => void;
   market: string;
   setMarket: (val: string) => void;
   offer_type: string;
