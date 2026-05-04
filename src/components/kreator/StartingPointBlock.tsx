@@ -38,7 +38,7 @@ const StartingPointBlock = () => {
     company_activity, company_sector,
     product_service,
     market,
-    objective,
+    marketing_angle,
     render_style, setRenderStyle,
     options,
   } = useKreatorStore();
@@ -110,14 +110,14 @@ const StartingPointBlock = () => {
     }
     const missing: string[] = [];
     if (!product_service?.trim()) missing.push('Produit ou service');
-    if (!objective?.trim() || objective === 'custom:') missing.push('Objectif du contenu');
+    if (!marketing_angle?.trim()) missing.push('Angle marketing');
     if (missing.length > 0) {
       toast.error(`Veuillez renseigner : ${missing.join(' et ')} avant de générer des idées`);
       return;
     }
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service, market);
+      const result = await generateIdeas(company_activity, company_sector, type, marketing_angle, product_service, market);
       setIdeas(result.ideas);
       setShowIdeas(true);
     } catch (err) {
@@ -137,7 +137,7 @@ const StartingPointBlock = () => {
   const handleGenerateMore = async () => {
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service, market);
+      const result = await generateIdeas(company_activity, company_sector, type, marketing_angle, product_service, market);
       setIdeas(result.ideas);
     } catch {
       toast.error('Erreur lors de la génération');
@@ -175,7 +175,7 @@ const StartingPointBlock = () => {
         imageDescriptions: uploadedPhotos.map(p => p.description?.trim() || ''),
         imageBase64s: base64Images,
         contentType: type,
-        objective,
+        objective: marketing_angle,
         format,
         activity: company_activity,
         sector: company_sector,

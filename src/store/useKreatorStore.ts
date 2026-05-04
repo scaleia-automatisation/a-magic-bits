@@ -162,6 +162,14 @@ interface KreatorState {
   setProductService: (val: string) => void;
   market: string;
   setMarket: (val: string) => void;
+  offer_type: string;
+  setOfferType: (val: string) => void;
+  target_persona: string;
+  setTargetPersona: (val: string) => void;
+  marketing_angle: string;
+  setMarketingAngle: (val: string) => void;
+  visual_style_brief: string;
+  setVisualStyleBrief: (val: string) => void;
 
   format: Format;
   setFormat: (format: Format) => void;
@@ -212,6 +220,10 @@ const initialState = {
   company_sector: '',
   product_service: '',
   market: '',
+  offer_type: '',
+  target_persona: '',
+  marketing_angle: '',
+  visual_style_brief: '',
   video_render_style: '',
   video_resolution: '1080p' as VideoResolution,
   sora_character_total_duration: 10 as 10 | 15 | 25,
@@ -270,6 +282,10 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setCompanySector: (val) => set({ company_sector: val }),
   setProductService: (val) => set({ product_service: val }),
   setMarket: (val) => set({ market: val }),
+  setOfferType: (val) => set({ offer_type: val }),
+  setTargetPersona: (val) => set({ target_persona: val }),
+  setMarketingAngle: (val) => set({ marketing_angle: val }),
+  setVisualStyleBrief: (val) => set({ visual_style_brief: val }),
   setFormat: (format) => set({ format }),
   setInputImageUrl: (url) => set({ input_image_url: url }),
   setInputImageDescription: (desc) => set({ input_image_description: desc }),

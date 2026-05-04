@@ -13,7 +13,8 @@ const PromptStep = () => {
   const { user } = useAuth();
   const {
     prompt_fr, setPromptFr,
-    type, format, objective, company_activity, company_sector, product_service, market,
+    type, format, company_activity, company_sector, product_service, market,
+    offer_type, target_persona, marketing_angle, visual_style_brief,
     input_text, idea_chosen, input_image_description, input_photos,
     options, slides_count, status, setStatus, setResultUrl, ai_model,
     render_style, video_render_style
@@ -34,7 +35,8 @@ const PromptStep = () => {
 
   const missingFields: string[] = [];
   if (!product_service?.trim()) missingFields.push('Produit ou service');
-  if (!objective?.trim() || objective === 'custom:') missingFields.push('Objectif du contenu');
+  if (!offer_type?.trim()) missingFields.push("Type d'offre");
+  if (!marketing_angle?.trim()) missingFields.push('Angle marketing');
   const hasMissing = missingFields.length > 0;
 
   const handleGenerate = async () => {
@@ -52,15 +54,18 @@ const PromptStep = () => {
       const result = await generatePrompt({
         contentType: type,
         format,
-        objective,
+        objective: marketing_angle,
         ton: options.ton,
-        visualStyle: options.visual_style,
+        visualStyle: visual_style_brief || options.visual_style,
         inputText: input_text,
         ideaChosen: idea_chosen,
         companyActivity: company_activity,
         companySector: company_sector,
         productService: product_service,
         market,
+        offerType: offer_type,
+        targetPersona: target_persona,
+        marketingAngle: marketing_angle,
         showText: options.show_text,
         textContent: options.text_content,
         paletteEnabled: options.palette_enabled,

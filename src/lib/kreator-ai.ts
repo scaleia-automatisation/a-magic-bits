@@ -69,6 +69,40 @@ Génère 3 idées virales, persuasives, impactantes et engageantes qui suscitent
   }
 }
 
+export async function generatePersonas(params: {
+  activity: string;
+  sector: string;
+  offerType: string;
+}) {
+  const systemPrompt = `Tu es un expert en marketing et personas client. Génère exactement 3 profils de persona ULTRA pertinents pour le contexte fourni.
+
+RETOURNE UNIQUEMENT un JSON valide sans markdown, exactement ce format :
+{"personas":[{"id":1,"profil":"Nom + âge + situation courte (ex: Marie, 34 ans, maman active)","contexte_rapide":"1 phrase sur son contexte de vie / pro","csp":"CSP+ / CSP / employé / étudiant / retraité / dirigeant…","probleme":"problème principal qu'il/elle rencontre","objectif":"objectif principal qu'il/elle cherche à atteindre"},{"id":2,...},{"id":3,...}]}
+
+Les 3 personas doivent être DIFFÉRENTS (âges, situations, motivations différentes) mais tous cohérents avec l'activité, le secteur et le type d'offre.`;
+
+  const userPrompt = `Activité principale: ${params.activity}
+Secteur d'activité: ${params.sector || 'non précisé'}
+Type d'offre: ${params.offerType}
+
+Génère 3 personas clients cibles parfaitement adaptés.`;
+
+  const data = await callKreatorAI({
+    action: 'generate_personas',
+    messages: [{ role: 'user', content: userPrompt }],
+    system_prompt: systemPrompt,
+  });
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  try {
+    const cleaned = content.replace(/```json\n?|\n?```/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch {
+    throw new Error('Failed to parse AI response');
+  }
+}
+
 export async function generateIdeaFromImages(params: {
   imageDescriptions: string[];
   imageBase64s: string[];
@@ -145,6 +179,9 @@ export async function generatePrompt(params: {
   companySector: string;
   productService?: string;
   market?: string;
+  offerType?: string;
+  targetPersona?: string;
+  marketingAngle?: string;
   showText: boolean;
   textContent: string;
   paletteEnabled: boolean;
@@ -308,6 +345,9 @@ RETOURNE UNIQUEMENT un JSON valide sans markdown:
 ${params.companyActivity ? `Activité principale: ${params.companyActivity}` : 'Activité: non renseignée'}
 ${params.companySector ? `Secteur d'activité: ${params.companySector}` : 'Secteur: non renseigné'}
 ${params.productService ? `Produit ou service mis en avant (RÉFÉRENCE EXACTE pour la cohérence visuelle): ${params.productService}` : ''}
+${params.offerType ? `Type d'offre: ${params.offerType}` : ''}
+${params.targetPersona ? `Client cible / Persona: ${params.targetPersona} — adapter le casting, l'environnement, le ton visuel et l'ambiance pour parler DIRECTEMENT à ce profil.` : ''}
+${params.marketingAngle ? `Angle marketing (PRIORITAIRE — fil conducteur du visuel): ${params.marketingAngle}` : ''}
 ${params.market ? `Marché / Localisation cible: ${params.market} (adapter casting, environnement et codes culturels en conséquence)` : 'Marché / Localisation: non précisé (rester culturellement neutre, casting et décor universels)'}
 
 === CONTENU ===
