@@ -4,6 +4,7 @@ import MobileMenu from '@/components/MobileMenu';
 import StartingPointBlock from '@/components/kreator/StartingPointBlock';
 import ActivitySectorFields from '@/components/kreator/ActivitySectorFields';
 import ContentTypeStep from '@/components/kreator/ContentTypeStep';
+import ProductOfferStep from '@/components/kreator/ProductOfferStep';
 
 import CustomizationStep from '@/components/kreator/CustomizationStep';
 import PromptStep from '@/components/kreator/PromptStep';
@@ -92,6 +93,7 @@ const Index = () => {
 
         <div className="space-y-6">
           <ContentTypeStep />
+          <ProductOfferStep />
           <StartingPointBlock />
           <ActivitySectorFields />
           
