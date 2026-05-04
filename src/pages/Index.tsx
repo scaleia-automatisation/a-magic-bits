@@ -92,8 +92,8 @@ const Index = () => {
 
         <div className="space-y-6">
           <ContentTypeStep />
-          <ActivitySectorFields />
           <StartingPointBlock />
+          <ActivitySectorFields />
           
           <CustomizationStep />
           <PromptStep />
