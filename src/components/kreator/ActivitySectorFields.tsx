@@ -5,21 +5,21 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const SECTORS = [
-  'E-commerce / Retail (DTC, marketplaces)',
-  'Produits grande consommation (cosmétiques, food, boissons)',
-  'Mode / Fashion / Luxe',
-  'Beauté / Cosmétique / Skincare',
-  'Tech / SaaS / IA / startups digitales',
-  'Banque / Finance / Assurance (Fintech incluse)',
-  'Immobilier (promotion, agences, location courte durée)',
-  'Automobile (constructeurs + concessionnaires)',
-  'Tourisme / Voyage / Hôtellerie',
-  'Restauration / Food brands / Dark kitchens',
-  'Santé / Pharma / Cliniques / Bien-être',
-  'Éducation / Formation / Infoproduits',
-  'Coaching / Consulting / Services B2B',
-  'Médias / Divertissement / Gaming / Créateurs',
-  'Télécom / Internet / Services digitaux',
+  '🛍️ E-commerce / Retail (DTC, marketplaces)',
+  '🧃 Produits grande consommation (cosmétiques, food, boissons)',
+  '👗 Mode / Fashion / Luxe',
+  '🧴 Beauté / Cosmétique / Skincare',
+  '💻 Tech / SaaS / IA / startups digitales',
+  '🏦 Banque / Finance / Assurance (Fintech incluse)',
+  '🏠 Immobilier (promotion, agences, location courte durée)',
+  '🚗 Automobile (constructeurs + concessionnaires)',
+  '✈️ Tourisme / Voyage / Hôtellerie',
+  '🍽️ Restauration / Food brands / Dark kitchens',
+  '🩺 Santé / Pharma / Cliniques / Bien-être',
+  '🎓 Éducation / Formation / Infoproduits',
+  '💼 Coaching / Consulting / Services B2B',
+  '🎮 Médias / Divertissement / Gaming / Créateurs',
+  '📡 Télécom / Internet / Services digitaux',
 ];
 
 const MARKETS = [
