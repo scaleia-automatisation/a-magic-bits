@@ -30,20 +30,22 @@ const StartingChoiceButtons = () => {
   };
 
   const baseBtn =
-    'flex items-center justify-center gap-2 h-auto py-3 px-4 rounded-btn text-xs font-bold border-2 transition-all whitespace-normal leading-tight text-center';
+    'w-full flex items-center justify-center gap-2 h-auto py-4 px-5 text-sm md:text-base font-bold border-2 border-[hsl(210_100%_55%)] transition-all whitespace-normal leading-tight text-center';
+  const radius = { borderRadius: '20px' };
 
   return (
-    <div className="grid grid-cols-2 gap-3 items-start">
-      <div className="flex flex-col gap-2">
+    <div className="flex flex-col sm:flex-row justify-center gap-3 items-start max-w-2xl mx-auto">
+      <div className="flex flex-col gap-2 w-full sm:w-[260px]">
         <button
           onClick={() => choose('scratch')}
+          style={radius}
           className={`${baseBtn} ${
             starting_choice === 'scratch'
-              ? 'gradient-bg border-transparent text-primary-foreground shadow-lg shadow-primary/20'
-              : 'border-foreground/10 bg-card text-foreground hover:border-primary/40'
+              ? 'gradient-bg text-primary-foreground shadow-lg shadow-primary/20'
+              : 'bg-card text-foreground hover:opacity-90'
           }`}
         >
-          <Lightbulb className="w-4 h-4 shrink-0" />
+          <Lightbulb className="w-5 h-5 shrink-0" />
           <span>Je n'ai pas d'idée,<br />partir de zéro</span>
         </button>
         {scratchError.length > 0 && (
@@ -58,17 +60,20 @@ const StartingChoiceButtons = () => {
           </div>
         )}
       </div>
-      <button
-        onClick={() => choose('perf')}
-        className={`${baseBtn} ${
-          starting_choice === 'perf'
-            ? 'gradient-bg border-transparent text-primary-foreground shadow-lg shadow-primary/20'
-            : 'border-foreground/10 bg-card text-foreground hover:border-primary/40'
-        }`}
-      >
-        <TrendingUp className="w-4 h-4 shrink-0" />
-        <span>S'inspirer d'un post<br />qui a performé</span>
-      </button>
+      <div className="w-full sm:w-[260px]">
+        <button
+          onClick={() => choose('perf')}
+          style={radius}
+          className={`${baseBtn} ${
+            starting_choice === 'perf'
+              ? 'gradient-bg text-primary-foreground shadow-lg shadow-primary/20'
+              : 'bg-card text-foreground hover:opacity-90'
+          }`}
+        >
+          <TrendingUp className="w-5 h-5 shrink-0" />
+          <span>S'inspirer d'un post<br />qui a performé</span>
+        </button>
+      </div>
     </div>
   );
 };
