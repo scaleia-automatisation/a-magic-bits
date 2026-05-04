@@ -187,6 +187,9 @@ interface KreatorState {
   idea_chosen: string;
   setIdeaChosen: (idea: string) => void;
 
+  starting_choice: '' | 'scratch' | 'perf';
+  setStartingChoice: (val: '' | 'scratch' | 'perf') => void;
+
   options: KreatorOptions;
   setOptions: (opts: Partial<KreatorOptions>) => void;
   showAdvanced: boolean;
@@ -238,6 +241,7 @@ const initialState = {
   input_photos: [] as { url: string; description: string }[],
   input_text: '',
   idea_chosen: '',
+  starting_choice: '' as '' | 'scratch' | 'perf',
   options: {
     show_text: false,
     text_content: '',
@@ -296,6 +300,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setInputPhotos: (photos) => set({ input_photos: photos }),
   setInputText: (text) => set({ input_text: text }),
   setIdeaChosen: (idea) => set({ idea_chosen: idea }),
+  setStartingChoice: (val) => set({ starting_choice: val }),
   setOptions: (opts) => set((state) => ({ options: { ...state.options, ...opts } })),
   setShowAdvanced: (show) => set({ showAdvanced: show }),
   setPromptFr: (p) => set({ prompt_fr: p }),
