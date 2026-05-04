@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Upload, X, Replace, ImagePlus, FileText, TrendingUp, Lightbulb, Loader2, RefreshCw, CheckCircle, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -41,6 +41,7 @@ const StartingPointBlock = () => {
     marketing_angle,
     render_style, setRenderStyle,
     options,
+    starting_choice, setStartingChoice,
   } = useKreatorStore();
 
   // Refs for file inputs (only 1 reference image now)
@@ -64,6 +65,27 @@ const StartingPointBlock = () => {
   
   const [loadingIdeas, setLoadingIdeas] = useState(false);
   const [loadingImageIdea, setLoadingImageIdea] = useState(false);
+
+  // React to global starting_choice (buttons placed above ContentTypeStep)
+  useEffect(() => {
+    if (starting_choice === 'perf') {
+      setShowPerfBlock(true);
+      // scroll into view
+      setTimeout(() => {
+        document.getElementById('starting-point-block')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    } else if (starting_choice === 'scratch') {
+      setShowPerfBlock(false);
+      setTimeout(() => {
+        document.getElementById('starting-point-block')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+      // Trigger idea generation
+      handleNoIdea();
+      // reset selection so re-click works
+      setStartingChoice('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [starting_choice]);
 
   const handlePhotoFile = (file: File, index: number) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
