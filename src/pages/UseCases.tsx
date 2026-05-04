@@ -4,7 +4,7 @@ import MarketingLayout from '@/components/marketing/MarketingLayout';
 
 const cases = [
   { emoji: '🛍️', title: 'E-commerce / Retail', desc: 'DTC, marketplaces — lancements produits, soldes, social proof pour booster vos conversions.', examples: ['Visuel produit', 'Story collection', 'Pub Reels'] },
-  { emoji: '🧃', title: 'FMCG / Grande conso', desc: 'Cosmétiques, food, boissons — créez des assets shoppable à grande échelle.', examples: ['Packshot lifestyle', 'Reel recette', 'Campagne saison'] },
+  { emoji: '🧃', title: 'Produits Grande conso', desc: 'Cosmétiques, food, boissons — créez des assets shoppable à grande échelle.', examples: ['Packshot lifestyle', 'Reel recette', 'Campagne saison'] },
   { emoji: '👗', title: 'Mode / Fashion / Luxe', desc: 'Collections, lookbooks, drops — un univers visuel premium et cohérent.', examples: ['Lookbook', 'Drop teaser', 'Édito carrousel'] },
   { emoji: '🧴', title: 'Beauté / Cosmétique / Skincare', desc: 'Routines, avant/après, ingrédients — engagez une communauté beauté experte.', examples: ['Routine vidéo', 'Avant/après', 'Texture macro'] },
   { emoji: '💻', title: 'Tech / SaaS / IA / Startups', desc: 'Features, use cases, growth — du contenu B2B qui génère des leads qualifiés.', examples: ['Demo feature', 'Cas client', 'Post LinkedIn'] },
