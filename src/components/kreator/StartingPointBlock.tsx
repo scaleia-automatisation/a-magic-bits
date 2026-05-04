@@ -178,15 +178,14 @@ const StartingPointBlock = () => {
       toast.error('Connectez-vous pour générer des idées');
       return;
     }
-    if (!company_activity) {
-      toast.error('Renseignez au moins votre activité principale dans "Votre activité"');
-      return;
-    }
+    const { offer_type } = useKreatorStore.getState();
     const missing: string[] = [];
+    if (!offer_type?.trim()) missing.push("Type d'offre");
     if (!product_service?.trim()) missing.push('Produit ou service');
-    if (!marketing_angle?.trim()) missing.push('Angle marketing');
+    if (!company_activity?.trim()) missing.push('Activité principale');
+    if (!company_sector?.trim()) missing.push("Secteur d'activité");
     if (missing.length > 0) {
-      toast.error(`Veuillez renseigner : ${missing.join(' et ')} avant de générer des idées`);
+      toast.error(`Veuillez renseigner : ${missing.join(', ')} avant de générer des idées à partir de zéro`);
       return;
     }
     setLoadingIdeas(true);
