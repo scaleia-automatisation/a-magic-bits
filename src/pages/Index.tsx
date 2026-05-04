@@ -5,6 +5,7 @@ import StartingPointBlock from '@/components/kreator/StartingPointBlock';
 import ActivitySectorFields from '@/components/kreator/ActivitySectorFields';
 import ContentTypeStep from '@/components/kreator/ContentTypeStep';
 import ProductOfferStep from '@/components/kreator/ProductOfferStep';
+import StartingChoiceButtons from '@/components/kreator/StartingChoiceButtons';
 
 import CustomizationStep from '@/components/kreator/CustomizationStep';
 import PromptStep from '@/components/kreator/PromptStep';
@@ -92,6 +93,7 @@ const Index = () => {
         </div>
 
         <div className="space-y-6">
+          <StartingChoiceButtons />
           <ContentTypeStep />
           <ProductOfferStep />
           <StartingPointBlock />
