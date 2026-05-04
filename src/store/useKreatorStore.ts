@@ -160,6 +160,8 @@ interface KreatorState {
   setCompanySector: (val: string) => void;
   product_service: string;
   setProductService: (val: string) => void;
+  product_image_url: string;
+  setProductImageUrl: (val: string) => void;
   market: string;
   setMarket: (val: string) => void;
   offer_type: string;
@@ -219,6 +221,7 @@ const initialState = {
   company_activity: '',
   company_sector: '',
   product_service: '',
+  product_image_url: '',
   market: '',
   offer_type: '',
   target_persona: '',
@@ -281,6 +284,7 @@ export const useKreatorStore = create<KreatorState>((set) => ({
   setCompanyActivity: (val) => set({ company_activity: val }),
   setCompanySector: (val) => set({ company_sector: val }),
   setProductService: (val) => set({ product_service: val }),
+  setProductImageUrl: (val) => set({ product_image_url: val }),
   setMarket: (val) => set({ market: val }),
   setOfferType: (val) => set({ offer_type: val }),
   setTargetPersona: (val) => set({ target_persona: val }),

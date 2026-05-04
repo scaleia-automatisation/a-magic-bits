@@ -103,6 +103,19 @@ Génère 3 personas clients cibles parfaitement adaptés.`;
   }
 }
 
+export async function describeImage(imageBase64: string) {
+  const systemPrompt = `Tu es un expert en analyse visuelle. Décris l'image fournie de façon claire, factuelle et concise en 3 phrases MAXIMUM (jamais plus). Concentre-toi sur le sujet principal, le contexte/ambiance et les détails marquants. Réponds uniquement avec la description, sans introduction ni mise en forme.`;
+  const data = await callKreatorAI({
+    action: 'describe_image',
+    image_base64s: [imageBase64],
+    messages: [{ role: 'user', content: 'Décris cette image en 3 phrases maximum.' }],
+    system_prompt: systemPrompt,
+  });
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('No response from AI');
+  return content.trim();
+}
+
 export async function generateIdeaFromImages(params: {
   imageDescriptions: string[];
   imageBase64s: string[];
