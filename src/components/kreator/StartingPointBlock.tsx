@@ -476,22 +476,6 @@ const StartingPointBlock = () => {
       )}
 
       {/* Type de rendu — image/carousel */}
-      <div className="mt-6 pt-6 border-t border-foreground/10">
-        <label className="text-sm font-medium text-muted-foreground mb-2 block">Type de rendu</label>
-        <Select value={render_style} onValueChange={setRenderStyle}>
-          <SelectTrigger className="bg-card border-foreground/10 text-foreground">
-            <SelectValue placeholder="Choisir un type de rendu..." />
-          </SelectTrigger>
-          <SelectContent className="bg-card border-foreground/10">
-            {renderStyles.map((r) => (
-              <SelectItem key={r} value={r} className="text-foreground focus:bg-secondary/20">
-                {r}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
       {/* Loading */}
       {loadingIdeas && (
         <div className="flex flex-col items-center py-8 mt-6 border-t border-foreground/10">
