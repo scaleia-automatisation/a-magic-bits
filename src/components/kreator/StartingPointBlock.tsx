@@ -371,6 +371,9 @@ const StartingPointBlock = () => {
     );
   }
 
+  const hasContent = showPerfBlock || loadingIdeas || showIdeas;
+  if (!hasContent) return null;
+
   return (
     <div id="starting-point-block" className="step-border bg-background p-4 sm:p-6 md:p-8">
       {/* Performing posts upload area */}
