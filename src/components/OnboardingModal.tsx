@@ -9,16 +9,21 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
 const SECTORS = [
-  'Commerce & Distribution',
-  'Services aux entreprises (B2B)',
-  'Santé & Bien-être',
-  'Éducation & Formation',
-  'Restauration & Hôtellerie',
-  'Immobilier',
-  'Finance & Assurance',
-  'Marketing & Communication',
-  'Technologies & IT',
-  'Transport & Logistique',
+  'E-commerce / Retail (DTC, marketplaces)',
+  'Produits grande consommation (cosmétiques, food, boissons)',
+  'Mode / Fashion / Luxe',
+  'Beauté / Cosmétique / Skincare',
+  'Tech / SaaS / IA / startups digitales',
+  'Banque / Finance / Assurance (Fintech incluse)',
+  'Immobilier (promotion, agences, location courte durée)',
+  'Automobile (constructeurs + concessionnaires)',
+  'Tourisme / Voyage / Hôtellerie',
+  'Restauration / Food brands / Dark kitchens',
+  'Santé / Pharma / Cliniques / Bien-être',
+  'Éducation / Formation / Infoproduits',
+  'Coaching / Consulting / Services B2B',
+  'Médias / Divertissement / Gaming / Créateurs',
+  'Télécom / Internet / Services digitaux',
 ];
 
 const ACTIVITY_SECTOR_MAP: Record<string, string> = {
