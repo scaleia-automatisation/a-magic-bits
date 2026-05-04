@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { generateIdeas, generateIdeaFromImages } from '@/lib/kreator-ai';
+import { generateIdeas, generateIdeaFromImages, describeImage, summarizePerformingPosts } from '@/lib/kreator-ai';
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
@@ -45,10 +45,18 @@ const StartingPointBlock = () => {
 
   // Refs for file inputs (only 1 reference image now)
   const photoRefs = [useRef<HTMLInputElement>(null)];
-  const perfRef = useRef<HTMLInputElement>(null);
+  const perfRefs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+  ];
 
-  // Local state for perf image
-  const [perfImage, setPerfImage] = useState('');
+  // Local state for performing posts (up to 4)
+  const [showPerfBlock, setShowPerfBlock] = useState(false);
+  const [perfPosts, setPerfPosts] = useState<{ url: string; description: string; loading: boolean }[]>([]);
+  const [perfSummary, setPerfSummary] = useState('');
+  const [loadingPerfSummary, setLoadingPerfSummary] = useState(false);
 
   // Idea generation state
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
@@ -81,7 +89,7 @@ const StartingPointBlock = () => {
     setInputImageUrl('');
   };
 
-  const handlePerfFile = (file: File) => {
+  const handlePerfFile = (file: File, index: number) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
       toast.error('Format non supporté. Utilisez JPG, PNG ou WEBP.');
       return;
@@ -93,10 +101,54 @@ const StartingPointBlock = () => {
     const reader = new FileReader();
     reader.onload = () => {
       const base64 = reader.result as string;
-      setPerfImage(base64);
-      setInputImageUrl(base64);
+      setPerfPosts((prev) => {
+        const next = [...prev];
+        if (index < next.length) {
+          next[index] = { ...next[index], url: base64, description: '' };
+        } else {
+          next.push({ url: base64, description: '', loading: false });
+        }
+        return next;
+      });
+      setPerfSummary('');
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleRemovePerf = (index: number) => {
+    setPerfPosts((prev) => prev.filter((_, i) => i !== index));
+    setPerfSummary('');
+  };
+
+  const handleDescribePerf = async (index: number) => {
+    const post = perfPosts[index];
+    if (!post?.url) return;
+    setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, loading: true } : p));
+    try {
+      const desc = await describeImage(post.url);
+      setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: desc, loading: false } : p));
+      setPerfSummary('');
+
+      // Auto-summary if 2+ descriptions present
+      const updated = perfPosts.map((p, i) => i === index ? { ...p, description: desc } : p);
+      const descs = updated.filter(p => p.description?.trim()).map(p => p.description.trim());
+      if (descs.length >= 2) {
+        setLoadingPerfSummary(true);
+        try {
+          const summary = await summarizePerformingPosts(descs);
+          setPerfSummary(summary);
+        } catch (e) {
+          console.error(e);
+          toast.error('Erreur lors du résumé des posts');
+        } finally {
+          setLoadingPerfSummary(false);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Erreur lors de l'analyse de l'image");
+      setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, loading: false } : p));
+    }
   };
 
   const handleNoIdea = async () => {
