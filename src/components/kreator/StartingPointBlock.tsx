@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { generateIdeas, generateIdeaFromImages } from '@/lib/kreator-ai';
+import { generateIdeas, generateIdeaFromImages, describeImage, summarizePerformingPosts } from '@/lib/kreator-ai';
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 5;
@@ -45,10 +45,18 @@ const StartingPointBlock = () => {
 
   // Refs for file inputs (only 1 reference image now)
   const photoRefs = [useRef<HTMLInputElement>(null)];
-  const perfRef = useRef<HTMLInputElement>(null);
+  const perfRefs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+  ];
 
-  // Local state for perf image
-  const [perfImage, setPerfImage] = useState('');
+  // Local state for performing posts (up to 4)
+  const [showPerfBlock, setShowPerfBlock] = useState(false);
+  const [perfPosts, setPerfPosts] = useState<{ url: string; description: string; loading: boolean }[]>([]);
+  const [perfSummary, setPerfSummary] = useState('');
+  const [loadingPerfSummary, setLoadingPerfSummary] = useState(false);
 
   // Idea generation state
   const [ideas, setIdeas] = useState<{ id: number; title: string; angle: string; description?: string }[]>([]);
@@ -81,7 +89,7 @@ const StartingPointBlock = () => {
     setInputImageUrl('');
   };
 
-  const handlePerfFile = (file: File) => {
+  const handlePerfFile = (file: File, index: number) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
       toast.error('Format non supporté. Utilisez JPG, PNG ou WEBP.');
       return;
@@ -93,10 +101,54 @@ const StartingPointBlock = () => {
     const reader = new FileReader();
     reader.onload = () => {
       const base64 = reader.result as string;
-      setPerfImage(base64);
-      setInputImageUrl(base64);
+      setPerfPosts((prev) => {
+        const next = [...prev];
+        if (index < next.length) {
+          next[index] = { ...next[index], url: base64, description: '' };
+        } else {
+          next.push({ url: base64, description: '', loading: false });
+        }
+        return next;
+      });
+      setPerfSummary('');
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleRemovePerf = (index: number) => {
+    setPerfPosts((prev) => prev.filter((_, i) => i !== index));
+    setPerfSummary('');
+  };
+
+  const handleDescribePerf = async (index: number) => {
+    const post = perfPosts[index];
+    if (!post?.url) return;
+    setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, loading: true } : p));
+    try {
+      const desc = await describeImage(post.url);
+      setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: desc, loading: false } : p));
+      setPerfSummary('');
+
+      // Auto-summary if 2+ descriptions present
+      const updated = perfPosts.map((p, i) => i === index ? { ...p, description: desc } : p);
+      const descs = updated.filter(p => p.description?.trim()).map(p => p.description.trim());
+      if (descs.length >= 2) {
+        setLoadingPerfSummary(true);
+        try {
+          const summary = await summarizePerformingPosts(descs);
+          setPerfSummary(summary);
+        } catch (e) {
+          console.error(e);
+          toast.error('Erreur lors du résumé des posts');
+        } finally {
+          setLoadingPerfSummary(false);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Erreur lors de l'analyse de l'image");
+      setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, loading: false } : p));
+    }
   };
 
   const handleNoIdea = async () => {
@@ -425,57 +477,135 @@ const StartingPointBlock = () => {
           </div>
         </div>
 
-        {/* Column 3: High-performing content image */}
+        {/* Column 3: Inspire from a performing post */}
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-foreground">Contenu qui a performé</span>
+            <span className="text-sm font-medium text-foreground">Post performant</span>
           </div>
-          <p className="text-xs text-muted-foreground mb-3">Uploadez un visuel de contenu qui a bien marché</p>
-          {perfImage ? (
-            <div className="relative group aspect-[4/3] rounded-lg overflow-hidden border border-foreground/10 bg-card">
-              <img src={perfImage} alt="Contenu performant" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-foreground bg-card/80 hover:bg-destructive hover:text-destructive-foreground"
-                  onClick={() => { setPerfImage(''); setInputImageUrl(''); }}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-foreground bg-card/80 hover:bg-primary hover:text-primary-foreground"
-                  onClick={() => perfRef.current?.click()}
-                >
-                  <Replace className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
+          <p className="text-xs text-muted-foreground mb-3">Inspirez-vous d'un post qui a déjà bien performé</p>
+          {!showPerfBlock ? (
+            <Button
+              onClick={() => setShowPerfBlock(true)}
+              className="w-full h-auto py-3 px-3 gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs font-bold whitespace-normal leading-tight text-center"
+            >
+              <TrendingUp className="w-4 h-4 mr-1.5 shrink-0" />
+              <span className="block">
+                S'inspirer d'un post<br />qui a performé
+              </span>
+            </Button>
           ) : (
             <button
-              onClick={() => perfRef.current?.click()}
-              className="aspect-[4/3] w-full rounded-lg border-2 border-dashed border-foreground/10 bg-card hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary"
+              onClick={() => setShowPerfBlock(false)}
+              className="text-xs text-muted-foreground hover:text-primary underline"
             >
-              <Upload className="w-6 h-6" />
-              <span className="text-xs font-medium">Importer un visuel</span>
+              Masquer la section
             </button>
           )}
-          <input
-            ref={perfRef}
-            type="file"
-            accept=".jpg,.jpeg,.png"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handlePerfFile(file);
-              e.target.value = '';
-            }}
-          />
         </div>
       </div>
+
+      {/* Performing posts upload area */}
+      {showPerfBlock && (
+        <div className="mt-6 pt-6 border-t border-foreground/10">
+          <div className="flex items-center gap-2 mb-3">
+            <TrendingUp className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-foreground">Posts qui ont performé (jusqu'à 4)</span>
+          </div>
+          <p className="text-xs text-muted-foreground mb-4">
+            Importez vos visuels, puis cliquez sur "Décrire le post" pour analyser chaque image. Si vous en ajoutez plusieurs, un résumé marketing sera automatiquement généré.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[0, 1, 2, 3].map((index) => {
+              const post = perfPosts[index];
+              return (
+                <div key={index} className="space-y-2">
+                  {post?.url ? (
+                    <div className="relative group aspect-square rounded-lg overflow-hidden border border-foreground/10 bg-card">
+                      <img src={post.url} alt={`Post performant ${index + 1}`} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-foreground bg-card/80 hover:bg-destructive hover:text-destructive-foreground"
+                          onClick={() => handleRemovePerf(index)}
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-foreground bg-card/80 hover:bg-primary hover:text-primary-foreground"
+                          onClick={() => perfRefs[index]?.current?.click()}
+                        >
+                          <Replace className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => perfRefs[index]?.current?.click()}
+                      className="aspect-square w-full rounded-lg border-2 border-dashed border-foreground/10 bg-card hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary"
+                    >
+                      <Upload className="w-5 h-5" />
+                      <span className="text-xs font-medium">Image {index + 1}</span>
+                    </button>
+                  )}
+                  {post?.url && (
+                    <Button
+                      onClick={() => handleDescribePerf(index)}
+                      disabled={post.loading}
+                      size="sm"
+                      variant="outline"
+                      className="w-full text-xs"
+                    >
+                      {post.loading ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
+                      ) : (
+                        <FileText className="w-3.5 h-3.5 mr-1" />
+                      )}
+                      Décrire le post
+                    </Button>
+                  )}
+                  {post?.description && (
+                    <p className="text-[11px] text-muted-foreground bg-card border border-foreground/10 rounded-md p-2 leading-snug">
+                      {post.description}
+                    </p>
+                  )}
+                  <input
+                    ref={perfRefs[index]}
+                    type="file"
+                    accept=".jpg,.jpeg,.png"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handlePerfFile(file, index);
+                      e.target.value = '';
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {(loadingPerfSummary || perfSummary) && (
+            <div className="mt-5 p-4 rounded-lg border border-primary/30 bg-primary/5">
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                <span className="text-sm font-bold text-foreground">Résumé marketing</span>
+              </div>
+              {loadingPerfSummary ? (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Analyse des posts performants en cours…
+                </div>
+              ) : (
+                <p className="text-xs text-foreground leading-relaxed whitespace-pre-line">{perfSummary}</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Type de rendu — image/carousel */}
       <div className="mt-6 pt-6 border-t border-foreground/10">
