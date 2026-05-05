@@ -6,14 +6,37 @@ import { useEffect, useMemo } from 'react';
 import type { ContentType } from '@/store/useKreatorStore';
 
 const OBJECTIVES = [
-  '🛒 Vendre un produit / service',
-  '🎯 Générer des leads / prospects',
-  '📣 Faire connaître la marque (notoriété)',
-  '❤️ Engager la communauté',
-  '🔁 Fidéliser les clients existants',
+  // 🟣 ATTENTION / Notoriété
+  '📣 Faire connaître la marque',
+  '🌟 Augmenter la notoriété de marque',
+  '⭐ Améliorer l\'image de marque',
   '🚀 Lancer un nouveau produit',
-  '📚 Éduquer / informer l\'audience',
-  '⭐ Renforcer l\'image de marque',
+  '🧲 Attirer du trafic qualifié',
+  // 🔵 INTÉRÊT / Éducation
+  '📚 Éduquer le marché cible',
+  '🎓 Positionner comme expert du marché',
+  '❤️ Créer de l\'engagement audience',
+  '👥 Développer une communauté engagée',
+  '📢 Promouvoir un produit ou service',
+  // 🟢 DÉSIR / Considération
+  '🎯 Générer des leads qualifiés',
+  '📥 Générer des demandes entrantes',
+  '🌱 Nourrir les prospects (lead nurturing)',
+  '🛡️ Rassurer et lever les objections',
+  '💡 Créer un besoin chez le client',
+  '🧪 Tester une offre ou un produit',
+  '🔍 Valider une idée de marché',
+  // 🟡 ACTION / Conversion
+  '🛒 Vendre un produit ou service',
+  '⚡ Convertir en clients rapidement',
+  '📈 Augmenter le taux de conversion',
+  '⏩ Accélérer la prise de décision',
+  '💰 Maximiser le retour publicitaire (ROAS)',
+  '📉 Réduire le coût d\'acquisition (CAC)',
+  // 🔴 FIDÉLISATION / Rétention
+  '🔁 Fidéliser les clients existants',
+  '💎 Augmenter la valeur client (LTV)',
+  '🔔 Relancer les prospects inactifs',
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
