@@ -23,6 +23,8 @@ const OBJECTIVES = [
   '📥 Générer des demandes entrantes',
   '🌱 Nourrir les prospects (lead nurturing)',
   '🛡️ Rassurer et lever les objections',
+  '🚧 Lever les frictions à l\'achat',
+  '🧱 Casser les barrières limitantes',
   '💡 Créer un besoin chez le client',
   '🧪 Tester une offre ou un produit',
   '🔍 Valider une idée de marché',
