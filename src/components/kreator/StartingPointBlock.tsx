@@ -189,8 +189,9 @@ const StartingPointBlock = () => {
       toast.error('Connectez-vous pour générer des idées');
       return;
     }
-    const { offer_type } = useKreatorStore.getState();
+    const { offer_type, objective } = useKreatorStore.getState();
     const missing: string[] = [];
+    if (!objective?.trim()) missing.push('Objectif du contenu (bloc 4)');
     if (!offer_type?.trim()) missing.push("Type d'offre");
     if (!product_service?.trim()) missing.push('Produit ou service');
     if (!company_activity?.trim()) missing.push('Activité principale');
@@ -201,7 +202,7 @@ const StartingPointBlock = () => {
     }
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, marketing_angle, product_service, market);
+      const result = await generateIdeas(company_activity, company_sector, type, objective, product_service, market);
       setIdeas(result.ideas);
       setShowIdeas(true);
     } catch (err) {
