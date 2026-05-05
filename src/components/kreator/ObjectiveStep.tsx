@@ -1,5 +1,6 @@
 import { useKreatorStore } from '@/store/useKreatorStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import StepContainer from './StepContainer';
 import { useEffect, useMemo } from 'react';
 import type { ContentType } from '@/store/useKreatorStore';
@@ -531,11 +532,12 @@ const ObjectiveStep = () => {
 
   // Reset si la valeur sélectionnée n'appartient plus aux options du secteur/type
   useEffect(() => {
-    if (marketing_angle && !angles.includes(marketing_angle)) setMarketingAngle('');
-  }, [angles, marketing_angle, setMarketingAngle]);
-  useEffect(() => {
-    if (visual_style_brief && !styles.includes(visual_style_brief)) setVisualStyleBrief('');
-  }, [styles, visual_style_brief, setVisualStyleBrief]);
+    // L'utilisateur peut désormais personnaliser le texte → on ne reset plus
+    // automatiquement la valeur si elle n'est plus dans les presets.
+  }, [angles, styles]);
+
+  const angleInPresets = angles.includes(marketing_angle);
+  const styleInPresets = styles.includes(visual_style_brief);
 
   return (
     <StepContainer stepNumber={4} title="Votre objectif">
@@ -557,7 +559,7 @@ const ObjectiveStep = () => {
           <label className="text-sm font-medium text-muted-foreground mb-2 block">
             Angle marketing <span className="text-xs opacity-70">(adapté à votre secteur)</span>
           </label>
-          <Select value={marketing_angle} onValueChange={setMarketingAngle}>
+          <Select value={angleInPresets ? marketing_angle : ''} onValueChange={setMarketingAngle}>
             <SelectTrigger className="bg-card border-foreground/10 text-foreground">
               <SelectValue placeholder="Choisir un angle..." />
             </SelectTrigger>
@@ -567,12 +569,20 @@ const ObjectiveStep = () => {
               ))}
             </SelectContent>
           </Select>
+          {marketing_angle && (
+            <Input
+              value={marketing_angle}
+              onChange={(e) => setMarketingAngle(e.target.value)}
+              placeholder="Personnaliser l'angle marketing..."
+              className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
+            />
+          )}
         </div>
         <div>
           <label className="text-sm font-medium text-muted-foreground mb-2 block">
             Style visuel <span className="text-xs opacity-70">(adapté au {type === 'video' ? 'format vidéo' : type === 'carousel' ? 'carrousel' : 'visuel'})</span>
           </label>
-          <Select value={visual_style_brief} onValueChange={setVisualStyleBrief}>
+          <Select value={styleInPresets ? visual_style_brief : ''} onValueChange={setVisualStyleBrief}>
             <SelectTrigger className="bg-card border-foreground/10 text-foreground">
               <SelectValue placeholder="Choisir un style visuel..." />
             </SelectTrigger>
@@ -582,6 +592,14 @@ const ObjectiveStep = () => {
               ))}
             </SelectContent>
           </Select>
+          {visual_style_brief && (
+            <Input
+              value={visual_style_brief}
+              onChange={(e) => setVisualStyleBrief(e.target.value)}
+              placeholder="Personnaliser le style visuel..."
+              className="mt-2 bg-card border-foreground/10 text-foreground placeholder:text-muted-foreground"
+            />
+          )}
         </div>
         <div className="md:col-span-2">
           <p className="text-xs text-muted-foreground italic">{QUALITY_DIRECTIVE}</p>
