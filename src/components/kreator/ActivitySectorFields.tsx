@@ -80,7 +80,7 @@ const ActivitySectorFields = () => {
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">Secteur d'activité *</label>
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">Secteur *</label>
           {sectorMode === 'preset' ? (
             <Select value={company_sector} onValueChange={handleSectorChange}>
               <SelectTrigger className="bg-card border-foreground/10 text-foreground">
