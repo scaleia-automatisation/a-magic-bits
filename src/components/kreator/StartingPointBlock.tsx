@@ -70,19 +70,30 @@ const StartingPointBlock = () => {
   useEffect(() => {
     if (starting_choice === 'perf') {
       setShowPerfBlock(true);
+      // Clear any previously generated ideas
+      setShowIdeas(false);
+      setIdeas([]);
       // scroll into view
       setTimeout(() => {
         document.getElementById('starting-point-block')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
     } else if (starting_choice === 'scratch') {
       setShowPerfBlock(false);
+      // Clear any previously uploaded performing posts
+      setPerfPosts([]);
+      setPerfSummary('');
       setTimeout(() => {
         document.getElementById('starting-point-block')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
       // Trigger idea generation
       handleNoIdea();
-      // reset selection so re-click works
-      setStartingChoice('');
+    } else {
+      // Neither selected: hide everything
+      setShowPerfBlock(false);
+      setShowIdeas(false);
+      setIdeas([]);
+      setPerfPosts([]);
+      setPerfSummary('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [starting_choice]);
