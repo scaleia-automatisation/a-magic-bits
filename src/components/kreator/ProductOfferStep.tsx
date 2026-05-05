@@ -263,19 +263,7 @@ const ProductOfferStep = () => {
             </div>
           )}
 
-          {/* "Je n'ai pas d'idée" sous le champ persona */}
           <div className="mt-4 flex flex-col items-start gap-3">
-            {!showIdeas && !loadingIdeas && (
-              <Button
-                type="button"
-                onClick={handleNoIdea}
-                size="sm"
-                className="gradient-bg border-0 text-primary-foreground hover:opacity-90 rounded-btn text-xs font-bold px-4"
-              >
-                <Lightbulb className="w-4 h-4 mr-1.5" />
-                Je n'ai pas d'idée
-              </Button>
-            )}
             {loadingIdeas && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="w-4 h-4 animate-spin text-primary" />
