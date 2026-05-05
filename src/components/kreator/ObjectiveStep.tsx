@@ -6,39 +6,39 @@ import { useEffect, useMemo } from 'react';
 import type { ContentType } from '@/store/useKreatorStore';
 
 const OBJECTIVES = [
-  // 🟣 ATTENTION / Notoriété
+  // 🟣 TOFU — ATTENTION / Notoriété (haut du tunnel)
+  '🧲 Attirer du trafic qualifié',
   '📣 Faire connaître le produit ou service',
   '🌟 Augmenter la notoriété de marque',
-  '⭐ Améliorer l\'image du produit ou service',
   '🚀 Lancer un nouveau produit',
-  '🧲 Attirer du trafic qualifié',
-  // 🔵 INTÉRÊT / Éducation
+  '📢 Promouvoir un produit ou service',
+  '⭐ Améliorer l\'image du produit ou service',
+  // 🔵 TOFU/MOFU — INTÉRÊT / Éducation
   '📚 Éduquer le marché cible',
   '🎓 Positionner comme expert du marché',
   '❤️ Créer de l\'engagement audience',
   '👥 Développer une communauté engagée',
-  '📢 Promouvoir un produit ou service',
-  // 🟢 DÉSIR / Considération
+  // 🟢 MOFU — DÉSIR / Considération (milieu du tunnel)
+  '💡 Créer un besoin chez le client',
   '🎯 Générer des leads qualifiés',
   '📥 Générer des demandes entrantes',
   '🌱 Nourrir les prospects (lead nurturing)',
+  '🔍 Valider une idée de marché',
+  '🧪 Tester une offre ou un produit',
   '🛡️ Rassurer et lever les objections',
   '🚧 Lever les frictions à l\'achat',
   '🧱 Casser les barrières limitantes',
-  '💡 Créer un besoin chez le client',
-  '🧪 Tester une offre ou un produit',
-  '🔍 Valider une idée de marché',
-  // 🟡 ACTION / Conversion
-  '🛒 Vendre un produit ou service',
-  '⚡ Convertir en clients rapidement',
-  '📈 Augmenter le taux de conversion',
+  // 🟡 BOFU — ACTION / Conversion (bas du tunnel)
   '⏩ Accélérer la prise de décision',
-  '💰 Maximiser le retour publicitaire (ROAS)',
+  '⚡ Convertir en clients rapidement',
+  '🛒 Vendre un produit ou service',
+  '📈 Augmenter le taux de conversion',
   '📉 Réduire le coût d\'acquisition (CAC)',
-  // 🔴 FIDÉLISATION / Rétention
+  '💰 Maximiser le retour publicitaire (ROAS)',
+  // 🔴 POST-ACHAT — FIDÉLISATION / Rétention
+  '🔔 Relancer les prospects inactifs',
   '🔁 Fidéliser les clients existants',
   '💎 Augmenter la valeur client (LTV)',
-  '🔔 Relancer les prospects inactifs',
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
