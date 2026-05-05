@@ -191,11 +191,10 @@ const StartingPointBlock = () => {
     }
     const { offer_type, objective } = useKreatorStore.getState();
     const missing: string[] = [];
-    if (!objective?.trim()) missing.push('Objectif du contenu (bloc 4)');
     if (!offer_type?.trim()) missing.push("Type d'offre");
     if (!product_service?.trim()) missing.push('Produit ou service');
+    if (!objective?.trim()) missing.push('Objectif du contenu');
     if (!company_activity?.trim()) missing.push('Activité principale');
-    if (!company_sector?.trim()) missing.push("Secteur d'activité");
     if (missing.length > 0) {
       toast.error(`Veuillez renseigner : ${missing.join(', ')} avant de générer des idées à partir de zéro`);
       return;
