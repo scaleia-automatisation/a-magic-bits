@@ -5,7 +5,7 @@ import { useState } from 'react';
 const StartingChoiceButtons = () => {
   const {
     type, starting_choice, setStartingChoice,
-    offer_type, product_service, company_activity, company_sector,
+    offer_type, company_activity, company_sector, objective,
   } = useKreatorStore();
   const [scratchError, setScratchError] = useState<string[]>([]);
 
@@ -15,9 +15,9 @@ const StartingChoiceButtons = () => {
     if (val === 'scratch') {
       const missing: string[] = [];
       if (!offer_type?.trim()) missing.push("Type d'offre");
-      if (!product_service?.trim()) missing.push('Produit ou service');
       if (!company_activity?.trim()) missing.push('Activité principale');
       if (!company_sector?.trim()) missing.push("Secteur d'activité");
+      if (!objective?.trim()) missing.push('Objectif du contenu');
       if (missing.length > 0 && starting_choice !== 'scratch') {
         setScratchError(missing);
         return;
