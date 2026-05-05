@@ -439,9 +439,15 @@ const StartingPointBlock = () => {
                     </Button>
                   )}
                   {post?.description && (
-                    <p className="text-[11px] text-muted-foreground bg-card border border-foreground/10 rounded-md p-2 leading-snug">
-                      {post.description}
-                    </p>
+                    <Textarea
+                      value={post.description}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: value } : p));
+                        setPerfSummary('');
+                      }}
+                      className="text-[11px] text-foreground bg-card border border-foreground/10 rounded-md p-2 leading-snug min-h-[80px] resize-y"
+                    />
                   )}
                   <input
                     ref={perfRefs[index]}
