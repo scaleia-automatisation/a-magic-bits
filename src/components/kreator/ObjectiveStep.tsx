@@ -7,9 +7,9 @@ import type { ContentType } from '@/store/useKreatorStore';
 
 const OBJECTIVES = [
   // 🟣 ATTENTION / Notoriété
-  '📣 Faire connaître la marque',
+  '📣 Faire connaître le produit ou service',
   '🌟 Augmenter la notoriété de marque',
-  '⭐ Améliorer l\'image de marque',
+  '⭐ Améliorer l\'image du produit ou service',
   '🚀 Lancer un nouveau produit',
   '🧲 Attirer du trafic qualifié',
   // 🔵 INTÉRÊT / Éducation
