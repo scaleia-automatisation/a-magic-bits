@@ -446,7 +446,7 @@ const StartingPointBlock = () => {
                         setPerfPosts((prev) => prev.map((p, i) => i === index ? { ...p, description: value } : p));
                         setPerfSummary('');
                       }}
-                      className="text-[11px] text-foreground bg-card border border-foreground/10 rounded-md p-2 leading-snug min-h-[80px] resize-y"
+                      className="text-sm text-foreground bg-card border border-foreground/10 rounded-md p-2 leading-relaxed min-h-[100px] resize-y"
                     />
                   )}
                   <input
