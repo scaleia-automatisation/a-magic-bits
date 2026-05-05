@@ -222,7 +222,8 @@ const StartingPointBlock = () => {
   const handleGenerateMore = async () => {
     setLoadingIdeas(true);
     try {
-      const result = await generateIdeas(company_activity, company_sector, type, marketing_angle, product_service, market);
+      const { objective } = useKreatorStore.getState();
+      const result = await generateIdeas(company_activity, company_sector, type, objective || marketing_angle, product_service, market);
       setIdeas(result.ideas);
     } catch {
       toast.error('Erreur lors de la génération');
